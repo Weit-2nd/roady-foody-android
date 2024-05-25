@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RoadyFoody</string>
+    <string name="login_btn">로그인</string>
 </resources>
