@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.kakao.vectormap.KakaoMapSdk
+import com.weit2nd.presentation.BuildConfig.KAKAO_NATIVE_APP_KEY
 import com.weit2nd.presentation.navigation.AppNavHost
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        KakaoMapSdk.init(this, KAKAO_NATIVE_APP_KEY)
         setContent {
             RoadyFoodyTheme {
                 // A surface container using the 'background' color from the theme

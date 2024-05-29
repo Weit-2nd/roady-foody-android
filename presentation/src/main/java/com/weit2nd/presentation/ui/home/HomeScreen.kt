@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.presentation.ui.map.MapScreen
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -21,5 +22,6 @@ fun HomeScreen(
                 text = state.value.user.name,
             )
         }
+        MapScreen()
     }
 }
