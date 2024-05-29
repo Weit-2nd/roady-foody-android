@@ -1,3 +1,9 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("local.properties")))
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -10,12 +16,23 @@ android {
     namespace = "com.weit2nd.presentation"
     compileSdk = 34
 
+    // BuildConfig 클래스 생성
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            localProperties.getProperty("KAKAO_NATIVE_APP_KEY")
+        )
     }
 
     buildTypes {
@@ -82,4 +99,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.kakaoMap)
 }
