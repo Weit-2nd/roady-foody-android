@@ -1,9 +1,7 @@
 package com.weit2nd.presentation.ui.map
 
 import android.util.Log
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -36,11 +34,7 @@ fun MapScreen(
         }
     }
 
-    CompositionLocalProvider(
-        LocalLifecycleOwner provides androidx.compose.ui.platform.LocalLifecycleOwner.current,
-    ) {
-        DisposableEffectWithLifeCycle(onResume = mapView::resume, onPause = mapView::pause)
-    }
+    DisposableEffectWithLifeCycle(onResume = mapView::resume, onPause = mapView::pause)
 
     AndroidView(
         modifier = modifier,
@@ -71,7 +65,8 @@ private fun kakaoMapReadyCallback(
 
 @Composable
 private fun DisposableEffectWithLifeCycle(
-    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    // 오류로 compose.ui의 LocalLifecycleOwner 사용
+    lifecycleOwner: LifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
     onResume: () -> Unit,
     onPause: () -> Unit
 ) {
