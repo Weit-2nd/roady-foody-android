@@ -14,7 +14,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -23,6 +22,7 @@ import com.kakao.vectormap.MapView
 
 @Composable
 fun MapScreen(
+    modifier: Modifier = Modifier,
     position: LatLng = LatLng.from(37.566, 126.978),
     onMapReady: () -> Unit = {}
 ) {
@@ -43,14 +43,14 @@ fun MapScreen(
     }
 
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         factory = { mapView }
     )
 }
 
 private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
     override fun onMapDestroy() {
-        Log.d("KakaoMap", "onMapDestroy: ")
+        Log.d("KakaoMap", "onMapDestroy")
     }
 
     override fun onMapError(error: Exception) {
