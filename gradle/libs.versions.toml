@@ -21,6 +21,12 @@ inject = "1"
 tedPermission = "3.3.0"
 gson = "2.11.0"
 kakaoMap = "2.11.1"
+moshi = "1.14.0"
+retrofit2 = "2.9.0"
+loggingInterceptor = "5.0.0-alpha.6"
+converterMoshi = "2.9.0"
+converterScalars = "2.9.0"
+ksp = "1.8.10-1.0.9"
 kakaoSdk = "2.20.1"
 
 [libraries]
@@ -55,6 +61,12 @@ material = { group = "com.google.android.material", name = "material", version.r
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "inject" }
 tedpermission-coroutine = { group = "io.github.ParkSangGwon", name = "tedpermission-coroutine", version.ref = "tedPermission" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2" }
+retrofit2-converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "converterMoshi" }
+retrofit2-converter-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "converterScalars" }
+okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
+moshi = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+moshiCodegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshi" }
 kakao-map = { module = "com.kakao.maps.open:android", name = "kakaoMap", version.ref = "kakaoMap" }
 kakao-login = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoSdk" }
 
@@ -64,3 +76,4 @@ jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "k
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

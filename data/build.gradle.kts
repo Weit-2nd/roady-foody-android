@@ -1,12 +1,17 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.ksp)
     kotlin("kapt")
 }
 
 android {
     namespace = "com.weit2nd.data"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         minSdk = 29
@@ -37,6 +42,12 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.moshi)
+    kapt(libs.moshiCodegen)
+    implementation(libs.retrofit2)
+    implementation(libs.retrofit2.converter.moshi)
+    implementation(libs.retrofit2.converter.scalars)
+    implementation(libs.okhttp3.logging.interceptor)
     implementation(libs.kakao.login)
     testImplementation(libs.junit)
 }
