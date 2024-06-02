@@ -21,6 +21,7 @@ inject = "1"
 tedPermission = "3.3.0"
 gson = "2.11.0"
 kakaoMap = "2.11.1"
+kakaoSdk = "2.20.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,7 +55,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "inject" }
 tedpermission-coroutine = { group = "io.github.ParkSangGwon", name = "tedpermission-coroutine", version.ref = "tedPermission" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-kakaoMap = { module = "com.kakao.maps.open:android", name = "kakaoMap", version.ref = "kakaoMap" }
+kakao-map = { module = "com.kakao.maps.open:android", name = "kakaoMap", version.ref = "kakaoMap" }
+kakao-login = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoSdk" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -10,8 +10,6 @@ android {
 
     defaultConfig {
         minSdk = 29
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -39,6 +37,6 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kakao.login)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
 }
