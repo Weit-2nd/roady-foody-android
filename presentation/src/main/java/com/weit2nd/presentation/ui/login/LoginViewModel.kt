@@ -1,5 +1,7 @@
 package com.weit2nd.presentation.ui.login
 
+import android.util.Log
+import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.LoginUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,9 +31,11 @@ class LoginViewModel @Inject constructor(
                     )
                 }
                 runCatching {
-                    val user = loginUseCase.invoke()
-                    postSideEffect(LoginSideEffect.NavToHome(user))
+                    loginUseCase.invoke().getOrThrow()
+                }.onSuccess {
+                    postSideEffect(LoginSideEffect.NavToHome(User("으아악")))
                 }.onFailure {
+                    Log.e("MainTest", "$it")
                     reduce {
                         state.copy(
                             isLoading = false,

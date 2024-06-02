@@ -31,7 +31,7 @@ android {
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
-            localProperties.getProperty("KAKAO_NATIVE_APP_KEY")
+            "\"${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}\""
         )
     }
 

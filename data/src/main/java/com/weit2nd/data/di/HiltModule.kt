@@ -18,18 +18,18 @@ object HiltModule {
     @Provides
     fun providesLoginRepository(
         loginDataSource: LoginDataSource,
+        activityProvider: ActivityProvider,
     ): LoginRepository {
         return LoginRepositoryImpl(
             loginDataSource = loginDataSource,
+            activityProvider = activityProvider,
         )
     }
 
     @Singleton
     @Provides
-    fun providesLoginDataSource(
-        activityProvider: ActivityProvider,
-    ): LoginDataSource {
-        return LoginDataSource(activityProvider)
+    fun providesLoginDataSource(): LoginDataSource {
+        return LoginDataSource()
     }
 
     @Singleton
