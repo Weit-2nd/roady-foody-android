@@ -1,6 +1,6 @@
 package com.weit2nd.presentation.ui.map
 
-import com.weit2nd.domain.usecase.RestaurantUseCase
+import com.weit2nd.domain.usecase.GetRestaurantUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.ui.home.HomeIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val restaurantUseCase: RestaurantUseCase,
+    private val getRestaurantUseCase: GetRestaurantUseCase,
 ) : BaseViewModel<MapState, MapSideEffect>() {
 
     override val container = container<MapState, MapSideEffect>(MapState())
@@ -28,7 +28,7 @@ class MapViewModel @Inject constructor(
         when (this@post) {
             HomeIntent.RequestRestaurants -> {
                 runCatching {
-                    val restaurants = restaurantUseCase.invoke().map { it.toRestaurantState() }
+                    val restaurants = getRestaurantUseCase.invoke().map { it.toRestaurantState() }
                     reduce {
                         state.copy(
                             restaurants = restaurants
