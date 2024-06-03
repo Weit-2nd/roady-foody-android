@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -17,19 +18,22 @@ import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
+    vm: MapViewModel = hiltViewModel(),
     position: LatLng = LatLng.from(37.566, 126.978),
     onMapReady: () -> Unit = {}
 ) {
+    val state = vm.collectAsState()
     val context = LocalContext.current
     val mapView = remember {
         MapView(context).apply {
             start(
                 mapLifeCycleCallback(),
-                kakaoMapReadyCallback(onMapReady, position),
+                kakaoMapReadyCallback(onMapReady, position, state.value.restaurants),
             )
         }
     }
@@ -54,10 +58,12 @@ private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
 
 private fun kakaoMapReadyCallback(
     onMapReady: () -> Unit,
-    position: LatLng
+    position: LatLng,
+    restaurants: List<RestaurantState>,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady()
+        // todo 음식점 마커 띄우기
     }
 
     override fun getPosition(): LatLng = position
