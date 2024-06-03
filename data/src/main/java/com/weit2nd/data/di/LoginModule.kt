@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object HiltModule {
+object LoginModule {
 
     @Singleton
     @Provides
@@ -30,11 +30,5 @@ object HiltModule {
     @Provides
     fun providesLoginDataSource(): LoginDataSource {
         return LoginDataSource()
-    }
-
-    @Singleton
-    @Provides
-    fun providesActivityProvider(): ActivityProvider {
-        return ActivityProvider()
     }
 }
