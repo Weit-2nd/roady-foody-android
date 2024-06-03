@@ -1,4 +1,4 @@
-package com.weit2nd.data.source
+package com.weit2nd.data.source.login
 
 import android.app.Activity
 import com.kakao.sdk.common.model.ClientError

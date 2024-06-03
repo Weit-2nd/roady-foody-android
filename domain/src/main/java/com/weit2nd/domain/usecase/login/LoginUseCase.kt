@@ -1,6 +1,6 @@
-package com.weit2nd.domain.usecase
+package com.weit2nd.domain.usecase.login
 
-import com.weit2nd.domain.repository.LoginRepository
+import com.weit2nd.domain.repository.login.LoginRepository
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(

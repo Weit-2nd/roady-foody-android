@@ -1,9 +1,9 @@
-package com.weit2nd.data.repository
+package com.weit2nd.data.repository.login
 
 import com.kakao.sdk.user.UserApiClient
-import com.weit2nd.data.source.LoginDataSource
+import com.weit2nd.data.source.login.LoginDataSource
 import com.weit2nd.data.util.ActivityProvider
-import com.weit2nd.domain.repository.LoginRepository
+import com.weit2nd.domain.repository.login.LoginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

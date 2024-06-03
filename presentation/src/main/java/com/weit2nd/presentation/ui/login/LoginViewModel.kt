@@ -2,7 +2,7 @@ package com.weit2nd.presentation.ui.login
 
 import android.util.Log
 import com.weit2nd.domain.model.User
-import com.weit2nd.domain.usecase.LoginUseCase
+import com.weit2nd.domain.usecase.login.LoginUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
