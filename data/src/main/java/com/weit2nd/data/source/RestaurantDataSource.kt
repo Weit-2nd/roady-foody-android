@@ -9,11 +9,11 @@ class RestaurantDataSource {
     ): List<RestaurantDTO> {
         delay(1000)
         return listOf(
-            RestaurantDTO(0, 126.9423666, 37.5597706),
-            RestaurantDTO(1, 126.9416726, 37.5140823),
-            RestaurantDTO(2, 127.0247661, 37.503932),
-            RestaurantDTO(3, 127.1001714, 37.5133497),
-            RestaurantDTO(4, 127.0559819, 37.5445688),
+            RestaurantDTO(0, longitude = 126.9423666, latitude = 37.5597706),
+            RestaurantDTO(1, longitude =126.9416726, latitude = 37.5140823),
+            RestaurantDTO(2, longitude =127.0247661, latitude = 37.503932),
+            RestaurantDTO(3, longitude =127.1001714, latitude = 37.5133497),
+            RestaurantDTO(4, longitude =127.0559819, latitude = 37.5445688),
         )
     }
 }
