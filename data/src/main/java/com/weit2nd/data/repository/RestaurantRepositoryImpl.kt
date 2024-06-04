@@ -15,7 +15,7 @@ class RestaurantRepositoryImpl @Inject constructor(
 
     private fun RestaurantDTO.toRestaurant() = Restaurant(
         id = id,
-        x = x,
-        y = y,
+        latitude = latitude,
+        longitude = longitude,
     )
 }

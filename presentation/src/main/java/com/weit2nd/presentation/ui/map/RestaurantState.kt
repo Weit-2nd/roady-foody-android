@@ -9,5 +9,5 @@ data class RestaurantState(
 )
 
 fun Restaurant.toRestaurantState(): RestaurantState = RestaurantState(
-    id = id, coordinate = LatLng.from(y, x)
+    id = id, coordinate = LatLng.from(latitude, longitude)
 )
