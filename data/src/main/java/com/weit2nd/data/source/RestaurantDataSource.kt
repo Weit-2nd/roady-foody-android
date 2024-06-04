@@ -4,7 +4,9 @@ import com.weit2nd.data.model.RestaurantDTO
 import kotlinx.coroutines.delay
 
 class RestaurantDataSource {
-    suspend fun getRestaurants(): List<RestaurantDTO> {
+    suspend fun getRestaurants(
+        startLat: Double, startLng: Double, endLat: Double, endLng: Double
+    ): List<RestaurantDTO> {
         delay(1000)
         return listOf(
             RestaurantDTO(0, 126.9423666, 37.5597706),

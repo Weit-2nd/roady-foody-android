@@ -9,8 +9,15 @@ import javax.inject.Inject
 class RestaurantRepositoryImpl @Inject constructor(
     private val restaurantDataSource: RestaurantDataSource,
 ) : RestaurantRepository {
-    override suspend fun getRestaurants(): List<Restaurant> {
-        return restaurantDataSource.getRestaurants().map { it.toRestaurant() }
+    override suspend fun getRestaurants(
+        startLat: Double,
+        startLng: Double,
+        endLat: Double,
+        endLng: Double
+    ): List<Restaurant> {
+        return restaurantDataSource.getRestaurants(
+            startLat, startLng, endLat, endLng
+        ).map { it.toRestaurant() }
     }
 
     private fun RestaurantDTO.toRestaurant() = Restaurant(

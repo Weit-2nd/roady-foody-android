@@ -33,7 +33,7 @@ fun MapScreen(
         MapView(context).apply {
             start(
                 mapLifeCycleCallback(),
-                kakaoMapReadyCallback(onMapReady, position, state.value.restaurants),
+                kakaoMapReadyCallback(onMapReady, vm::loadRestaurants, position),
             )
         }
     }
@@ -58,12 +58,25 @@ private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
 
 private fun kakaoMapReadyCallback(
     onMapReady: () -> Unit,
+    onCameraMove: (Double, Double, Double, Double) -> Unit,
     position: LatLng,
-    restaurants: List<RestaurantState>,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady()
-        // todo 음식점 마커 띄우기
+        map.setOnCameraMoveEndListener { kakaoMap, _, _ ->
+            val viewport = kakaoMap.viewport
+            val startCoordinate = kakaoMap.fromScreenPoint(0, 0)
+            val endCoordinate = kakaoMap.fromScreenPoint(viewport.width(), viewport.height())
+            if (startCoordinate != null && endCoordinate != null) {
+                onCameraMove(
+                    startCoordinate.getLatitude(),
+                    startCoordinate.getLongitude(),
+                    endCoordinate.latitude,
+                    endCoordinate.longitude,
+                )
+            }
+            // todo 음식점 마커 띄우기
+        }
     }
 
     override fun getPosition(): LatLng = position

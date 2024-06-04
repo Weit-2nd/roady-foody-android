@@ -16,19 +16,22 @@ class MapViewModel @Inject constructor(
 
     override val container = container<MapState, MapSideEffect>(MapState())
 
-    init {
-        loadRestaurants()
+    fun loadRestaurants(startLat: Double, startLng: Double, endLat: Double, endLng: Double) {
+        HomeIntent.RequestRestaurants.post(startLat, startLng, endLat, endLng)
     }
 
-    private fun loadRestaurants() {
-        HomeIntent.RequestRestaurants.post()
-    }
-
-    private fun HomeIntent.post() = intent {
+    private fun HomeIntent.post(
+        startLat: Double,
+        startLng: Double,
+        endLat: Double,
+        endLng: Double,
+    ) = intent {
         when (this@post) {
             HomeIntent.RequestRestaurants -> {
                 runCatching {
-                    val restaurants = getRestaurantUseCase.invoke().map { it.toRestaurantState() }
+                    val restaurants = getRestaurantUseCase.invoke(
+                        startLat, startLng, endLat, endLng
+                    ).map { it.toRestaurantState() }
                     reduce {
                         state.copy(
                             restaurants = restaurants

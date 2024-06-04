@@ -7,7 +7,12 @@ import javax.inject.Inject
 class GetRestaurantUseCase @Inject constructor(
     private val repository: RestaurantRepository,
 ) {
-    suspend operator fun invoke(): List<Restaurant> {
-        return repository.getRestaurants()
+    suspend operator fun invoke(
+        startLat: Double,
+        startLng: Double,
+        endLat: Double,
+        endLng: Double
+    ): List<Restaurant> {
+        return repository.getRestaurants(startLat, startLng, endLat, endLng)
     }
 }
