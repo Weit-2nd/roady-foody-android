@@ -31,7 +31,7 @@ android {
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
-            localProperties.getProperty("KAKAO_NATIVE_APP_KEY")
+            "\"${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}\""
         )
     }
 
@@ -99,5 +99,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.kakaoMap)
+    implementation(libs.kakao.map)
 }
