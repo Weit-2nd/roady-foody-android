@@ -1,8 +1,8 @@
 package com.weit2nd.presentation.ui.map
 
+import com.kakao.vectormap.KakaoMap
 import com.weit2nd.domain.usecase.GetRestaurantUseCase
 import com.weit2nd.presentation.base.BaseViewModel
-import com.weit2nd.presentation.ui.home.HomeIntent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -16,18 +16,17 @@ class MapViewModel @Inject constructor(
 
     override val container = container<MapState, MapSideEffect>(MapState())
 
-    fun loadRestaurants(startLat: Double, startLng: Double, endLat: Double, endLng: Double) {
-        HomeIntent.RequestRestaurants.post(startLat, startLng, endLat, endLng)
+    fun onCameraMoveEnd(startLat: Double, startLng: Double, endLat: Double, endLng: Double) {
+        MapIntent.RequestRestaurants(startLat, startLng, endLat, endLng).post()
     }
 
-    private fun HomeIntent.post(
-        startLat: Double,
-        startLng: Double,
-        endLat: Double,
-        endLng: Double,
-    ) = intent {
+    fun onMapReady(kakaoMap: KakaoMap) {
+        MapIntent.ReadyMap(kakaoMap).post()
+    }
+
+    private fun MapIntent.post() = intent {
         when (this@post) {
-            HomeIntent.RequestRestaurants -> {
+            is MapIntent.RequestRestaurants -> {
                 runCatching {
                     val restaurants = getRestaurantUseCase.invoke(
                         startLat, startLng, endLat, endLng
@@ -37,6 +36,14 @@ class MapViewModel @Inject constructor(
                             restaurants = restaurants
                         )
                     }
+                }
+            }
+
+            is MapIntent.ReadyMap -> {
+                reduce {
+                    state.copy(
+                        map = map
+                    )
                 }
             }
         }
