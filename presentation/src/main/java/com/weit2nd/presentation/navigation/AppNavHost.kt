@@ -18,7 +18,7 @@ import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
-
+import com.weit2nd.presentation.ui.signup.SignUpScreen
 
 @Composable
 fun AppNavHost(
@@ -33,6 +33,7 @@ fun AppNavHost(
         exitTransition = { ExitTransition.None },
     ) {
         loginComposable(navController)
+        signUpComposable(navController)
         homeComposable(navController)
     }
 }
@@ -45,6 +46,32 @@ private fun NavGraphBuilder.loginComposable(
             navToHome = { user ->
                 navController.navigateToHome(user) {
                     popUpTo(LoginNavRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            },
+            navToSignUp = { user ->
+                navController.navigateToSignUp(user) {
+                    popUpTo(LoginNavRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.signUpComposable(
+    navController: NavHostController,
+) {
+    composable(
+        route = "${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.USER_STATE_KEY}}",
+        arguments = listOf(navArgument(SignUpNavRoutes.USER_STATE_KEY) { type = UserType() }),
+    ) {
+        SignUpScreen(
+            navToHome = { user ->
+                navController.navigateToHome(user) {
+                    popUpTo("${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.USER_STATE_KEY}}") {
                         inclusive = true
                     }
                 }
@@ -64,6 +91,14 @@ private fun NavGraphBuilder.homeComposable(
     }
 }
 
+private fun NavHostController.navigateToSignUp(
+    user: User,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val userJson = Uri.encode(Gson().toJson(user.toUserDTO()))
+    navigate("${SignUpNavRoutes.GRAPH}/$userJson", builder)
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -74,6 +109,11 @@ private fun NavHostController.navigateToHome(
 
 object LoginNavRoutes {
     const val GRAPH = "login"
+}
+
+object SignUpNavRoutes {
+    const val GRAPH = "signup"
+    const val USER_STATE_KEY = "user"
 }
 
 object HomeNavRoutes {

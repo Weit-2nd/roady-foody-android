@@ -33,7 +33,7 @@ class LoginViewModel @Inject constructor(
                 runCatching {
                     loginUseCase.invoke().getOrThrow()
                 }.onSuccess {
-                    postSideEffect(LoginSideEffect.NavToHome(User("으아악")))
+                    postSideEffect(LoginSideEffect.NavToSignUp(User("으아악")))
                 }.onFailure {
                     Log.e("MainTest", "$it")
                     reduce {
