@@ -72,7 +72,7 @@ private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
-    onCameraMoveEnd: (Double, Double, Double, Double) -> Unit,
+    onCameraMoveEnd: (startLat: Double, startLng: Double, endLat: Double, endLng: Double) -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
@@ -88,7 +88,7 @@ private fun kakaoMapReadyCallback(
 
 private fun onCameraMoveEnd(
     map: KakaoMap,
-    onCameraMoveEnd: (Double, Double, Double, Double) -> Unit,
+    onCameraMoveEnd: (startLat: Double, startLng: Double, endLat: Double, endLng: Double) -> Unit,
 ) {
     val viewport = map.viewport
     val startCoordinate = map.fromScreenPoint(0, 0)
