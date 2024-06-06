@@ -24,6 +24,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun MapScreen(
@@ -32,6 +33,9 @@ fun MapScreen(
     position: LatLng = LatLng.from(37.5597706, 126.9423666),
 ) {
     val state = vm.collectAsState()
+    vm.collectSideEffect { sideEffect ->
+        handleSideEffects(sideEffect)
+    }
     val context = LocalContext.current
     val mapView = remember {
         MapView(context).apply {
@@ -58,6 +62,14 @@ fun MapScreen(
         modifier = modifier,
         factory = { mapView }
     )
+}
+
+private fun handleSideEffects(sideEffect: MapSideEffect) {
+    when (sideEffect) {
+        is MapSideEffect.RefreshMarkers -> {
+            drawMarkers(sideEffect.map, sideEffect.restaurantMarkers)
+        }
+    }
 }
 
 private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
