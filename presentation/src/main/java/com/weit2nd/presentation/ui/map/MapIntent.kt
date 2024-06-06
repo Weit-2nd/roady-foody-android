@@ -10,7 +10,7 @@ sealed class MapIntent {
         val endLng: Double
     ) : MapIntent()
 
-    data class ReadyMap(
+    data class RefreshMarkers(
         val map: KakaoMap,
     ) : MapIntent()
 }

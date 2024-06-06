@@ -21,7 +21,7 @@ class MapViewModel @Inject constructor(
     }
 
     fun onMapReady(kakaoMap: KakaoMap) {
-        MapIntent.ReadyMap(kakaoMap).post()
+        MapIntent.RefreshMarkers(kakaoMap).post()
     }
 
     private fun MapIntent.post() = intent {
@@ -39,7 +39,7 @@ class MapViewModel @Inject constructor(
                 }
             }
 
-            is MapIntent.ReadyMap -> {
+            is MapIntent.RefreshMarkers -> {
                 reduce {
                     state.copy(
                         map = map
