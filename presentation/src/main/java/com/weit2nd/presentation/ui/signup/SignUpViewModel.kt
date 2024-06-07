@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.signup
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SignUpNavRoutes
@@ -8,6 +9,7 @@ import com.weit2nd.presentation.navigation.dto.toUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
@@ -28,6 +30,10 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.RequestSignUp.post()
     }
 
+    fun onProfileImageClick(imageUri: Uri?) {
+        SignUpIntent.SetProfileImage(imageUri).post()
+    }
+
     private fun SignUpIntent.post() = intent {
         when (this@post) {
             SignUpIntent.RequestSignUp -> {
@@ -37,6 +43,13 @@ class SignUpViewModel @Inject constructor(
                     postSideEffect(SignUpSideEffect.NavToHome(container.stateFlow.value.user))
                 }.onFailure {
                     // 회원가입 실패 문구 띄우기
+                }
+            }
+            is SignUpIntent.SetProfileImage -> {
+                reduce {
+                    state.copy(
+                        profileImageUri = imageUri
+                    )
                 }
             }
         }
