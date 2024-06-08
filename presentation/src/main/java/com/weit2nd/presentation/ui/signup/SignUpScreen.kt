@@ -171,8 +171,10 @@ fun NicknameInput(
     TextField(
         value = userInput,
         onValueChange = { newValue ->
-            userInput = newValue
-            onInputValueChange(userInput.text)
+            if (userInput.text != newValue.text){
+                userInput = newValue
+                onInputValueChange(userInput.text)
+            }
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         placeholder = {
