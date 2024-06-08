@@ -5,7 +5,8 @@ import com.weit2nd.domain.model.User
 
 data class SignUpState(
     val user: User,
+    val profileImageUri: Uri? = null,
     val nickname: String = "",
     val warning: String = "",
-    val profileImageUri: Uri? = null
+    val canSignUp: Boolean = false,
 )

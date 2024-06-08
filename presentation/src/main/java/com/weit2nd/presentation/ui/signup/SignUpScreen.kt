@@ -68,7 +68,10 @@ fun SignUpScreen(
             warning = state.value.warning
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = vm::onSignUpButtonClick) {
+        Button(
+            onClick = vm::onSignUpButtonClick,
+            enabled = state.value.canSignUp
+        ) {
             Text(text = "회원가입")
         }
     }

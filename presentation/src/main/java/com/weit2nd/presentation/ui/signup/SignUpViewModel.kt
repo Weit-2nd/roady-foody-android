@@ -68,13 +68,15 @@ class SignUpViewModel @Inject constructor(
                 if (nickname.matches(regex)) {
                     reduce {
                         state.copy(
-                            warning = ""
+                            warning = "",
+                            canSignUp = true,
                         )
                     }
                 } else {
                     reduce {
                         state.copy(
-                            warning = "한글, 영문, 숫자만 포함되는 6~16자"
+                            warning = "한글, 영문, 숫자만 포함되는 6~16자",
+                            canSignUp = false,
                         )
                     }
                 }
