@@ -16,7 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -65,7 +69,8 @@ fun SignUpScreen(
         )
         NicknameInput(
             onInputValueChange = vm::onInputValueChange,
-            warning = state.value.warning
+            isNicknameValid = state.value.isNicknameValid,
+            onDuplicationBtnClick = vm::onDuplicationBtnClick
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(
@@ -126,7 +131,8 @@ fun ProfileImage(
 fun NicknameInput(
     modifier: Modifier = Modifier,
     onInputValueChange: (String) -> Unit,
-    warning: String = "",
+    isNicknameValid: Boolean,
+    onDuplicationBtnClick: (String) -> Unit,
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -141,11 +147,19 @@ fun NicknameInput(
             placeholder = {
                 Text("닉네임")
             },
+            trailingIcon = {
+                IconButton(
+                    onClick = { onDuplicationBtnClick(userInput.text) },
+                    enabled = isNicknameValid
+                ) {
+                    Icon(Icons.Default.CheckCircle, null)
+                }
+            },
             modifier = modifier
                 .fillMaxWidth()
                 .padding(24.dp),
             singleLine = true
         )
-        Text(text = warning)
+        Text(if (isNicknameValid) "" else "한글, 영문, 숫자만 포함되는 6~16자")
     }
 }

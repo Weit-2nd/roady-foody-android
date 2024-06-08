@@ -7,6 +7,7 @@ data class SignUpState(
     val user: User,
     val profileImageUri: Uri? = null,
     val nickname: String = "",
-    val warning: String = "",
+    val isNicknameValid: Boolean = true,
+    val isNicknameDuplicate: Boolean = false,
     val canSignUp: Boolean = false,
 )

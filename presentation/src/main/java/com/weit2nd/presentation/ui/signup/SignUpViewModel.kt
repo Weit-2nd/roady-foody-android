@@ -38,6 +38,10 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.VerifyNickname(nickname).post()
     }
 
+    fun onDuplicationBtnClick(nickname: String) {
+        SignUpIntent.CheckNicknameDuplication(nickname).post()
+    }
+
     private fun SignUpIntent.post() = intent {
         when (this@post) {
             SignUpIntent.RequestSignUp -> {
@@ -68,17 +72,30 @@ class SignUpViewModel @Inject constructor(
                 if (nickname.matches(regex)) {
                     reduce {
                         state.copy(
-                            warning = "",
-                            canSignUp = true,
+                            isNicknameValid = true,
+                            isNicknameDuplicate = false,
+                            canSignUp = false,
                         )
                     }
                 } else {
                     reduce {
                         state.copy(
-                            warning = "한글, 영문, 숫자만 포함되는 6~16자",
+                            isNicknameValid = false,
+                            isNicknameDuplicate = false,
                             canSignUp = false,
                         )
                     }
+                }
+            }
+
+            is SignUpIntent.CheckNicknameDuplication -> {
+                // todo 서버 통신을 통한 닉네임 중복 여부 확인
+                val isDuplicated = false
+                reduce {
+                    state.copy(
+                        isNicknameDuplicate = isDuplicated,
+                        canSignUp = container.stateFlow.value.isNicknameValid && !isDuplicated
+                    )
                 }
             }
         }
