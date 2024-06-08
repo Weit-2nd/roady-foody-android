@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -74,7 +75,7 @@ fun SignUpScreen(
             onClick = vm::onSignUpButtonClick,
             enabled = state.value.canSignUp
         ) {
-            Text(text = "회원가입")
+            Text(text = stringResource(R.string.sign_up))
         }
     }
 }
@@ -107,8 +108,8 @@ private fun NicknameSetting(
         color = Color.Red,
         text = when (state.value.warningState) {
             WarningState.IS_VALID -> ""
-            WarningState.IS_NOT_VALID -> "한글, 영문, 숫자만 포함되는 6~16자로 입력해주세요."
-            WarningState.IS_DUPLICATE -> "중복된 닉네임입니다."
+            WarningState.IS_NOT_VALID -> stringResource(R.string.nickname_warning_not_valid)
+            WarningState.IS_DUPLICATE -> stringResource(R.string.nickname_warning_duplicate)
         }
     )
 }
@@ -178,7 +179,7 @@ fun NicknameInput(
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         placeholder = {
-            Text("닉네임")
+            Text(stringResource(R.string.nickname_input_placeholder))
         },
         trailingIcon = {
             DuplicationCheckButton(onDuplicationBtnClick, userInput, isNicknameValid)
@@ -200,6 +201,6 @@ private fun DuplicationCheckButton(
         onClick = { onDuplicationBtnClick(userInput.text) },
         enabled = isNicknameValid
     ) {
-        Text(text = "중복 체크")
+        Text(text = stringResource(R.string.nickname_duplicate_check))
     }
 }

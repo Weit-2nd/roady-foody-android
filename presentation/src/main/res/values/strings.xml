@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">RoadyFoody</string>
     <string name="login_btn">로그인</string>
+
+<!--  SignUpScreen  -->
+    <string name="sign_up">회원가입</string>
+    <string name="nickname_warning_not_valid">한글, 영문, 숫자만 포함되는 6~16자로 입력해주세요.</string>
+    <string name="nickname_warning_duplicate">중복된 닉네임입니다.</string>
+    <string name="nickname_input_placeholder">닉네임을 입력해주세요</string>
+    <string name="nickname_duplicate_check">중복 체크</string>
 </resources>
