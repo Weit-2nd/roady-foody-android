@@ -65,7 +65,9 @@ class SignUpViewModel @Inject constructor(
             is SignUpIntent.VerifyNickname -> {
                 reduce {
                     state.copy(
-                        nickname = nickname
+                        nickname = nickname,
+                        isNicknameDuplicate = false,
+                        canSignUp = false,
                     )
                 }
                 val regex = "^[가-힣a-zA-Z0-9]{6,16}$".toRegex()
@@ -73,16 +75,14 @@ class SignUpViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             isNicknameValid = true,
-                            isNicknameDuplicate = false,
-                            canSignUp = false,
+                            warningState = WarningState.IS_VALID,
                         )
                     }
                 } else {
                     reduce {
                         state.copy(
                             isNicknameValid = false,
-                            isNicknameDuplicate = false,
-                            canSignUp = false,
+                            warningState = WarningState.IS_NOT_VALID,
                         )
                     }
                 }
@@ -91,11 +91,23 @@ class SignUpViewModel @Inject constructor(
             is SignUpIntent.CheckNicknameDuplication -> {
                 // todo 서버 통신을 통한 닉네임 중복 여부 확인
                 val isDuplicated = false
-                reduce {
-                    state.copy(
-                        isNicknameDuplicate = isDuplicated,
-                        canSignUp = container.stateFlow.value.isNicknameValid && !isDuplicated
-                    )
+
+                if (isDuplicated) {
+                    reduce {
+                        state.copy(
+                            isNicknameDuplicate = isDuplicated,
+                            warningState = WarningState.IS_DUPLICATE,
+                            canSignUp = false
+                        )
+                    }
+                } else {
+                    reduce {
+                        state.copy(
+                            isNicknameDuplicate = isDuplicated,
+                            warningState = WarningState.IS_VALID,
+                            canSignUp = container.stateFlow.value.isNicknameValid && !isDuplicated
+                        )
+                    }
                 }
             }
         }

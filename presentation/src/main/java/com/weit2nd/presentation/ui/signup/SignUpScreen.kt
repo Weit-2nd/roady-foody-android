@@ -16,11 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -68,9 +64,17 @@ fun SignUpScreen(
             onProfileImageClick = vm::onProfileImageClick
         )
         NicknameInput(
+            nickname = state.value.nickname,
             onInputValueChange = vm::onInputValueChange,
             isNicknameValid = state.value.isNicknameValid,
             onDuplicationBtnClick = vm::onDuplicationBtnClick
+        )
+        Text(
+            when(state.value.warningState) {
+                WarningState.IS_VALID -> ""
+                WarningState.IS_NOT_VALID -> "한글, 영문, 숫자만 포함되는 6~16자로 입력해주세요."
+                WarningState.IS_DUPLICATE -> "중복된 닉네임입니다."
+            }
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(
@@ -130,36 +134,43 @@ fun ProfileImage(
 @Composable
 fun NicknameInput(
     modifier: Modifier = Modifier,
+    nickname: String,
     onInputValueChange: (String) -> Unit,
     isNicknameValid: Boolean,
     onDuplicationBtnClick: (String) -> Unit,
 ) {
-    var userInput by remember { mutableStateOf(TextFieldValue("")) }
+    var userInput by remember { mutableStateOf(TextFieldValue(nickname)) }
 
-    Column {
-        TextField(
-            value = userInput,
-            onValueChange = { newValue ->
-                userInput = newValue
-                onInputValueChange(userInput.text)
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            placeholder = {
-                Text("닉네임")
-            },
-            trailingIcon = {
-                IconButton(
-                    onClick = { onDuplicationBtnClick(userInput.text) },
-                    enabled = isNicknameValid
-                ) {
-                    Icon(Icons.Default.CheckCircle, null)
-                }
-            },
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            singleLine = true
-        )
-        Text(if (isNicknameValid) "" else "한글, 영문, 숫자만 포함되는 6~16자")
+    TextField(
+        value = userInput,
+        onValueChange = { newValue ->
+            userInput = newValue
+            onInputValueChange(userInput.text)
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        placeholder = {
+            Text("닉네임")
+        },
+        trailingIcon = {
+            DuplicationCheckButton(onDuplicationBtnClick, userInput, isNicknameValid)
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        singleLine = true
+    )
+}
+
+@Composable
+private fun DuplicationCheckButton(
+    onDuplicationBtnClick: (String) -> Unit,
+    userInput: TextFieldValue,
+    isNicknameValid: Boolean
+) {
+    Button(
+        onClick = { onDuplicationBtnClick(userInput.text) },
+        enabled = isNicknameValid
+    ) {
+        Text(text = "중복 체크")
     }
 }
