@@ -34,6 +34,10 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.SetProfileImage(imageUri).post()
     }
 
+    fun onInputValueChange(nickname: String) {
+        SignUpIntent.VerifyNickname(nickname).post()
+    }
+
     private fun SignUpIntent.post() = intent {
         when (this@post) {
             SignUpIntent.RequestSignUp -> {
@@ -45,11 +49,34 @@ class SignUpViewModel @Inject constructor(
                     // 회원가입 실패 문구 띄우기
                 }
             }
+
             is SignUpIntent.SetProfileImage -> {
                 reduce {
                     state.copy(
                         profileImageUri = imageUri
                     )
+                }
+            }
+
+            is SignUpIntent.VerifyNickname -> {
+                reduce {
+                    state.copy(
+                        nickname = nickname
+                    )
+                }
+                val regex = "^[가-힣a-zA-Z0-9]{6,16}$".toRegex()
+                if (nickname.matches(regex)) {
+                    reduce {
+                        state.copy(
+                            warning = ""
+                        )
+                    }
+                } else {
+                    reduce {
+                        state.copy(
+                            warning = "한글, 영문, 숫자만 포함되는 6~16자"
+                        )
+                    }
                 }
             }
         }

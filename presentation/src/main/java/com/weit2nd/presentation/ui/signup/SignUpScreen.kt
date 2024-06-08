@@ -9,7 +9,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -60,6 +63,11 @@ fun SignUpScreen(
             imgUri = state.value.profileImageUri,
             onProfileImageClick = vm::onProfileImageClick
         )
+        NicknameInput(
+            onInputValueChange = vm::onInputValueChange,
+            warning = state.value.warning
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = vm::onSignUpButtonClick) {
             Text(text = "회원가입")
         }
@@ -113,20 +121,28 @@ fun ProfileImage(
 
 @Composable
 fun NicknameInput(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onInputValueChange: (String) -> Unit,
+    warning: String = "",
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue("")) }
-    TextField(
-        value = userInput,
-        onValueChange = { newValue ->
-            userInput = newValue
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        placeholder = {
-            Text("닉네임")
-        },
-        modifier = modifier
-            .fillMaxWidth(),
-        singleLine = true
-    )
+
+    Column {
+        TextField(
+            value = userInput,
+            onValueChange = { newValue ->
+                userInput = newValue
+                onInputValueChange(userInput.text)
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            placeholder = {
+                Text("닉네임")
+            },
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            singleLine = true
+        )
+        Text(text = warning)
+    }
 }
