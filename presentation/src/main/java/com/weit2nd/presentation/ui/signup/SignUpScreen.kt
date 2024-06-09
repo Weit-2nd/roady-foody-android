@@ -224,7 +224,11 @@ private fun NicknameTextField(
             Text(stringResource(R.string.nickname_input_placeholder))
         },
         trailingIcon = {
-            DuplicationCheckButton(onDuplicationBtnClick, userInput, isNicknameValid)
+            DuplicationCheckButton(
+                onClick = onDuplicationBtnClick,
+                userInput = userInput,
+                enable = isNicknameValid,
+            )
         },
         modifier = modifier
             .fillMaxWidth()
@@ -235,13 +239,13 @@ private fun NicknameTextField(
 
 @Composable
 private fun DuplicationCheckButton(
-    onDuplicationBtnClick: (String) -> Unit,
+    onClick: (String) -> Unit,
     userInput: TextFieldValue,
-    isNicknameValid: Boolean
+    enable: Boolean
 ) {
     Button(
-        onClick = { onDuplicationBtnClick(userInput.text) },
-        enabled = isNicknameValid
+        onClick = { onClick(userInput.text) },
+        enabled = enable
     ) {
         Text(text = stringResource(R.string.nickname_duplicate_check))
     }
