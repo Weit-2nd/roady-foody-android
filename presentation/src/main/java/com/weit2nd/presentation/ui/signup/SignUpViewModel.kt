@@ -2,11 +2,9 @@ package com.weit2nd.presentation.ui.signup
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
+import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.signup.SignUpUseCase
 import com.weit2nd.presentation.base.BaseViewModel
-import com.weit2nd.presentation.navigation.SignUpNavRoutes
-import com.weit2nd.presentation.navigation.dto.UserDTO
-import com.weit2nd.presentation.navigation.dto.toUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -16,17 +14,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
-    override val container = container<SignUpState, SignUpSideEffect>(
-        SignUpState(
-            user = checkNotNull(
-                savedStateHandle.get<UserDTO>(SignUpNavRoutes.USER_STATE_KEY)?.toUser()
-            )
-        )
-    )
+    override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
 
     fun onSignUpButtonClick() {
         SignUpIntent.RequestSignUp.post()
@@ -50,7 +41,7 @@ class SignUpViewModel @Inject constructor(
                 runCatching {
                     // 회원가입 시도
                 }.onSuccess {
-                    postSideEffect(SignUpSideEffect.NavToHome(container.stateFlow.value.user))
+                    postSideEffect(SignUpSideEffect.NavToHome(User("으악")))
                 }.onFailure {
                     // 회원가입 실패 문구 띄우기
                 }

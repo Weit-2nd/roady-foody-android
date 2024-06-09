@@ -1,7 +1,6 @@
 package com.weit2nd.presentation.ui.login
 
 import android.util.Log
-import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.login.LoginUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +32,7 @@ class LoginViewModel @Inject constructor(
                 runCatching {
                     loginUseCase.invoke().getOrThrow()
                 }.onSuccess {
-                    postSideEffect(LoginSideEffect.NavToSignUp(User("으아악")))
+                    postSideEffect(LoginSideEffect.NavToSignUp)
                 }.onFailure {
                     Log.e("MainTest", "$it")
                     reduce {

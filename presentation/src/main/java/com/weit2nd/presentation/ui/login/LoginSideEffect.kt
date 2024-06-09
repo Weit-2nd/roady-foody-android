@@ -8,7 +8,5 @@ sealed class LoginSideEffect {
         val user: User,
     ) : LoginSideEffect()
 
-    data class NavToSignUp(
-        val user: User,
-    ) : LoginSideEffect()
+    data object NavToSignUp : LoginSideEffect()
 }

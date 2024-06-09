@@ -50,8 +50,8 @@ private fun NavGraphBuilder.loginComposable(
                     }
                 }
             },
-            navToSignUp = { user ->
-                navController.navigateToSignUp(user) {
+            navToSignUp = {
+                navController.navigate(SignUpNavRoutes.GRAPH) {
                     popUpTo(LoginNavRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -64,14 +64,11 @@ private fun NavGraphBuilder.loginComposable(
 private fun NavGraphBuilder.signUpComposable(
     navController: NavHostController,
 ) {
-    composable(
-        route = "${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.USER_STATE_KEY}}",
-        arguments = listOf(navArgument(SignUpNavRoutes.USER_STATE_KEY) { type = UserType() }),
-    ) {
+    composable(route = SignUpNavRoutes.GRAPH) {
         SignUpScreen(
             navToHome = { user ->
                 navController.navigateToHome(user) {
-                    popUpTo("${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.USER_STATE_KEY}}") {
+                    popUpTo(SignUpNavRoutes.GRAPH) {
                         inclusive = true
                     }
                 }
@@ -91,14 +88,6 @@ private fun NavGraphBuilder.homeComposable(
     }
 }
 
-private fun NavHostController.navigateToSignUp(
-    user: User,
-    builder: NavOptionsBuilder.() -> Unit = {},
-) {
-    val userJson = Uri.encode(Gson().toJson(user.toUserDTO()))
-    navigate("${SignUpNavRoutes.GRAPH}/$userJson", builder)
-}
-
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -113,7 +102,6 @@ object LoginNavRoutes {
 
 object SignUpNavRoutes {
     const val GRAPH = "signup"
-    const val USER_STATE_KEY = "user"
 }
 
 object HomeNavRoutes {
