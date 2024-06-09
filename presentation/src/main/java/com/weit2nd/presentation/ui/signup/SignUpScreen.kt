@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,7 +66,13 @@ fun SignUpScreen(
                 onProfileImageClick = vm::onProfileImageClick
             )
             Spacer(modifier = Modifier.padding(16.dp))
-            NicknameSetting(state, vm)
+            NicknameSetting(
+                nickname = state.value.nickname,
+                isNicknameValid = state.value.isNicknameValid,
+                warningState = state.value.warningState,
+                onInputValueChange = vm::onInputValueChange,
+                onDuplicationBtnClick = vm::onDuplicationBtnClick,
+            )
         }
 
         Button(
@@ -93,20 +98,24 @@ private fun handleSideEffects(
 
 @Composable
 private fun NicknameSetting(
-    state: State<SignUpState>,
-    vm: SignUpViewModel
+    modifier: Modifier = Modifier,
+    nickname: String,
+    isNicknameValid: Boolean,
+    warningState: WarningState,
+    onInputValueChange: (String) -> Unit,
+    onDuplicationBtnClick: (String) -> Unit,
 ) {
     NicknameInput(
-        nickname = state.value.nickname,
-        onInputValueChange = vm::onInputValueChange,
-        isNicknameValid = state.value.isNicknameValid,
-        onDuplicationBtnClick = vm::onDuplicationBtnClick
+        nickname = nickname,
+        onInputValueChange = onInputValueChange,
+        isNicknameValid = isNicknameValid,
+        onDuplicationBtnClick = onDuplicationBtnClick
     )
     Text(
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier.padding(8.dp),
         textAlign = TextAlign.Center,
         color = Color.Red,
-        text = when (state.value.warningState) {
+        text = when (warningState) {
             WarningState.IS_VALID -> ""
             WarningState.IS_NOT_VALID -> stringResource(R.string.nickname_warning_not_valid)
             WarningState.IS_DUPLICATE -> stringResource(R.string.nickname_warning_duplicate)
@@ -172,7 +181,7 @@ fun NicknameInput(
     TextField(
         value = userInput,
         onValueChange = { newValue ->
-            if (userInput.text != newValue.text){
+            if (userInput.text != newValue.text) {
                 userInput = newValue
                 onInputValueChange(userInput.text)
             }
