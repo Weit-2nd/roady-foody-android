@@ -1,7 +1,6 @@
 package com.weit2nd.presentation.ui.signup
 
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.signup.SignUpUseCase
 import com.weit2nd.presentation.base.BaseViewModel
@@ -56,49 +55,21 @@ class SignUpViewModel @Inject constructor(
             }
 
             is SignUpIntent.VerifyNickname -> {
+                val nicknameState = signUpUseCase.verifyNickname(nickname)
                 reduce {
                     state.copy(
                         nickname = nickname,
-                        isNicknameDuplicate = false,
-                        canSignUp = false,
+                        nicknameState = nicknameState,
                     )
-                }
-
-                if (signUpUseCase.verifyNickname(nickname)) {
-                    reduce {
-                        state.copy(
-                            isNicknameValid = true,
-                            warningState = WarningState.IS_VALID,
-                        )
-                    }
-                } else {
-                    reduce {
-                        state.copy(
-                            isNicknameValid = false,
-                            warningState = WarningState.IS_NOT_VALID,
-                        )
-                    }
                 }
             }
 
             is SignUpIntent.CheckNicknameDuplication -> {
-                // todo 서버 통신을 통한 닉네임 중복 여부 확인
-                val isDuplicated = false
-
-                if (isDuplicated) {
+                runCatching {
+                    val nicknameState = signUpUseCase.invoke(nickname)
                     reduce {
                         state.copy(
-                            isNicknameDuplicate = isDuplicated,
-                            warningState = WarningState.IS_DUPLICATE,
-                            canSignUp = false
-                        )
-                    }
-                } else {
-                    reduce {
-                        state.copy(
-                            isNicknameDuplicate = isDuplicated,
-                            warningState = WarningState.IS_VALID,
-                            canSignUp = container.stateFlow.value.isNicknameValid && !isDuplicated
+                            nicknameState = nicknameState
                         )
                     }
                 }

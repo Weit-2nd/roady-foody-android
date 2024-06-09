@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.R
 import org.orbitmvi.orbit.compose.collectAsState
@@ -70,8 +71,7 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.padding(16.dp))
             NicknameSetting(
                 nickname = state.value.nickname,
-                isNicknameValid = state.value.isNicknameValid,
-                warningState = state.value.warningState,
+                nicknameState = state.value.nicknameState,
                 onInputValueChange = vm::onInputValueChange,
                 onDuplicationBtnClick = vm::onDuplicationBtnClick,
             )
@@ -80,7 +80,7 @@ fun SignUpScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = vm::onSignUpButtonClick,
-            enabled = state.value.canSignUp
+            enabled = state.value.nicknameState == NicknameState.CAN_SIGN_UP
         ) {
             Text(text = stringResource(R.string.sign_up))
         }
@@ -159,25 +159,31 @@ private fun ProfileImage(
 private fun NicknameSetting(
     modifier: Modifier = Modifier,
     nickname: String,
-    isNicknameValid: Boolean,
-    warningState: WarningState,
+    nicknameState: NicknameState,
     onInputValueChange: (String) -> Unit,
     onDuplicationBtnClick: (String) -> Unit,
 ) {
     NicknameContainer(
         nickname = nickname,
         onInputValueChange = onInputValueChange,
-        isNicknameValid = isNicknameValid,
+        isNicknameValid = nicknameState == NicknameState.VALID,
         onDuplicationBtnClick = onDuplicationBtnClick
     )
     Text(
         modifier = modifier.padding(8.dp),
         textAlign = TextAlign.Center,
-        color = Color.Red,
-        text = when (warningState) {
-            WarningState.IS_VALID -> ""
-            WarningState.IS_NOT_VALID -> stringResource(R.string.nickname_warning_not_valid)
-            WarningState.IS_DUPLICATE -> stringResource(R.string.nickname_warning_duplicate)
+        color = if (nicknameState == NicknameState.CAN_SIGN_UP) {
+            Color.Blue
+        } else {
+            Color.Red
+        },
+        text = when (nicknameState) {
+            NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
+            NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
+            NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
+            NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
+            NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
+            else -> ""
         }
     )
 }
