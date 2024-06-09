@@ -27,7 +27,9 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onInputValueChange(nickname: String) {
-        SignUpIntent.VerifyNickname(nickname).post()
+        if (container.stateFlow.value.nickname != nickname) {
+            SignUpIntent.VerifyNickname(nickname).post()
+        }
     }
 
     fun onDuplicationBtnClick(nickname: String) {
