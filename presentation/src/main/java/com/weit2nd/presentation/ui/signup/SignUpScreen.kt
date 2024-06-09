@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.signup
 
 import android.graphics.ImageDecoder
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,7 +63,7 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.padding(24.dp))
-            ProfileImage(
+            ProfileImageContainer(
                 imgUri = state.value.profileImageUri,
                 onProfileImageClick = vm::onProfileImageClick
             )
@@ -97,40 +99,12 @@ private fun handleSideEffects(
 }
 
 @Composable
-private fun NicknameSetting(
-    modifier: Modifier = Modifier,
-    nickname: String,
-    isNicknameValid: Boolean,
-    warningState: WarningState,
-    onInputValueChange: (String) -> Unit,
-    onDuplicationBtnClick: (String) -> Unit,
-) {
-    NicknameInput(
-        nickname = nickname,
-        onInputValueChange = onInputValueChange,
-        isNicknameValid = isNicknameValid,
-        onDuplicationBtnClick = onDuplicationBtnClick
-    )
-    Text(
-        modifier = modifier.padding(8.dp),
-        textAlign = TextAlign.Center,
-        color = Color.Red,
-        text = when (warningState) {
-            WarningState.IS_VALID -> ""
-            WarningState.IS_NOT_VALID -> stringResource(R.string.nickname_warning_not_valid)
-            WarningState.IS_DUPLICATE -> stringResource(R.string.nickname_warning_duplicate)
-        }
-    )
-}
-
-@Composable
-fun ProfileImage(
+fun ProfileImageContainer(
     modifier: Modifier = Modifier,
     imgUri: Uri? = null,
     onProfileImageClick: (Uri?) -> Unit,
 ) {
     var imageUri by remember { mutableStateOf(imgUri) }
-
     val context = LocalContext.current
     val storageAccessLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
@@ -153,6 +127,19 @@ fun ProfileImage(
         painterResource(R.drawable.ic_launcher_background)
     }
 
+    ProfileImage(
+        modifier = modifier,
+        painter = painter,
+        storageAccessLauncher = storageAccessLauncher,
+    )
+}
+
+@Composable
+private fun ProfileImage(
+    modifier: Modifier = Modifier,
+    painter: Painter,
+    storageAccessLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
+) {
     Image(
         painter = painter,
         contentDescription = null,
@@ -164,12 +151,39 @@ fun ProfileImage(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
             },
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop,
     )
 }
 
 @Composable
-fun NicknameInput(
+private fun NicknameSetting(
+    modifier: Modifier = Modifier,
+    nickname: String,
+    isNicknameValid: Boolean,
+    warningState: WarningState,
+    onInputValueChange: (String) -> Unit,
+    onDuplicationBtnClick: (String) -> Unit,
+) {
+    NicknameContainer(
+        nickname = nickname,
+        onInputValueChange = onInputValueChange,
+        isNicknameValid = isNicknameValid,
+        onDuplicationBtnClick = onDuplicationBtnClick
+    )
+    Text(
+        modifier = modifier.padding(8.dp),
+        textAlign = TextAlign.Center,
+        color = Color.Red,
+        text = when (warningState) {
+            WarningState.IS_VALID -> ""
+            WarningState.IS_NOT_VALID -> stringResource(R.string.nickname_warning_not_valid)
+            WarningState.IS_DUPLICATE -> stringResource(R.string.nickname_warning_duplicate)
+        }
+    )
+}
+
+@Composable
+fun NicknameContainer(
     modifier: Modifier = Modifier,
     nickname: String,
     onInputValueChange: (String) -> Unit,
@@ -178,12 +192,31 @@ fun NicknameInput(
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue(nickname)) }
 
+    NicknameTextField(
+        userInput = userInput,
+        onInputValueChange = { newValue ->
+            userInput = newValue
+            onInputValueChange(newValue.text)
+        },
+        onDuplicationBtnClick = onDuplicationBtnClick,
+        isNicknameValid = isNicknameValid,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun NicknameTextField(
+    userInput: TextFieldValue,
+    onInputValueChange: (TextFieldValue) -> Unit,
+    onDuplicationBtnClick: (String) -> Unit,
+    isNicknameValid: Boolean,
+    modifier: Modifier
+) {
     TextField(
         value = userInput,
         onValueChange = { newValue ->
             if (userInput.text != newValue.text) {
-                userInput = newValue
-                onInputValueChange(userInput.text)
+                onInputValueChange(newValue)
             }
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
