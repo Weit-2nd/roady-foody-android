@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.signup
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
+import com.weit2nd.domain.usecase.signup.SignUpUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SignUpNavRoutes
 import com.weit2nd.presentation.navigation.dto.UserDTO
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
     override val container = container<SignUpState, SignUpSideEffect>(
@@ -70,8 +72,8 @@ class SignUpViewModel @Inject constructor(
                         canSignUp = false,
                     )
                 }
-                val regex = "^[가-힣a-zA-Z0-9]{6,16}$".toRegex()
-                if (nickname.matches(regex)) {
+
+                if (signUpUseCase.verifyNickname(nickname)) {
                     reduce {
                         state.copy(
                             isNicknameValid = true,
