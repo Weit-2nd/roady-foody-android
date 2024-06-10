@@ -72,6 +72,7 @@ fun SignUpScreen(
             NicknameSetting(
                 nickname = state.value.nickname,
                 nicknameState = state.value.nicknameState,
+                isLoading = state.value.isLoading,
                 onInputValueChange = vm::onNicknameInputValueChange,
                 onDuplicationBtnClick = vm::onDuplicationBtnClick,
             )
@@ -160,13 +161,14 @@ private fun NicknameSetting(
     modifier: Modifier = Modifier,
     nickname: String,
     nicknameState: NicknameState,
+    isLoading: Boolean,
     onInputValueChange: (String) -> Unit,
     onDuplicationBtnClick: (String) -> Unit,
 ) {
     NicknameContainer(
         nickname = nickname,
         onInputValueChange = onInputValueChange,
-        isNicknameValid = nicknameState == NicknameState.VALID,
+        isNicknameValid = (nicknameState == NicknameState.VALID) && !isLoading,
         onDuplicationBtnClick = onDuplicationBtnClick
     )
     Text(

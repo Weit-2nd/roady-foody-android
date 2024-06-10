@@ -67,11 +67,17 @@ class SignUpViewModel @Inject constructor(
             }
 
             is SignUpIntent.CheckNicknameDuplication -> {
+                reduce {
+                    state.copy(
+                        isLoading = true,
+                    )
+                }
                 runCatching {
                     val nicknameState = signUpUseCase.invoke(nickname)
                     reduce {
                         state.copy(
-                            nicknameState = nicknameState
+                            isLoading = false,
+                            nicknameState = nicknameState,
                         )
                     }
                 }
