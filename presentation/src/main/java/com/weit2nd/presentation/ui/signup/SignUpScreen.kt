@@ -72,7 +72,7 @@ fun SignUpScreen(
             NicknameSetting(
                 nickname = state.value.nickname,
                 nicknameState = state.value.nicknameState,
-                onInputValueChange = vm::onInputValueChange,
+                onInputValueChange = vm::onNicknameInputValueChange,
                 onDuplicationBtnClick = vm::onDuplicationBtnClick,
             )
         }

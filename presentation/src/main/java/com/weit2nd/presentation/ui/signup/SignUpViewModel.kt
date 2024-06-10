@@ -26,7 +26,7 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.SetProfileImage(imageUri).post()
     }
 
-    fun onInputValueChange(nickname: String) {
+    fun onNicknameInputValueChange(nickname: String) {
         if (container.stateFlow.value.nickname != nickname) {
             SignUpIntent.VerifyNickname(nickname).post()
         }
