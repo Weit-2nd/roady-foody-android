@@ -164,16 +164,19 @@ private fun NicknameSetting(
             } else {
                 Color.Red
             },
-            text = when (nicknameState) {
-                NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
-                NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
-                NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
-                NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
-                NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
-                else -> ""
-            }
+            text = getNicknameStateMessage(nicknameState)
         )
     }
+}
+
+@Composable
+private fun getNicknameStateMessage(nicknameState: NicknameState) = when (nicknameState) {
+    NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
+    NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
+    NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
+    NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
+    NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
+    else -> ""
 }
 
 @Composable
