@@ -6,14 +6,14 @@ import com.weit2nd.domain.repository.signup.SignUpRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object SignUpModule {
 
-    @Singleton
+    @ViewModelScoped
     @Provides
     fun providesSignUpRepository(
         signUpDataSource: SignUpDataSource,
@@ -23,7 +23,7 @@ object SignUpModule {
         )
     }
 
-    @Singleton
+    @ViewModelScoped
     @Provides
     fun providesSignUpDataSource(): SignUpDataSource {
         return SignUpDataSource()
