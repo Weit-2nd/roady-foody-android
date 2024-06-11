@@ -2,7 +2,6 @@ package com.weit2nd.presentation.ui.signup
 
 import android.graphics.ImageDecoder
 import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,23 +19,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,7 +57,7 @@ fun SignUpScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.padding(24.dp))
-            ProfileImageContainer(
+            ProfileImage(
                 imgUri = state.value.profileImageUri,
                 onProfileImageClick = vm::onProfileImageClick
             )
@@ -100,26 +93,24 @@ private fun handleSideEffects(
 }
 
 @Composable
-fun ProfileImageContainer(
+fun ProfileImage(
     modifier: Modifier = Modifier,
     imgUri: Uri? = null,
     onProfileImageClick: (Uri?) -> Unit,
 ) {
-    var imageUri by remember { mutableStateOf(imgUri) }
     val context = LocalContext.current
     val storageAccessLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
             uri?.let {
-                imageUri = it
-                onProfileImageClick(imageUri)
+                onProfileImageClick(it)
             }
         }
 
-    val painter = if (imageUri != null) {
+    val painter = if (imgUri != null) {
         val bitmap = ImageDecoder.decodeBitmap(
             ImageDecoder.createSource(
                 context.contentResolver,
-                imageUri!!
+                imgUri
             )
         )
         BitmapPainter(bitmap.asImageBitmap())
@@ -128,19 +119,6 @@ fun ProfileImageContainer(
         painterResource(R.drawable.ic_launcher_background)
     }
 
-    ProfileImage(
-        modifier = modifier,
-        painter = painter,
-        storageAccessLauncher = storageAccessLauncher,
-    )
-}
-
-@Composable
-private fun ProfileImage(
-    modifier: Modifier = Modifier,
-    painter: Painter,
-    storageAccessLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
-) {
     Image(
         painter = painter,
         contentDescription = null,
@@ -163,65 +141,51 @@ private fun NicknameSetting(
     nicknameState: NicknameState,
     isLoading: Boolean,
     onInputValueChange: (String) -> Unit,
-    onDuplicationBtnClick: (String) -> Unit,
+    onDuplicationBtnClick: () -> Unit,
 ) {
-    NicknameContainer(
-        nickname = nickname,
-        onInputValueChange = onInputValueChange,
-        isNicknameValid = (nicknameState == NicknameState.VALID) && !isLoading,
-        onDuplicationBtnClick = onDuplicationBtnClick
-    )
-    Text(
-        modifier = modifier.padding(8.dp),
-        textAlign = TextAlign.Center,
-        color = if (nicknameState == NicknameState.CAN_SIGN_UP) {
-            Color.Blue
-        } else {
-            Color.Red
-        },
-        text = when (nicknameState) {
-            NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
-            NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
-            NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
-            NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
-            NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
-            else -> ""
-        }
-    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        NicknameTextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            nickname = nickname,
+            onInputValueChange = onInputValueChange,
+            isNicknameValid = (nicknameState == NicknameState.VALID) && !isLoading,
+            onDuplicationBtnClick = onDuplicationBtnClick
+        )
+
+        Text(
+            modifier = modifier.padding(8.dp),
+            textAlign = TextAlign.Center,
+            color = if (nicknameState == NicknameState.CAN_SIGN_UP) {
+                Color.Blue
+            } else {
+                Color.Red
+            },
+            text = when (nicknameState) {
+                NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
+                NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
+                NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
+                NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
+                NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
+                else -> ""
+            }
+        )
+    }
 }
 
 @Composable
-fun NicknameContainer(
+fun NicknameTextField(
     modifier: Modifier = Modifier,
     nickname: String,
     onInputValueChange: (String) -> Unit,
     isNicknameValid: Boolean,
-    onDuplicationBtnClick: (String) -> Unit,
-) {
-    var userInput by remember { mutableStateOf(TextFieldValue(nickname)) }
-
-    NicknameTextField(
-        userInput = userInput,
-        onInputValueChange = { newValue ->
-            userInput = newValue
-            onInputValueChange(newValue.text)
-        },
-        onDuplicationBtnClick = onDuplicationBtnClick,
-        isNicknameValid = isNicknameValid,
-        modifier = modifier,
-    )
-}
-
-@Composable
-private fun NicknameTextField(
-    userInput: TextFieldValue,
-    onInputValueChange: (TextFieldValue) -> Unit,
-    onDuplicationBtnClick: (String) -> Unit,
-    isNicknameValid: Boolean,
-    modifier: Modifier
+    onDuplicationBtnClick: () -> Unit,
 ) {
     TextField(
-        value = userInput,
+        value = nickname,
         onValueChange = { newValue ->
             onInputValueChange(newValue)
         },
@@ -232,25 +196,22 @@ private fun NicknameTextField(
         trailingIcon = {
             DuplicationCheckButton(
                 onClick = onDuplicationBtnClick,
-                userInput = userInput,
                 enable = isNicknameValid,
             )
         },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(24.dp),
+        modifier = modifier,
         singleLine = true
     )
 }
 
 @Composable
 private fun DuplicationCheckButton(
-    onClick: (String) -> Unit,
-    userInput: TextFieldValue,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
     enable: Boolean
 ) {
     Button(
-        onClick = { onClick(userInput.text) },
+        onClick = onClick,
         enabled = enable
     ) {
         Text(text = stringResource(R.string.nickname_duplicate_check))

@@ -32,8 +32,8 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun onDuplicationBtnClick(nickname: String) {
-        SignUpIntent.CheckNicknameDuplication(nickname).post()
+    fun onDuplicationBtnClick() {
+        SignUpIntent.CheckNicknameDuplication(container.stateFlow.value.nickname).post()
     }
 
     private fun SignUpIntent.post() = intent {
