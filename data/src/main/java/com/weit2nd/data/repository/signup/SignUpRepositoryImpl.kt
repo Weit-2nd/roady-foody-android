@@ -21,6 +21,9 @@ class SignUpRepositoryImpl @Inject constructor(
     }
 
     override suspend fun checkNicknameValidation(nickname: String): NicknameState {
+        val nicknameState = verifyNickname(nickname)
+        if (nicknameState != NicknameState.VALID) return nicknameState
+
         return if (signUpDataSource.checkNicknameValidation(nickname)) {
             NicknameState.DUPLICATE
         } else {
