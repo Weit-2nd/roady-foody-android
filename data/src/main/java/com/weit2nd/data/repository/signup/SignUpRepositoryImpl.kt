@@ -10,12 +10,15 @@ class SignUpRepositoryImpl @Inject constructor(
 ) : SignUpRepository {
 
     override fun verifyNickname(nickname: String): NicknameState {
+        val nicknameCondition = '가'..'힣'
 
         return when {
             nickname.isEmpty() -> NicknameState.EMPTY
-            nickname.contains(' ') -> NicknameState.INVALID_CONTAIN_SPACE
-            nickname.any { !it.isLetterOrDigit() && it !in '가'..'힣' } -> NicknameState.INVALID_CHARACTERS
-            nickname.length < 6 || nickname.length > 16 -> NicknameState.INVALID_LENGTH
+            nickname.any { it.isWhitespace() } -> NicknameState.INVALID_CONTAIN_SPACE
+            nickname.any {
+                it.isLetterOrDigit().not() && it !in nicknameCondition
+            } -> NicknameState.INVALID_CHARACTERS
+            (nickname.length in 6..16).not() -> NicknameState.INVALID_LENGTH
             else -> NicknameState.VALID
         }
     }
