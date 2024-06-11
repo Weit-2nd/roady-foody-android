@@ -13,8 +13,10 @@ class SearchHistoryRepositoryImpl @Inject constructor(
 
     override suspend fun addSearchHistory(searchWord: String) {
         val newHistories = dataSource.getSearchHistories().toMutableList()
-        if (newHistories.contains(searchWord)) {
-            newHistories.remove(searchWord)
+        // 넣으려는 검색어가 첫번째에 있다면 동작이 불필요하기 때문에 패스
+        val targetIndex = newHistories.indexOf(searchWord).takeIf { it != 0 } ?: return
+        if (targetIndex != -1) {
+            newHistories.removeAt(targetIndex)
         }
         newHistories.add(0, searchWord)
         dataSource.setSearchHistory(newHistories)
