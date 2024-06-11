@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.signup
 
 import android.graphics.ImageDecoder
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,8 +46,16 @@ fun SignUpScreen(
     navToHome: (User) -> Unit,
 ) {
     val state = vm.collectAsState()
+    val storageAccessLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+            vm.onProfileImageChoose(uri)
+        }
     vm.collectSideEffect { sideEffect ->
-        handleSideEffects(sideEffect, navToHome)
+        handleSideEffects(
+            sideEffect = sideEffect,
+            navToHome = navToHome,
+            storageAccessLauncher = storageAccessLauncher,
+        )
     }
 
     Column(
@@ -83,11 +92,18 @@ fun SignUpScreen(
 
 private fun handleSideEffects(
     sideEffect: SignUpSideEffect,
-    navToHome: (User) -> Unit
+    navToHome: (User) -> Unit,
+    storageAccessLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
 ) {
     when (sideEffect) {
         is SignUpSideEffect.NavToHome -> {
             navToHome(sideEffect.user)
+        }
+
+        SignUpSideEffect.ShowImagePicker -> {
+            storageAccessLauncher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
         }
     }
 }
@@ -96,16 +112,9 @@ private fun handleSideEffects(
 fun ProfileImage(
     modifier: Modifier = Modifier,
     imgUri: Uri? = null,
-    onProfileImageClick: (Uri?) -> Unit,
+    onProfileImageClick: (() -> Unit) = {},
 ) {
     val context = LocalContext.current
-    val storageAccessLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            uri?.let {
-                onProfileImageClick(it)
-            }
-        }
-
     val painter = if (imgUri != null) {
         val bitmap = ImageDecoder.decodeBitmap(
             ImageDecoder.createSource(
@@ -125,11 +134,7 @@ fun ProfileImage(
         modifier = modifier
             .clip(CircleShape)
             .size(200.dp)
-            .clickable {
-                storageAccessLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
-            },
+            .clickable { onProfileImageClick() },
         contentScale = ContentScale.Crop,
     )
 }

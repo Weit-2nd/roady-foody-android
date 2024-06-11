@@ -24,7 +24,11 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.RequestSignUp.post()
     }
 
-    fun onProfileImageClick(imageUri: Uri?) {
+    fun onProfileImageClick() {
+        SignUpIntent.ShowImagePicker.post()
+    }
+
+    fun onProfileImageChoose(imageUri: Uri?) {
         SignUpIntent.SetProfileImage(imageUri).post()
     }
 
@@ -48,6 +52,10 @@ class SignUpViewModel @Inject constructor(
                 }.onFailure {
                     // 회원가입 실패 문구 띄우기
                 }
+            }
+
+            SignUpIntent.ShowImagePicker -> {
+                postSideEffect(SignUpSideEffect.ShowImagePicker)
             }
 
             is SignUpIntent.SetProfileImage -> {

@@ -7,4 +7,6 @@ sealed class SignUpSideEffect {
     data class NavToHome(
         val user: User,
     ) : SignUpSideEffect()
+
+    data object ShowImagePicker : SignUpSideEffect()
 }
