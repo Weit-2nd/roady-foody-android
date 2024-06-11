@@ -1,20 +1,15 @@
 package com.weit2nd.presentation.ui.signup
 
-import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -22,13 +17,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -106,37 +96,6 @@ private fun handleSideEffects(
             )
         }
     }
-}
-
-@Composable
-fun ProfileImage(
-    modifier: Modifier = Modifier,
-    imgUri: Uri? = null,
-    onProfileImageClick: (() -> Unit) = {},
-) {
-    val context = LocalContext.current
-    val painter = if (imgUri != null) {
-        val bitmap = ImageDecoder.decodeBitmap(
-            ImageDecoder.createSource(
-                context.contentResolver,
-                imgUri
-            )
-        )
-        BitmapPainter(bitmap.asImageBitmap())
-    } else {
-        // 기본 프로필 이미지
-        painterResource(R.drawable.ic_launcher_background)
-    }
-
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = modifier
-            .clip(CircleShape)
-            .size(200.dp)
-            .clickable { onProfileImageClick() },
-        contentScale = ContentScale.Crop,
-    )
 }
 
 @Composable
