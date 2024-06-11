@@ -2,7 +2,8 @@ package com.weit2nd.presentation.ui.signup
 
 import android.net.Uri
 import com.weit2nd.domain.model.User
-import com.weit2nd.domain.usecase.signup.SignUpUseCase
+import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
+import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase,
+    private val verifyNicknameUseCase: VerifyNicknameUseCase,
+    private val checkNicknameDuplicateUseCase: CheckNicknameDuplicateUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
     override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
@@ -57,7 +59,7 @@ class SignUpViewModel @Inject constructor(
             }
 
             is SignUpIntent.VerifyNickname -> {
-                val nicknameState = signUpUseCase.verifyNickname(nickname)
+                val nicknameState = verifyNicknameUseCase.invoke(nickname)
                 reduce {
                     state.copy(
                         nickname = nickname,
@@ -73,7 +75,7 @@ class SignUpViewModel @Inject constructor(
                     )
                 }
                 runCatching {
-                    val nicknameState = signUpUseCase.invoke(nickname)
+                    val nicknameState = checkNicknameDuplicateUseCase.invoke(nickname)
                     reduce {
                         state.copy(
                             isLoading = false,
