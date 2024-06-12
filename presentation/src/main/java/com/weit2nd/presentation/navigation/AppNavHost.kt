@@ -19,6 +19,8 @@ import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
+import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
+
 
 @Composable
 fun AppNavHost(
@@ -35,6 +37,7 @@ fun AppNavHost(
         loginComposable(navController)
         signUpComposable(navController)
         homeComposable(navController)
+        selectPictureComposable(navController)
     }
 }
 
@@ -88,6 +91,14 @@ private fun NavGraphBuilder.homeComposable(
     }
 }
 
+private fun NavGraphBuilder.selectPictureComposable(
+    navController: NavHostController,
+) {
+    composable(SelectPictureRoutes.GRAPH) {
+        SelectPictureScreen()
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -109,3 +120,6 @@ object HomeNavRoutes {
     const val USER_STATE_KEY = "user"
 }
 
+object SelectPictureRoutes {
+    const val GRAPH = "select_picture"
+}
