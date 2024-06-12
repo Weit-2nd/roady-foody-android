@@ -9,9 +9,9 @@ class SignUpRepositoryImpl @Inject constructor(
     private val signUpDataSource: SignUpDataSource,
 ) : SignUpRepository {
 
-    override fun verifyNickname(nickname: String): NicknameState {
-        val nicknameCondition = '가'..'힣'
+    private val nicknameCondition = '가'..'힣'
 
+    override fun verifyNickname(nickname: String): NicknameState {
         return when {
             nickname.isEmpty() -> NicknameState.EMPTY
             nickname.any { it.isWhitespace() } -> NicknameState.INVALID_CONTAIN_SPACE
@@ -25,7 +25,9 @@ class SignUpRepositoryImpl @Inject constructor(
 
     override suspend fun checkNicknameValidation(nickname: String): NicknameState {
         val nicknameState = verifyNickname(nickname)
-        if (nicknameState != NicknameState.VALID) return nicknameState
+        if (nicknameState != NicknameState.VALID) {
+            return nicknameState
+        }
 
         return if (signUpDataSource.checkNicknameValidation(nickname)) {
             NicknameState.DUPLICATE
