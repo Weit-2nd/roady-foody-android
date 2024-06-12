@@ -9,4 +9,5 @@ sealed class SignUpIntent {
     data class SetProfileImage(val imageUri: Uri?) : SignUpIntent()
     data class VerifyNickname(val nickname: String) : SignUpIntent()
     data class CheckNicknameDuplication(val nickname: String) : SignUpIntent()
+    data class SetLoadingState(val isLoading: Boolean) : SignUpIntent()
 }
