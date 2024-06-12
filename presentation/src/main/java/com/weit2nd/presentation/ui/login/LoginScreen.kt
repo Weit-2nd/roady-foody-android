@@ -20,12 +20,17 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun LoginScreen(
     vm: LoginViewModel = hiltViewModel(),
     navToHome: (User) -> Unit,
+    navToSignUp: () -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is LoginSideEffect.NavToHome -> {
                 navToHome(sideEffect.user)
+            }
+
+            is LoginSideEffect.NavToSignUp -> {
+                navToSignUp()
             }
         }
     }
