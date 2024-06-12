@@ -127,9 +127,7 @@ private fun NicknameSetting(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         NicknameTextField(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+            modifier = modifier,
             nickname = nickname,
             onInputValueChange = onInputValueChange,
             isNicknameValid = (nicknameState == NicknameState.VALID) && !isLoading,
@@ -137,7 +135,7 @@ private fun NicknameSetting(
         )
 
         Text(
-            modifier = modifier.padding(8.dp),
+            modifier = Modifier.padding(8.dp),
             textAlign = TextAlign.Center,
             color = if (nicknameState == NicknameState.CAN_SIGN_UP) {
                 Color.Blue
