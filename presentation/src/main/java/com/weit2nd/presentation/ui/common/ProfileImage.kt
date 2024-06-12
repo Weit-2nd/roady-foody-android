@@ -13,18 +13,16 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.weit2nd.presentation.R
 
 @Composable
 fun ProfileImage(
     modifier: Modifier = Modifier,
-    imgUri: Uri? = null,
+    imgUri: Uri,
     onProfileImageClick: (() -> Unit) = {},
 ) {
     val context = LocalContext.current
-    val painter = if (imgUri != null) {
+    val painter = run {
         val bitmap = ImageDecoder.decodeBitmap(
             ImageDecoder.createSource(
                 context.contentResolver,
@@ -32,9 +30,6 @@ fun ProfileImage(
             )
         )
         BitmapPainter(bitmap.asImageBitmap())
-    } else {
-        // 기본 프로필 이미지
-        painterResource(R.drawable.ic_launcher_background)
     }
 
     Image(

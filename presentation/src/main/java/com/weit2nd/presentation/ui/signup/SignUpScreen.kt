@@ -35,6 +35,8 @@ import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+private const val RESOURCE_ADDRESS = "android.resource://com.weit2nd.roadyfoody"
+
 @Composable
 fun SignUpScreen(
     vm: SignUpViewModel = hiltViewModel(),
@@ -62,7 +64,8 @@ fun SignUpScreen(
         ) {
             Spacer(modifier = Modifier.padding(24.dp))
             ProfileImage(
-                imgUri = state.value.profileImageUri,
+                imgUri = state.value.profileImageUri
+                    ?: Uri.parse(RESOURCE_ADDRESS + R.drawable.ic_launcher_background),
                 onProfileImageClick = vm::onProfileImageClick
             )
             Spacer(modifier = Modifier.padding(16.dp))
