@@ -49,5 +49,6 @@ dependencies {
     implementation(libs.retrofit2.converter.scalars)
     implementation(libs.okhttp3.logging.interceptor)
     implementation(libs.kakao.login)
+    implementation(libs.datastore.preferences)
     testImplementation(libs.junit)
 }
