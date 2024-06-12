@@ -10,17 +10,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ProfileImage(
     modifier: Modifier = Modifier,
-    imgUri: Uri,
+    imgUri: Uri? = null,
+    defaultImage: Painter,
     onProfileImageClick: (() -> Unit) = {},
 ) {
     val context = LocalContext.current
-    val painter = run {
+    val painter = if (imgUri != null) {
         val bitmap = ImageDecoder.decodeBitmap(
             ImageDecoder.createSource(
                 context.contentResolver,
@@ -28,6 +30,8 @@ fun ProfileImage(
             )
         )
         BitmapPainter(bitmap.asImageBitmap())
+    } else {
+        defaultImage
     }
 
     Image(

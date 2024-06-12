@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -37,8 +38,6 @@ import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-
-private const val RESOURCE_ADDRESS = "android.resource://com.weit2nd.roadyfoody"
 
 @Composable
 fun SignUpScreen(
@@ -70,12 +69,15 @@ fun SignUpScreen(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(200.dp),
-                imgUri = state.value.profileImageUri
-                    ?: Uri.parse(RESOURCE_ADDRESS + R.drawable.ic_launcher_background),
+                imgUri = state.value.profileImageUri,
+                defaultImage = painterResource(R.drawable.ic_launcher_background),
                 onProfileImageClick = vm::onProfileImageClick
             )
             Spacer(modifier = Modifier.padding(16.dp))
             NicknameSetting(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
                 nickname = state.value.nickname,
                 nicknameState = state.value.nicknameState,
                 isLoading = state.value.isLoading,
@@ -196,6 +198,7 @@ private fun DuplicationCheckButton(
     enable: Boolean
 ) {
     Button(
+        modifier = modifier,
         onClick = onClick,
         enabled = enable
     ) {
