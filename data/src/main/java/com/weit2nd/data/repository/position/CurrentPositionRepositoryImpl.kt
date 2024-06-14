@@ -30,15 +30,14 @@ class CurrentPositionRepositoryImpl @Inject constructor(
         )
 
     override suspend fun getCurrentPosition(): Location {
-        var location = Location(latitude = 37.5597706, longitude = 126.9423666)
-        if (permission.checkGranted().not()) {
-            permission.check()
-        } else {
-            location = suspendCancellableCoroutine { continuation ->
+        val defaultLocation = Location(latitude = 37.5597706, longitude = 126.9423666)
+
+        if (permission.checkGranted()) {
+            return suspendCancellableCoroutine { continuation ->
                 requestLocationUpdates(continuation)
             }
         }
-        return location
+        return defaultLocation
     }
 
     // TedPermission.checkGranted()를 통해 권한 허용 확인 완료
