@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.map
 
 import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.usecase.GetRestaurantUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,10 @@ class MapViewModel @Inject constructor(
 
     fun onMapReady(kakaoMap: KakaoMap) {
         MapIntent.RefreshMarkers(kakaoMap).post()
+    }
+
+    fun onClickCurrentPositionBtn(currentPosition: LatLng) {
+        MapIntent.RequestCameraMove(currentPosition).post()
     }
 
     private fun MapIntent.post() = intent {
@@ -52,6 +57,11 @@ class MapViewModel @Inject constructor(
                         container.stateFlow.value.restaurants
                     )
                 )
+            }
+
+            is MapIntent.RequestCameraMove -> {
+                container.stateFlow.value.map?.let { MapSideEffect.MoveCamera(it, position) }
+                    ?.let { postSideEffect(it) }
             }
         }
     }
