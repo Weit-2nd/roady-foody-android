@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kakao.vectormap.LatLng
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun CurrentPositionBtn(
@@ -13,11 +15,18 @@ fun CurrentPositionBtn(
     vm: CurrentPositionViewModel = hiltViewModel(),
     onClick: ((LatLng) -> Unit) = {},
 ) {
+    val state = vm.collectAsState()
+    vm.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is CurrentPositionSideEffect.OnClick -> {
+                onClick(sideEffect.position)
+            }
+        }
+    }
     Button(
         modifier = modifier,
-        onClick = {
-            vm.requestCurrentPosition { onClick(it) }
-        },
+        enabled = state.value.isLoading.not(),
+        onClick = vm::requestCurrentPosition,
     ) {
         Text(text = "현재 위치")
     }

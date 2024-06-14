@@ -1,26 +1,51 @@
 package com.weit2nd.presentation.ui.common.currentposition
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.usecase.position.GetCurrentPositionUseCase
+import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
 class CurrentPositionViewModel @Inject constructor(
     private val getCurrentPositionUseCase: GetCurrentPositionUseCase,
-) : ViewModel() {
+) : BaseViewModel<CurrentPositionState, CurrentPositionSideEffect>() {
 
-    fun requestCurrentPosition(onClick: (LatLng) -> Unit) {
-        viewModelScope.launch {
-            val location = getCurrentPositionUseCase.invoke()
-            val currentPosition = LatLng.from(
-                location.latitude,
-                location.longitude
-            )
-            onClick(currentPosition)
+    override val container =
+        container<CurrentPositionState, CurrentPositionSideEffect>(CurrentPositionState())
+
+    fun requestCurrentPosition() {
+        CurrentPositionIntent.RequestCurrentPosition.post()
+    }
+
+    private fun setLoadingState() {
+        CurrentPositionIntent.SetLoadingState(container.stateFlow.value.isLoading.not()).post()
+    }
+
+    private fun CurrentPositionIntent.post() = intent {
+        when (this@post) {
+            CurrentPositionIntent.RequestCurrentPosition -> {
+                setLoadingState()
+                val location = getCurrentPositionUseCase.invoke()
+                val currentPosition = LatLng.from(
+                    location.latitude,
+                    location.longitude
+                )
+                postSideEffect(CurrentPositionSideEffect.OnClick(currentPosition))
+                setLoadingState()
+            }
+
+            is CurrentPositionIntent.SetLoadingState -> {
+                reduce {
+                    state.copy(
+                        isLoading = isLoading,
+                    )
+                }
+            }
         }
     }
 }
