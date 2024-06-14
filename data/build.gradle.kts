@@ -50,5 +50,6 @@ dependencies {
     implementation(libs.okhttp3.logging.interceptor)
     implementation(libs.kakao.login)
     implementation(libs.datastore.preferences)
+    implementation(libs.androidx.exifinterface)
     testImplementation(libs.junit)
 }
