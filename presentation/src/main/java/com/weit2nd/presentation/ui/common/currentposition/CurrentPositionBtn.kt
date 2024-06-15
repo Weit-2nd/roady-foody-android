@@ -14,14 +14,11 @@ fun CurrentPositionBtn(
     modifier: Modifier = Modifier,
     vm: CurrentPositionViewModel = hiltViewModel(),
     onClick: ((LatLng) -> Unit) = {},
+    onError: (Throwable) -> Unit = {},
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is CurrentPositionSideEffect.OnClick -> {
-                onClick(sideEffect.position)
-            }
-        }
+        handleSideEffects(sideEffect, onClick, onError)
     }
     Button(
         modifier = modifier,
@@ -29,5 +26,21 @@ fun CurrentPositionBtn(
         onClick = vm::onButtonClick,
     ) {
         Text(text = "현재 위치")
+    }
+}
+
+private fun handleSideEffects(
+    sideEffect: CurrentPositionSideEffect,
+    onClick: (LatLng) -> Unit,
+    onError: (Throwable) -> Unit
+) {
+    when (sideEffect) {
+        is CurrentPositionSideEffect.OnClickSuccess -> {
+            onClick(sideEffect.position)
+        }
+
+        is CurrentPositionSideEffect.OnClickFail -> {
+            onError(sideEffect.error)
+        }
     }
 }

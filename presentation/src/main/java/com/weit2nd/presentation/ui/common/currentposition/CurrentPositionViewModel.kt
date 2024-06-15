@@ -30,12 +30,16 @@ class CurrentPositionViewModel @Inject constructor(
                         isLoading = true,
                     )
                 }
-                val location = getCurrentPositionUseCase.invoke()
-                val currentPosition = LatLng.from(
-                    location.latitude,
-                    location.longitude
-                )
-                postSideEffect(CurrentPositionSideEffect.OnClick(currentPosition))
+                runCatching {
+                    val location = getCurrentPositionUseCase.invoke()
+                    val currentPosition = LatLng.from(
+                        location.latitude,
+                        location.longitude
+                    )
+                    postSideEffect(CurrentPositionSideEffect.OnClickSuccess(currentPosition))
+                }.onFailure {
+                    postSideEffect(CurrentPositionSideEffect.OnClickFail(it))
+                }
                 reduce {
                     state.copy(
                         isLoading = false,
