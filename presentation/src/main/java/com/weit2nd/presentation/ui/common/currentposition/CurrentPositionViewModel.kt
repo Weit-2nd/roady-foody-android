@@ -22,27 +22,23 @@ class CurrentPositionViewModel @Inject constructor(
         CurrentPositionIntent.RequestCurrentPosition.post()
     }
 
-    private fun setLoadingState() {
-        CurrentPositionIntent.SetLoadingState(container.stateFlow.value.isLoading.not()).post()
-    }
-
     private fun CurrentPositionIntent.post() = intent {
         when (this@post) {
             CurrentPositionIntent.RequestCurrentPosition -> {
-                setLoadingState()
+                reduce {
+                    state.copy(
+                        isLoading = true,
+                    )
+                }
                 val location = getCurrentPositionUseCase.invoke()
                 val currentPosition = LatLng.from(
                     location.latitude,
                     location.longitude
                 )
                 postSideEffect(CurrentPositionSideEffect.OnClick(currentPosition))
-                setLoadingState()
-            }
-
-            is CurrentPositionIntent.SetLoadingState -> {
                 reduce {
                     state.copy(
-                        isLoading = isLoading,
+                        isLoading = false,
                     )
                 }
             }
