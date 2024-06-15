@@ -10,7 +10,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.Priority
 import com.weit2nd.data.source.position.LocationPermissionDataSource
 import com.weit2nd.domain.exception.LocationException
-import com.weit2nd.domain.model.Location
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.repository.position.CurrentPositionRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -27,7 +27,7 @@ class CurrentPositionRepositoryImpl @Inject constructor(
         .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
         .build()
 
-    override suspend fun getCurrentPosition(): Location {
+    override suspend fun getCurrentPosition(): Coordinate {
         if (locationPermissionDataSource.requestLocationPermission()) {
             return requestLocationUpdates()
         }
@@ -46,11 +46,11 @@ class CurrentPositionRepositoryImpl @Inject constructor(
             }
 
             override fun onLocationResult(locationResult: LocationResult) {
-                val location = Location(
+                val coordinate = Coordinate(
                     latitude = locationResult.locations.first().latitude,
                     longitude = locationResult.locations.first().longitude,
                 )
-                trySend(location)
+                trySend(coordinate)
             }
         }
 
