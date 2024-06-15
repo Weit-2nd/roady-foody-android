@@ -12,40 +12,36 @@ import com.weit2nd.data.source.position.LocationPermissionDataSource
 import com.weit2nd.domain.exception.LocationException
 import com.weit2nd.domain.model.Location
 import com.weit2nd.domain.repository.position.CurrentPositionRepository
-import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class CurrentPositionRepositoryImpl @Inject constructor(
     private val locationPermissionDataSource: LocationPermissionDataSource,
     private val locationClient: FusedLocationProviderClient,
 ) : CurrentPositionRepository {
 
-    override suspend fun getCurrentPosition(): Location {
+    private val locationRequest = LocationRequest.Builder(1000L)
+        .setIntervalMillis(1000L)
+        .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+        .build()
 
+    override suspend fun getCurrentPosition(): Location {
         if (locationPermissionDataSource.requestLocationPermission()) {
-            return suspendCancellableCoroutine { continuation ->
-                requestLocationUpdates(continuation)
-            }
+            return requestLocationUpdates()
         }
         throw SecurityException("위치 권한이 허용되지 않았습니다.")
     }
 
     // TedPermission.checkGranted()를 통해 권한 허용 확인 완료
     @SuppressLint("MissingPermission")
-    private fun requestLocationUpdates(continuation: CancellableContinuation<Location>) {
-        val request = LocationRequest.Builder(1000L)
-            .setIntervalMillis(1000L)
-            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .build()
+    private suspend fun requestLocationUpdates() = callbackFlow {
 
-        val callback = object : LocationCallback() {
+        val locationCallback = object : LocationCallback() {
             override fun onLocationAvailability(availability: LocationAvailability) {
                 if (availability.isLocationAvailable.not()) {
-                    continuation.resumeWithException(LocationException("위치 정보를 받아올 수 없습니다."))
-                    locationClient.removeLocationUpdates(this)
+                    close(LocationException("위치 정보를 받아올 수 없습니다."))
                 }
             }
 
@@ -54,19 +50,18 @@ class CurrentPositionRepositoryImpl @Inject constructor(
                     latitude = locationResult.locations.first().latitude,
                     longitude = locationResult.locations.first().longitude,
                 )
-                continuation.resume(location)
-                locationClient.removeLocationUpdates(this)
+                trySend(location)
             }
         }
 
-        continuation.invokeOnCancellation {
-            locationClient.removeLocationUpdates(callback)
-        }
-
         locationClient.requestLocationUpdates(
-            request,
-            callback,
+            locationRequest,
+            locationCallback,
             Looper.getMainLooper()
         )
-    }
+
+        awaitClose {
+            locationClient.removeLocationUpdates(locationCallback)
+        }
+    }.first()
 }
