@@ -18,7 +18,7 @@ class CurrentPositionViewModel @Inject constructor(
     override val container =
         container<CurrentPositionState, CurrentPositionSideEffect>(CurrentPositionState())
 
-    fun requestCurrentPosition() {
+    fun onButtonClick() {
         CurrentPositionIntent.RequestCurrentPosition.post()
     }
 

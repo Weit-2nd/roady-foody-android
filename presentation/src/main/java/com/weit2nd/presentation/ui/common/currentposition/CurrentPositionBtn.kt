@@ -26,7 +26,7 @@ fun CurrentPositionBtn(
     Button(
         modifier = modifier,
         enabled = state.value.isLoading.not(),
-        onClick = vm::requestCurrentPosition,
+        onClick = vm::onButtonClick,
     ) {
         Text(text = "현재 위치")
     }
