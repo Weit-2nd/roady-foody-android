@@ -60,8 +60,9 @@ class MapViewModel @Inject constructor(
             }
 
             is MapIntent.RequestCameraMove -> {
-                container.stateFlow.value.map?.let { MapSideEffect.MoveCamera(it, position) }
-                    ?.let { postSideEffect(it) }
+                container.stateFlow.value.map?.let { map ->
+                    postSideEffect(MapSideEffect.MoveCamera(map, position))
+                }
             }
         }
     }
