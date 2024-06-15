@@ -60,6 +60,10 @@ private fun getScaledWidthAndHeight(
  * @param degree 회전 각도
  */
 fun Bitmap.getRotatedBitmap(degree: Float): Bitmap {
-    val matrix = Matrix().apply { postRotate(degree) }
-    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true) ?: this
+    return if (degree != 0f) {
+        val matrix = Matrix().apply { postRotate(degree) }
+        Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+    } else {
+        this
+    }
 }
