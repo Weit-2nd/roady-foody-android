@@ -28,10 +28,10 @@ class CurrentPositionRepositoryImpl @Inject constructor(
         .build()
 
     override suspend fun getCurrentPosition(): Coordinate {
-        if (locationPermissionDataSource.requestLocationPermission()) {
-            return requestLocationUpdates()
+        if (locationPermissionDataSource.requestLocationPermission().not()) {
+            throw SecurityException("위치 권한이 허용되지 않았습니다.")
         }
-        throw SecurityException("위치 권한이 허용되지 않았습니다.")
+        return requestLocationUpdates()
     }
 
     // TedPermission.checkGranted()를 통해 권한 허용 확인 완료
