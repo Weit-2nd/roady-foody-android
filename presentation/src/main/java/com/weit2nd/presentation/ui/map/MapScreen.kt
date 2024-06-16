@@ -2,14 +2,18 @@ package com.weit2nd.presentation.ui.map
 
 import android.R
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -20,11 +24,14 @@ import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+
 
 @Composable
 fun MapScreen(
@@ -58,10 +65,19 @@ fun MapScreen(
 
     DisposableEffectWithLifeCycle(onResume = mapView::resume, onPause = mapView::pause)
 
-    AndroidView(
-        modifier = modifier,
-        factory = { mapView }
-    )
+    Box(modifier = modifier) {
+        AndroidView(
+            modifier = modifier,
+            factory = { mapView }
+        )
+
+        CurrentPositionBtn(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 24.dp),
+            onClick = vm::onClickCurrentPositionBtn
+        )
+    }
 }
 
 private fun handleSideEffects(sideEffect: MapSideEffect) {
@@ -69,7 +85,16 @@ private fun handleSideEffects(sideEffect: MapSideEffect) {
         is MapSideEffect.RefreshMarkers -> {
             drawMarkers(sideEffect.map, sideEffect.restaurantMarkers)
         }
+
+        is MapSideEffect.MoveCamera -> {
+            moveCamera(sideEffect.map, sideEffect.position)
+        }
     }
+}
+
+private fun moveCamera(map: KakaoMap, position: LatLng) {
+    val cameraUpdate = CameraUpdateFactory.newCenterPosition(position)
+    map.moveCamera(cameraUpdate)
 }
 
 private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {

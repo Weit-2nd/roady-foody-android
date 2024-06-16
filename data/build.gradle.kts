@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.hilt.android)
+    implementation(libs.play.services.location)
     kapt(libs.hilt.android.compiler)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.moshi)
@@ -52,4 +53,5 @@ dependencies {
     implementation(libs.datastore.preferences)
     implementation(libs.androidx.exifinterface)
     testImplementation(libs.junit)
+    implementation(libs.tedpermission.coroutine)
 }
