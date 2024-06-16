@@ -36,9 +36,9 @@ class CurrentPositionViewModel @Inject constructor(
                         location.latitude,
                         location.longitude
                     )
-                    postSideEffect(CurrentPositionSideEffect.OnClickSuccess(currentPosition))
+                    postSideEffect(CurrentPositionSideEffect.PositionRequestSuccess(currentPosition))
                 }.onFailure {
-                    postSideEffect(CurrentPositionSideEffect.OnClickFail(it))
+                    postSideEffect(CurrentPositionSideEffect.PositionRequestFailed(it))
                 }
                 reduce {
                     state.copy(

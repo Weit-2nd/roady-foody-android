@@ -35,11 +35,11 @@ private fun handleSideEffects(
     onError: (Throwable) -> Unit
 ) {
     when (sideEffect) {
-        is CurrentPositionSideEffect.OnClickSuccess -> {
+        is CurrentPositionSideEffect.PositionRequestSuccess -> {
             onClick(sideEffect.position)
         }
 
-        is CurrentPositionSideEffect.OnClickFail -> {
+        is CurrentPositionSideEffect.PositionRequestFailed -> {
             onError(sideEffect.error)
         }
     }
