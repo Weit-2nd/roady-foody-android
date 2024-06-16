@@ -6,25 +6,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import org.orbitmvi.orbit.compose.collectAsState
 
 @Preview
 @Composable
-fun SelectLocationScreen() {
-
-    val itemsList = List(100) { "Item #$it" }
+fun SelectLocationScreen(
+    vm: SelectLocationViewModel = hiltViewModel()
+) {
+    val state = vm.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -38,14 +47,11 @@ fun SelectLocationScreen() {
                 color = Color.Black
             ),
         )
-        TextField(
+        LocationTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            value = "",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            placeholder = { "지번, 도로명, 건물명으로 검색" },
-            onValueChange = {},
+            onSearch = vm::onLocationSearch
         )
         Button(
             modifier = Modifier
@@ -58,14 +64,42 @@ fun SelectLocationScreen() {
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(itemsList) { item ->
+            items(state.value.searchResults) { item ->
                 Text(
-                    text = item,
+                    text = item.name,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(16.dp)
+                )
+                Text(
+                    text = item.locationDetail,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
                 )
             }
         }
     }
+}
+
+@Composable
+private fun LocationTextField(
+    modifier: Modifier,
+    onSearch: (String) -> Unit,
+) {
+    var userInput by remember { mutableStateOf(TextFieldValue()) }
+    TextField(
+        modifier = modifier,
+        value = userInput,
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Search
+        ),
+        placeholder = { "지번, 도로명, 건물명으로 검색" },
+        onValueChange = { newValue ->
+            userInput = newValue
+        },
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSearch(userInput.text)
+            }
+        ),
+    )
 }
 
