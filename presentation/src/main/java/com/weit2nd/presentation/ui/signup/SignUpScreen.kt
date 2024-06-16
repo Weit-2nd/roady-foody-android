@@ -1,10 +1,5 @@
 package com.weit2nd.presentation.ui.signup
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -45,15 +40,10 @@ fun SignUpScreen(
     navToHome: (User) -> Unit,
 ) {
     val state = vm.collectAsState()
-    val storageAccessLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            vm.onProfileImageChoose(uri)
-        }
     vm.collectSideEffect { sideEffect ->
         handleSideEffects(
             sideEffect = sideEffect,
             navToHome = navToHome,
-            storageAccessLauncher = storageAccessLauncher,
         )
     }
 
@@ -99,17 +89,10 @@ fun SignUpScreen(
 private fun handleSideEffects(
     sideEffect: SignUpSideEffect,
     navToHome: (User) -> Unit,
-    storageAccessLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
 ) {
     when (sideEffect) {
         is SignUpSideEffect.NavToHome -> {
             navToHome(sideEffect.user)
-        }
-
-        SignUpSideEffect.ShowImagePicker -> {
-            storageAccessLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
         }
     }
 }
