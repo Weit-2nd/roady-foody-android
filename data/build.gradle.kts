@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.hiltAndroid)
     kotlin("kapt")
 }
 
@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.kotlinx.coroutines.android)
