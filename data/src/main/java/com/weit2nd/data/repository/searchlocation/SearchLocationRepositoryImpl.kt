@@ -15,6 +15,10 @@ class SearchLocationRepositoryImpl @Inject constructor(
         return searchLocationDataSource.getLocations(searchWord).map { it.toLocation() }
     }
 
+    override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location {
+        return searchLocationDataSource.getLocationWithCoordinate(coordinate).toLocation()
+    }
+
     private fun LocationDTO.toLocation() = Location(
         name = name,
         locationDetail = locationDetail,

@@ -1,6 +1,6 @@
 package com.weit2nd.presentation.ui.select.location
 
-import com.weit2nd.domain.usecase.selectloction.SearchLocationUseCase
+import com.weit2nd.domain.usecase.selectloction.SearchLocationWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectLocationViewModel @Inject constructor(
-    private val searchLocationUseCase: SearchLocationUseCase
+    private val searchLocationWithWordUseCase: SearchLocationWithWordUseCase
 ) :
     BaseViewModel<SelectLocationState, SelectLocationSideEffect>() {
     override val container =
@@ -24,7 +24,7 @@ class SelectLocationViewModel @Inject constructor(
         when (this@post) {
             is SelectLocationIntent.SearchLocation -> {
                 runCatching {
-                    val result = searchLocationUseCase.invoke(input)
+                    val result = searchLocationWithWordUseCase.invoke(input)
                     reduce {
                         state.copy(
                             searchResults = result

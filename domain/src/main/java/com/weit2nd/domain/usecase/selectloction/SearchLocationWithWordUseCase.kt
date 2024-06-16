@@ -4,7 +4,7 @@ import com.weit2nd.domain.model.Location
 import com.weit2nd.domain.repository.searchlocation.SearchLocationRepository
 import javax.inject.Inject
 
-class SearchLocationUseCase @Inject constructor(
+class SearchLocationWithWordUseCase @Inject constructor(
     val repository: SearchLocationRepository
 ) {
 
