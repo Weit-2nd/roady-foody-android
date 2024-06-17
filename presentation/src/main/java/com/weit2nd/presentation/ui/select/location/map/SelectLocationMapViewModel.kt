@@ -25,7 +25,7 @@ class SelectLocationMapViewModel @Inject constructor(
     }
 
     fun onGloballyPositioned(offset: IntOffset) {
-        SelectLocationMapIntent.StoreMapCenterOffset(offset).post()
+        SelectLocationMapIntent.StoreSelectMarkerOffset(offset).post()
     }
 
     fun onCameraMoveEnd(coordinate: LatLng?) {
@@ -46,7 +46,7 @@ class SelectLocationMapViewModel @Inject constructor(
                 }
             }
 
-            is SelectLocationMapIntent.StoreMapCenterOffset -> {
+            is SelectLocationMapIntent.StoreSelectMarkerOffset -> {
                 reduce {
                     state.copy(
                         selectMarkerOffset = offset,

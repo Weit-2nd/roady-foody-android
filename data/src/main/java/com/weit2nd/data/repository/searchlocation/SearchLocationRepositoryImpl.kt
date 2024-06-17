@@ -11,8 +11,8 @@ class SearchLocationRepositoryImpl @Inject constructor(
     private val searchLocationDataSource: SearchLocationDataSource,
 ) : SearchLocationRepository {
 
-    override suspend fun searchLocation(searchWord: String): List<Location> {
-        return searchLocationDataSource.getLocations(searchWord).map { it.toLocation() }
+    override suspend fun searchLocationsWithWord(searchWord: String): List<Location> {
+        return searchLocationDataSource.getLocationsWithWord(searchWord).map { it.toLocation() }
     }
 
     override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location {

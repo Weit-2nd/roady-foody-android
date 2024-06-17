@@ -9,6 +9,6 @@ class SearchLocationWithWordUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(searchWord: String): List<Location> {
-        return repository.searchLocation(searchWord)
+        return repository.searchLocationsWithWord(searchWord)
     }
 }

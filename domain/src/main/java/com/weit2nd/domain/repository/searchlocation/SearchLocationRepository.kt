@@ -5,6 +5,6 @@ import com.weit2nd.domain.model.Location
 
 interface SearchLocationRepository {
 
-    suspend fun searchLocation(searchWord: String): List<Location>
+    suspend fun searchLocationsWithWord(searchWord: String): List<Location>
     suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location
 }

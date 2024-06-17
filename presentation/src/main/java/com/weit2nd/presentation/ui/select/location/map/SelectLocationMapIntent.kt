@@ -8,7 +8,7 @@ sealed class SelectLocationMapIntent {
 
     data class StoreMap(val map: KakaoMap) : SelectLocationMapIntent()
 
-    data class StoreMapCenterOffset(val offset: IntOffset) : SelectLocationMapIntent()
+    data class StoreSelectMarkerOffset(val offset: IntOffset) : SelectLocationMapIntent()
 
     data class SearchLocation(val coordinate: LatLng?) : SelectLocationMapIntent()
 

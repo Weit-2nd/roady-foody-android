@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class SearchLocationDataSource @Inject constructor() {
 
-    suspend fun getLocations(searchWord: String): List<LocationDTO> {
+    suspend fun getLocationsWithWord(searchWord: String): List<LocationDTO> {
         return List(100) {
             LocationDTO(
                 name = "위치이름$it",
