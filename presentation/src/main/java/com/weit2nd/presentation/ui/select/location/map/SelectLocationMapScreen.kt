@@ -67,7 +67,8 @@ fun SelectLocationMapScreen(
                 mapLifeCycleCallback(),
                 kakaoMapReadyCallback(
                     vm::onMapReady,
-                    vm::onCameraMoveEnd,
+                    onCameraMoveStart = vm::onCameraMoveStart,
+                    onCameraMoveEnd = vm::onCameraMoveEnd,
                     selectMarkerOffset = state.value.selectMarkerOffset,
                     position = position,
                 ),
@@ -132,7 +133,8 @@ fun SelectLocationMapScreen(
             Button(
                 modifier = Modifier
                     .fillMaxWidth(),
-                onClick = { }
+                onClick = { },
+                enabled = state.value.isLoading.not(),
             ) {
                 Text(text = "이 위치로 등록")
             }
@@ -153,6 +155,7 @@ private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
+    onCameraMoveStart: () -> Unit,
     onCameraMoveEnd: (LatLng?) -> Unit,
     selectMarkerOffset: IntOffset,
     position: LatLng,
@@ -160,6 +163,9 @@ private fun kakaoMapReadyCallback(
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
         onCameraMoveEnd(map, onCameraMoveEnd, selectMarkerOffset)
+        map.setOnCameraMoveStartListener { _, _ ->
+            onCameraMoveStart()
+        }
         map.setOnCameraMoveEndListener { kakaoMap, _, _ ->
             onCameraMoveEnd(kakaoMap, onCameraMoveEnd, selectMarkerOffset)
         }

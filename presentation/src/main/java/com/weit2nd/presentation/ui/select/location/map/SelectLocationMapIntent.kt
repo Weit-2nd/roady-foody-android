@@ -7,10 +7,8 @@ import com.kakao.vectormap.LatLng
 sealed class SelectLocationMapIntent {
 
     data class StoreMap(val map: KakaoMap) : SelectLocationMapIntent()
-
     data class StoreSelectMarkerOffset(val offset: IntOffset) : SelectLocationMapIntent()
-
+    data object StartLocatingMap : SelectLocationMapIntent()
     data class SearchLocation(val coordinate: LatLng?) : SelectLocationMapIntent()
-
     data class RequestCameraMove(val position: LatLng) : SelectLocationMapIntent()
 }

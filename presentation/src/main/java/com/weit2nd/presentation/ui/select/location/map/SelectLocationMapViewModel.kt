@@ -1,12 +1,15 @@
 package com.weit2nd.presentation.ui.select.location.map
 
 import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.usecase.selectloction.SearchLocationWithCoordinateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
@@ -19,6 +22,7 @@ class SelectLocationMapViewModel @Inject constructor(
 ) : BaseViewModel<SelectLocationMapState, SelectLocationMapSideEffect>() {
     override val container =
         container<SelectLocationMapState, SelectLocationMapSideEffect>(SelectLocationMapState())
+    private var searchLocationJob: Job = Job().apply { complete() }
 
     fun onMapReady(map: KakaoMap) {
         SelectLocationMapIntent.StoreMap(map).post()
@@ -26,6 +30,11 @@ class SelectLocationMapViewModel @Inject constructor(
 
     fun onGloballyPositioned(offset: IntOffset) {
         SelectLocationMapIntent.StoreSelectMarkerOffset(offset).post()
+    }
+
+    fun onCameraMoveStart() {
+        searchLocationJob.cancel()
+        SelectLocationMapIntent.StartLocatingMap.post()
     }
 
     fun onCameraMoveEnd(coordinate: LatLng?) {
@@ -54,18 +63,38 @@ class SelectLocationMapViewModel @Inject constructor(
                 }
             }
 
+            SelectLocationMapIntent.StartLocatingMap -> {
+                reduce {
+                    state.copy(
+                        isLoading = true,
+                    )
+                }
+            }
+
             is SelectLocationMapIntent.SearchLocation -> {
                 if (coordinate != null) {
-                    val location = searchLocationWithCoordinateUseCase.invoke(
-                        Coordinate(
-                            latitude = coordinate.latitude,
-                            longitude = coordinate.longitude
+                    searchLocationJob = viewModelScope.launch {
+                        val location = searchLocationWithCoordinateUseCase.invoke(
+                            Coordinate(
+                                latitude = coordinate.latitude,
+                                longitude = coordinate.longitude
+                            )
                         )
-                    )
-                    reduce {
-                        state.copy(
-                            location = location
-                        )
+                        reduce {
+                            state.copy(
+                                location = location
+                            )
+                        }
+                    }.apply {
+                        invokeOnCompletion {
+                            intent {
+                                reduce {
+                                    state.copy(
+                                        isLoading = false,
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

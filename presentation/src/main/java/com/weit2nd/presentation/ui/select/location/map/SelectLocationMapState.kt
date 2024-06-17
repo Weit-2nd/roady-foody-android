@@ -9,4 +9,5 @@ data class SelectLocationMapState(
     val map: KakaoMap? = null,
     val selectMarkerOffset: IntOffset = IntOffset.Zero,
     val location: Location = Location("", "", Coordinate(0.0, 0.0)),
+    val isLoading: Boolean = false,
 )
