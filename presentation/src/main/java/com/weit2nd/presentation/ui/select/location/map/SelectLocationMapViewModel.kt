@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.select.location.map
 
+import androidx.compose.ui.unit.IntOffset
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
@@ -23,6 +24,10 @@ class SelectLocationMapViewModel @Inject constructor(
         SelectLocationMapIntent.StoreMap(map).post()
     }
 
+    fun onGloballyPositioned(offset: IntOffset) {
+        SelectLocationMapIntent.StoreMapCenterOffset(offset).post()
+    }
+
     fun onCameraMoveEnd(coordinate: LatLng?) {
         SelectLocationMapIntent.SearchLocation(coordinate).post()
     }
@@ -37,6 +42,14 @@ class SelectLocationMapViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         map = map
+                    )
+                }
+            }
+
+            is SelectLocationMapIntent.StoreMapCenterOffset -> {
+                reduce {
+                    state.copy(
+                        selectMarkerOffset = offset,
                     )
                 }
             }

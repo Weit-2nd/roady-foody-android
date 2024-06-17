@@ -2,25 +2,33 @@ package com.weit2nd.presentation.ui.select.location.map
 
 import android.R
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -34,9 +42,6 @@ import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -63,7 +68,8 @@ fun SelectLocationMapScreen(
                 kakaoMapReadyCallback(
                     vm::onMapReady,
                     vm::onCameraMoveEnd,
-                    position,
+                    selectMarkerOffset = state.value.selectMarkerOffset,
+                    position = position,
                 ),
             )
         }
@@ -71,10 +77,18 @@ fun SelectLocationMapScreen(
 
     DisposableEffectWithLifeCycle(onResume = mapView::resume, onPause = mapView::pause)
 
+    var mapRectSize by remember { mutableStateOf(IntSize.Zero) }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Box(modifier = Modifier.weight(3f)) {
+        Box(
+            modifier = Modifier
+                .weight(3f)
+                .onGloballyPositioned { layoutCoordinates ->
+                    mapRectSize = layoutCoordinates.size
+                },
+            contentAlignment = Alignment.TopStart // 좌측 상단을 기준으로 offset을 적용하기 위함
+        ) {
             AndroidView(
                 modifier = Modifier,
                 factory = { mapView }
@@ -85,6 +99,19 @@ fun SelectLocationMapScreen(
                     .align(Alignment.BottomEnd)
                     .padding(end = 16.dp, bottom = 24.dp),
                 onClick = vm::onClickCurrentPositionBtn
+            )
+
+            Image(
+                painter = painterResource(R.drawable.ic_menu_mylocation),
+                contentDescription = "positionSelectMarker",
+                modifier = Modifier
+                    .onGloballyPositioned { layoutCoordinates ->
+                        val imageSize = layoutCoordinates.size
+                        val centerX = mapRectSize.width / 2 - imageSize.width / 2
+                        val centerY = mapRectSize.height / 2 - imageSize.height / 2
+                        vm.onGloballyPositioned(IntOffset(centerX, centerY))
+                    }
+                    .offset { state.value.selectMarkerOffset }
             )
         }
         Column(
@@ -127,13 +154,14 @@ private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
     onCameraMoveEnd: (LatLng?) -> Unit,
+    selectMarkerOffset: IntOffset,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
-        onCameraMoveEnd(map, onCameraMoveEnd)
+        onCameraMoveEnd(map, onCameraMoveEnd, selectMarkerOffset)
         map.setOnCameraMoveEndListener { kakaoMap, _, _ ->
-            onCameraMoveEnd(kakaoMap, onCameraMoveEnd)
+            onCameraMoveEnd(kakaoMap, onCameraMoveEnd, selectMarkerOffset)
         }
     }
 
@@ -143,20 +171,10 @@ private fun kakaoMapReadyCallback(
 private fun onCameraMoveEnd(
     map: KakaoMap,
     onCameraMoveEnd: (LatLng?) -> Unit,
+    selectMarkerOffset: IntOffset,
 ) {
-    val viewport = map.viewport
-
-    val x = viewport.width() / 2
-    val y = viewport.height() / 2
-    val position = map.fromScreenPoint(x, y)
+    val position = map.fromScreenPoint(selectMarkerOffset.x, selectMarkerOffset.y)
     onCameraMoveEnd(position)
-
-    map.labelManager?.layer?.removeAll()
-    val styles = map.labelManager
-        ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.ic_menu_mylocation)))
-    val options = LabelOptions.from(position).setStyles(styles)
-    map.labelManager?.layer?.addLabel(options)
-
 }
 
 @Composable
