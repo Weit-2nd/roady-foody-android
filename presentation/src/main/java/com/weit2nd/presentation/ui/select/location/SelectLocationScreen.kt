@@ -93,7 +93,7 @@ private fun LocationTextField(
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Search
         ),
-        placeholder = { "지번, 도로명, 건물명으로 검색" },
+        placeholder = { Text(text = "지번, 도로명, 건물명으로 검색") },
         onValueChange = { newValue ->
             userInput = newValue
         },

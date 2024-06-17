@@ -42,6 +42,7 @@ import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.weit2nd.domain.model.Location
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -53,12 +54,7 @@ fun SelectLocationMapScreen(
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
-        when (sideEffect) {
-            is SelectLocationMapSideEffect.MoveCamera -> {
-                val cameraUpdate = CameraUpdateFactory.newCenterPosition(sideEffect.position)
-                sideEffect.map.moveCamera(cameraUpdate)
-            }
-        }
+        handleSideEffects(sideEffect)
     }
     val context = LocalContext.current
     val mapView = remember {
@@ -88,7 +84,7 @@ fun SelectLocationMapScreen(
                 .onGloballyPositioned { layoutCoordinates ->
                     mapRectSize = layoutCoordinates.size
                 },
-            contentAlignment = Alignment.TopStart // 좌측 상단을 기준으로 offset을 적용하기 위함
+            contentAlignment = Alignment.TopStart
         ) {
             AndroidView(
                 modifier = Modifier,
@@ -102,44 +98,78 @@ fun SelectLocationMapScreen(
                 onClick = vm::onClickCurrentPositionBtn
             )
 
-            Image(
-                painter = painterResource(R.drawable.ic_menu_mylocation),
-                contentDescription = "positionSelectMarker",
-                modifier = Modifier
-                    .onGloballyPositioned { layoutCoordinates ->
-                        val imageSize = layoutCoordinates.size
-                        val centerX = mapRectSize.width / 2 - imageSize.width / 2
-                        val centerY = mapRectSize.height / 2 - imageSize.height / 2
-                        vm.onGloballyPositioned(IntOffset(centerX, centerY))
-                    }
-                    .offset { state.value.selectMarkerOffset }
+            PositionSelectMarker(
+                mapRectSize,
+                onGloballyPositioned = vm::onGloballyPositioned,
+                selectMarkerOffset = state.value.selectMarkerOffset
             )
         }
-        Column(
+        BottomInfo(
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = state.value.location.locationDetail,
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                ),
-            )
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = { },
-                enabled = state.value.isLoading.not(),
-            ) {
-                Text(text = "이 위치로 등록")
-            }
-        }
+            isLoading = state.value.isLoading,
+            location = state.value.location,
+        )
 
+    }
+}
+
+private fun handleSideEffects(sideEffect: SelectLocationMapSideEffect) {
+    when (sideEffect) {
+        is SelectLocationMapSideEffect.MoveCamera -> {
+            val cameraUpdate = CameraUpdateFactory.newCenterPosition(sideEffect.position)
+            sideEffect.map.moveCamera(cameraUpdate)
+        }
+    }
+}
+
+@Composable
+private fun PositionSelectMarker(
+    mapRectSize: IntSize,
+    onGloballyPositioned: (IntOffset) -> Unit,
+    selectMarkerOffset: IntOffset,
+) {
+    Image(
+        painter = painterResource(R.drawable.ic_menu_mylocation),
+        contentDescription = "positionSelectMarker",
+        modifier = Modifier
+            .onGloballyPositioned { layoutCoordinates ->
+                val imageSize = layoutCoordinates.size
+                val centerX = mapRectSize.width / 2 - imageSize.width / 2
+                val centerY = mapRectSize.height / 2 - imageSize.height / 2
+                onGloballyPositioned(IntOffset(centerX, centerY))
+            }
+            .offset { selectMarkerOffset }
+    )
+}
+
+@Composable
+private fun BottomInfo(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean,
+    location: Location,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = location.locationDetail,
+            style = TextStyle(
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            ),
+        )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { },
+            enabled = isLoading.not(),
+        ) {
+            Text(text = "이 위치로 등록")
+        }
     }
 }
 
