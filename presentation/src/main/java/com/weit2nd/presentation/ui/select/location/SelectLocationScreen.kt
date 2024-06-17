@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 
-@Preview
 @Composable
 fun SelectLocationScreen(
-    vm: SelectLocationViewModel = hiltViewModel()
+    vm: SelectLocationViewModel = hiltViewModel(),
+    navToMap: () -> Unit,
 ) {
     val state = vm.collectAsState()
 
@@ -57,7 +57,7 @@ fun SelectLocationScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp),
-            onClick = { }
+            onClick = { navToMap() }
         ) {
             Text(text = "지도에서 찾기")
         }

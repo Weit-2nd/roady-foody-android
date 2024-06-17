@@ -18,6 +18,8 @@ import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
+import com.weit2nd.presentation.ui.select.location.SelectLocationScreen
+import com.weit2nd.presentation.ui.select.location.map.SelectLocationMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 
@@ -38,6 +40,8 @@ fun AppNavHost(
         signUpComposable(navController)
         homeComposable(navController)
         selectPictureComposable(navController)
+        selectLocationComposable(navController)
+        selectLocationMapComposable(navController)
     }
 }
 
@@ -99,6 +103,30 @@ private fun NavGraphBuilder.selectPictureComposable(
     }
 }
 
+private fun NavGraphBuilder.selectLocationComposable(
+    navController: NavHostController,
+) {
+    composable(SelectLocationRoutes.GRAPH) {
+        SelectLocationScreen(
+            navToMap = {
+                navController.navigate(SelectLocationMapRoutes.GRAPH) {
+                    popUpTo(SelectLocationMapRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.selectLocationMapComposable(
+    navController: NavHostController,
+) {
+    composable(SelectLocationMapRoutes.GRAPH) {
+        SelectLocationMapScreen()
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -122,4 +150,12 @@ object HomeNavRoutes {
 
 object SelectPictureRoutes {
     const val GRAPH = "select_picture"
+}
+
+object SelectLocationRoutes {
+    const val GRAPH = "select_location"
+}
+
+object SelectLocationMapRoutes {
+    const val GRAPH = "select_location_map"
 }
