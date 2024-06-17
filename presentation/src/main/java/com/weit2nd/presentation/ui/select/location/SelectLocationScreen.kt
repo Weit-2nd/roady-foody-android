@@ -65,15 +65,17 @@ fun SelectLocationScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(state.value.searchResults) { item ->
-                Text(
-                    text = item.name,
-                    fontSize = 20.sp,
-                )
-                Text(
-                    text = item.locationDetail,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
-                )
+                Column {
+                    Text(
+                        text = item.name,
+                        fontSize = 20.sp,
+                    )
+                    Text(
+                        text = item.locationDetail,
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+                    )
+                }
             }
         }
     }
