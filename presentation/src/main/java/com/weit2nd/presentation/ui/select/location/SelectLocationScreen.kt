@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.Location
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
@@ -64,17 +65,7 @@ fun SelectLocationScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(state.value.searchResults) { item ->
-                Column {
-                    Text(
-                        text = item.name,
-                        fontSize = 20.sp,
-                    )
-                    Text(
-                        text = item.address,
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
-                    )
-                }
+                SearchLocationItem(item)
             }
         }
     }
@@ -102,5 +93,20 @@ private fun LocationTextField(
             }
         ),
     )
+}
+
+@Composable
+private fun SearchLocationItem(location: Location) {
+    Column {
+        Text(
+            text = location.name,
+            fontSize = 20.sp,
+        )
+        Text(
+            text = location.address,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+        )
+    }
 }
 
