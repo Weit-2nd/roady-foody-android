@@ -50,7 +50,6 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun SelectLocationMapScreen(
     vm: SelectLocationMapViewModel = hiltViewModel(),
-    position: LatLng = LatLng.from(37.5597706, 126.9423666),
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
@@ -66,7 +65,7 @@ fun SelectLocationMapScreen(
                     onCameraMoveStart = vm::onCameraMoveStart,
                     onCameraMoveEnd = vm::onCameraMoveEnd,
                     selectMarkerOffset = state.value.selectMarkerOffset,
-                    position = position,
+                    position = state.value.initialPosition.run { LatLng.from(latitude, longitude) },
                 ),
             )
         }

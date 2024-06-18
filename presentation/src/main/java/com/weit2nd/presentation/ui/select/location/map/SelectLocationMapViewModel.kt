@@ -1,12 +1,16 @@
 package com.weit2nd.presentation.ui.select.location.map
 
 import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.usecase.selectloction.SearchLocationWithCoordinateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.SelectLocationMapRoutes
+import com.weit2nd.presentation.navigation.dto.CoordinateDTO
+import com.weit2nd.presentation.navigation.dto.toCoordinate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -18,10 +22,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectLocationMapViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val searchLocationWithCoordinateUseCase: SearchLocationWithCoordinateUseCase,
 ) : BaseViewModel<SelectLocationMapState, SelectLocationMapSideEffect>() {
     override val container =
-        container<SelectLocationMapState, SelectLocationMapSideEffect>(SelectLocationMapState())
+        container<SelectLocationMapState, SelectLocationMapSideEffect>(
+            SelectLocationMapState(
+                initialPosition = checkNotNull(
+                    savedStateHandle.get<CoordinateDTO>(
+                        SelectLocationMapRoutes.INITIAL_POSITION_KEY
+                    )?.toCoordinate()
+                )
+            )
+        )
     private var searchLocationJob: Job = Job().apply { complete() }
 
     fun onMapReady(map: KakaoMap) {

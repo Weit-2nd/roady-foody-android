@@ -10,4 +10,5 @@ data class SelectLocationMapState(
     val selectMarkerOffset: IntOffset = IntOffset.Zero,
     val location: Location = Location("", "", Coordinate(0.0, 0.0)),
     val isLoading: Boolean = false,
+    val initialPosition: Coordinate = Coordinate(37.5597706, 126.9423666),
 )
