@@ -114,6 +114,7 @@ fun SelectLocationMapScreen(
                 .padding(16.dp),
             isLoading = state.value.isLoading,
             location = state.value.location,
+            onClick = {},
         )
     }
 }
@@ -143,6 +144,7 @@ private fun LocationInfoView(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     location: Location,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -159,7 +161,7 @@ private fun LocationInfoView(
         )
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { },
+            onClick = { onClick() },
             enabled = isLoading.not(),
         ) {
             Text(text = "이 위치로 등록")
