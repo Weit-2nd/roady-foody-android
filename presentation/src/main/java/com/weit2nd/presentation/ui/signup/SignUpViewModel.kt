@@ -1,8 +1,9 @@
 package com.weit2nd.presentation.ui.signup
 
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import com.weit2nd.domain.model.User
+import com.weit2nd.domain.usecase.pickimage.PickSingleImageUseCase
 import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
 import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
 import com.weit2nd.presentation.base.BaseViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val verifyNicknameUseCase: VerifyNicknameUseCase,
     private val checkNicknameDuplicateUseCase: CheckNicknameDuplicateUseCase,
+    private val pickSingleImageUseCase: PickSingleImageUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
     override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
@@ -29,11 +31,7 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun onProfileImageClick() {
-        SignUpIntent.ShowImagePicker.post()
-    }
-
-    fun onProfileImageChoose(imageUri: Uri?) {
-        SignUpIntent.SetProfileImage(imageUri).post()
+        SignUpIntent.ChangeProfileImage.post()
     }
 
     fun onNicknameInputValueChange(nickname: String) {
@@ -63,15 +61,14 @@ class SignUpViewModel @Inject constructor(
                 }
             }
 
-            SignUpIntent.ShowImagePicker -> {
-                postSideEffect(SignUpSideEffect.ShowImagePicker)
-            }
-
-            is SignUpIntent.SetProfileImage -> {
-                reduce {
-                    state.copy(
-                        profileImageUri = imageUri
-                    )
+            SignUpIntent.ChangeProfileImage -> {
+                val result = pickSingleImageUseCase.invoke()
+                if (result != null) {
+                    reduce {
+                        state.copy(
+                            profileImageUri = result.toUri()
+                        )
+                    }
                 }
             }
 
