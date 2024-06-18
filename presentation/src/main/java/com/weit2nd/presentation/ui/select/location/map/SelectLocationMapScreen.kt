@@ -108,14 +108,13 @@ fun SelectLocationMapScreen(
                     .offset { state.value.selectMarkerOffset },
             )
         }
-        BottomInfo(
+        LocationInfoView(
             modifier = Modifier
                 .weight(1f)
                 .padding(16.dp),
             isLoading = state.value.isLoading,
             location = state.value.location,
         )
-
     }
 }
 
@@ -140,7 +139,7 @@ private fun PositionSelectMarker(
 }
 
 @Composable
-private fun BottomInfo(
+private fun LocationInfoView(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     location: Location,
