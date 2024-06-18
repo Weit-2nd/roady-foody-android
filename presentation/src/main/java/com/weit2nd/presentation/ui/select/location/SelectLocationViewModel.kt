@@ -16,15 +16,28 @@ class SelectLocationViewModel @Inject constructor(
     override val container =
         container<SelectLocationState, SelectLocationSideEffect>(SelectLocationState())
 
-    fun onLocationSearch(input: String) {
-        SelectLocationIntent.SearchLocation(input).post()
+    fun onValueChange(input: String) {
+        SelectLocationIntent.StoreSearchWord(input).post()
+    }
+
+    fun onLocationSearch() {
+        SelectLocationIntent.SearchLocation.post()
     }
 
     private fun SelectLocationIntent.post() = intent {
         when (this@post) {
-            is SelectLocationIntent.SearchLocation -> {
+            is SelectLocationIntent.StoreSearchWord -> {
+                reduce {
+                    state.copy(
+                        userInput = input,
+                    )
+                }
+            }
+
+            SelectLocationIntent.SearchLocation -> {
                 runCatching {
-                    val result = searchLocationWithWordUseCase.invoke(input)
+                    val result =
+                        searchLocationWithWordUseCase.invoke(container.stateFlow.value.userInput)
                     reduce {
                         state.copy(
                             searchResults = result

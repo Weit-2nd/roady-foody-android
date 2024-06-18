@@ -4,4 +4,5 @@ import com.weit2nd.domain.model.Location
 
 data class SelectLocationState(
     val searchResults: List<Location> = emptyList(),
+    val userInput: String = "",
 )

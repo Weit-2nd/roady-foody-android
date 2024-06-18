@@ -51,6 +51,7 @@ fun SelectLocationScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
+            onValueChange = vm::onValueChange,
             onSearch = vm::onLocationSearch
         )
         Button(
@@ -74,7 +75,8 @@ fun SelectLocationScreen(
 @Composable
 private fun LocationTextField(
     modifier: Modifier,
-    onSearch: (String) -> Unit,
+    onValueChange: (String) -> Unit,
+    onSearch: () -> Unit,
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue()) }
     TextField(
@@ -86,11 +88,10 @@ private fun LocationTextField(
         placeholder = { Text(text = "지번, 도로명, 건물명으로 검색") },
         onValueChange = { newValue ->
             userInput = newValue
+            onValueChange(newValue.text)
         },
         keyboardActions = KeyboardActions(
-            onSearch = {
-                onSearch(userInput.text)
-            }
+            onSearch = { onSearch() }
         ),
     )
 }
