@@ -85,27 +85,26 @@ class SelectLocationMapViewModel @Inject constructor(
             }
 
             is SelectLocationMapIntent.SearchLocation -> {
-                if (coordinate != null) {
-                    searchLocationJob = viewModelScope.launch {
-                        val location = searchLocationWithCoordinateUseCase.invoke(
-                            Coordinate(
-                                latitude = coordinate.latitude,
-                                longitude = coordinate.longitude
-                            )
+                if (coordinate == null) return@intent
+                searchLocationJob = viewModelScope.launch {
+                    val location = searchLocationWithCoordinateUseCase.invoke(
+                        Coordinate(
+                            latitude = coordinate.latitude,
+                            longitude = coordinate.longitude
                         )
-                        reduce {
-                            state.copy(
-                                location = location
-                            )
-                        }
-                    }.apply {
-                        invokeOnCompletion {
-                            intent {
-                                reduce {
-                                    state.copy(
-                                        isLoading = false,
-                                    )
-                                }
+                    )
+                    reduce {
+                        state.copy(
+                            location = location
+                        )
+                    }
+                }.apply {
+                    invokeOnCompletion {
+                        intent {
+                            reduce {
+                                state.copy(
+                                    isLoading = false,
+                                )
                             }
                         }
                     }
