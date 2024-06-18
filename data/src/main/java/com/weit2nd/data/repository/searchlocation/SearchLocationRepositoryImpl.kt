@@ -21,7 +21,7 @@ class SearchLocationRepositoryImpl @Inject constructor(
 
     private fun LocationDTO.toLocation() = Location(
         name = name,
-        locationDetail = locationDetail,
+        address = address,
         coordinate = Coordinate(latitude = latitude, longitude = longitude),
     )
 }

@@ -11,7 +11,7 @@ class SearchLocationDataSource @Inject constructor() {
         return List(100) {
             LocationDTO(
                 name = "위치이름$it",
-                locationDetail = "서울 중구 세종대로",
+                address = "서울 중구 세종대로",
                 latitude = 0.0,
                 longitude = 0.0
             )
@@ -22,7 +22,7 @@ class SearchLocationDataSource @Inject constructor() {
         delay(1000)
         return LocationDTO(
             name = "위치이름",
-            locationDetail = "서울 중구 세종대로${coordinate.latitude}",
+            address = "서울 중구 세종대로${coordinate.latitude}",
             latitude = 0.0,
             longitude = 0.0
         )

@@ -156,7 +156,7 @@ private fun BottomInfo(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = location.locationDetail,
+            text = location.address,
             style = TextStyle(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
