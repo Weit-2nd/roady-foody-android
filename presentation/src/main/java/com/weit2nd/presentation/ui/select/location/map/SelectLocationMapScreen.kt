@@ -98,9 +98,14 @@ fun SelectLocationMapScreen(
             )
 
             PositionSelectMarker(
-                mapRectSize,
-                onGloballyPositioned = vm::onGloballyPositioned,
-                selectMarkerOffset = state.value.selectMarkerOffset
+                modifier = Modifier
+                    .onGloballyPositioned { layoutCoordinates ->
+                        val imageSize = layoutCoordinates.size
+                        val centerX = mapRectSize.width / 2 - imageSize.width / 2
+                        val centerY = mapRectSize.height / 2 - imageSize.height / 2
+                        vm.onGloballyPositioned(IntOffset(centerX, centerY))
+                    }
+                    .offset { state.value.selectMarkerOffset },
             )
         }
         BottomInfo(
@@ -125,21 +130,12 @@ private fun handleSideEffects(sideEffect: SelectLocationMapSideEffect) {
 
 @Composable
 private fun PositionSelectMarker(
-    mapRectSize: IntSize,
-    onGloballyPositioned: (IntOffset) -> Unit,
-    selectMarkerOffset: IntOffset,
+    modifier: Modifier = Modifier,
 ) {
     Image(
+        modifier = modifier,
         painter = painterResource(R.drawable.ic_menu_mylocation),
-        contentDescription = "positionSelectMarker",
-        modifier = Modifier
-            .onGloballyPositioned { layoutCoordinates ->
-                val imageSize = layoutCoordinates.size
-                val centerX = mapRectSize.width / 2 - imageSize.width / 2
-                val centerY = mapRectSize.height / 2 - imageSize.height / 2
-                onGloballyPositioned(IntOffset(centerX, centerY))
-            }
-            .offset { selectMarkerOffset }
+        contentDescription = "positionSelectMarker"
     )
 }
 
