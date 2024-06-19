@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
@@ -53,6 +54,9 @@ fun ReviewItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserInfo(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
                 profileImage = review.profileImage,
                 nickname = review.nickname,
             )
@@ -103,6 +107,8 @@ private fun UserInfo(
                 fontSize = 12.sp,
                 color = Color.Black
             ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
