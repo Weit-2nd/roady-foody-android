@@ -129,7 +129,7 @@ private fun ReviewDateAndRating(
                 color = Color.Black
             ),
         )
-        Text(text = rating.toString())
+        StarRatingBar(rating = rating)
     }
 }
 
