@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weit2nd.data.BuildConfig
 import com.weit2nd.data.R
+import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.util.LocalDateTimeConverter
 import dagger.Module
 import dagger.Provides
@@ -40,13 +41,14 @@ object NetworkModule {
             .addInterceptor(loggingInterceptor)
             .build()
 
-    // TODO: 6/2/24 (minseonglove) 토큰 인터셉터 추가
     @AuthNetwork
     @Singleton
     @Provides
     fun provideAuthOkHttpClient(
+        authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
         .build()
 
