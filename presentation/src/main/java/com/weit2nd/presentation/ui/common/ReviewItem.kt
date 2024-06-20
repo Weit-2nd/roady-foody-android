@@ -27,6 +27,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import com.gowtham.ratingbar.RatingBar
+import com.gowtham.ratingbar.RatingBarStyle
+import com.gowtham.ratingbar.StepSize
 import com.weit2nd.domain.model.Review
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.util.LocalDateTimeFormatter.reviewDateFormatter
@@ -129,7 +132,16 @@ private fun ReviewDateAndRating(
                 color = Color.Black
             ),
         )
-        StarRatingBar(rating = rating)
+        RatingBar(
+            value = rating,
+            style = RatingBarStyle.Fill(),
+            stepSize = StepSize.HALF,
+            size = 12.dp,
+            spaceBetween = 0.dp,
+            isIndicator = true,
+            onValueChange = {},
+            onRatingChanged = {},
+        )
     }
 }
 
