@@ -146,18 +146,16 @@ private fun ReviewImages(
     images: List<String>,
     onImageClick: (images: List<String>, position: Int) -> Unit,
 ) {
-    if (images.isNotEmpty()) {
-        LazyRow(
-            modifier = modifier.padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            itemsIndexed(images) { index, image ->
-                Image(
-                    modifier = modifier.clickable { onImageClick(images, index) },
-                    painter = uriToPainter(context = context, imgUri = image.toUri()),
-                    contentDescription = "$image reviewImage"
-                )
-            }
+    LazyRow(
+        modifier = modifier.padding(top = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        itemsIndexed(images) { index, image ->
+            Image(
+                modifier = modifier.clickable { onImageClick(images, index) },
+                painter = uriToPainter(context = context, imgUri = image.toUri()),
+                contentDescription = "$image reviewImage"
+            )
         }
     }
 }
