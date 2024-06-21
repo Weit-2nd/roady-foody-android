@@ -1,6 +1,5 @@
 package com.weit2nd.presentation.ui.common
 
-import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -8,11 +7,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import com.weit2nd.presentation.util.toPainter
 
 @Composable
 fun ProfileImage(
@@ -22,17 +20,7 @@ fun ProfileImage(
     onProfileImageClick: (() -> Unit) = {},
 ) {
     val context = LocalContext.current
-    val painter = if (imgUri != null) {
-        val bitmap = ImageDecoder.decodeBitmap(
-            ImageDecoder.createSource(
-                context.contentResolver,
-                imgUri
-            )
-        )
-        BitmapPainter(bitmap.asImageBitmap())
-    } else {
-        defaultImage
-    }
+    val painter = imgUri?.toPainter(context.contentResolver) ?: defaultImage
 
     Image(
         painter = painter,
