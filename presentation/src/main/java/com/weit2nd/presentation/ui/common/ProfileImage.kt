@@ -10,7 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import com.weit2nd.presentation.util.uriToPainter
+import com.weit2nd.presentation.util.toPainter
 
 @Composable
 fun ProfileImage(
@@ -20,11 +20,7 @@ fun ProfileImage(
     onProfileImageClick: (() -> Unit) = {},
 ) {
     val context = LocalContext.current
-    val painter = if (imgUri != null) {
-        uriToPainter(context, imgUri)
-    } else {
-        defaultImage
-    }
+    val painter = imgUri?.toPainter(context.contentResolver) ?: defaultImage
 
     Image(
         painter = painter,

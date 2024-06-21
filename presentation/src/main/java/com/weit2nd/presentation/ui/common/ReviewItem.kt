@@ -31,7 +31,7 @@ import com.gowtham.ratingbar.StepSize
 import com.weit2nd.domain.model.Review
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.util.LocalDateTimeFormatter.reviewDateFormatter
-import com.weit2nd.presentation.util.uriToPainter
+import com.weit2nd.presentation.util.toPainter
 import java.time.LocalDateTime
 
 @Composable
@@ -153,7 +153,7 @@ private fun ReviewImages(
         itemsIndexed(images) { index, image ->
             Image(
                 modifier = modifier.clickable { onImageClick(images, index) },
-                painter = uriToPainter(context = context, imgUri = image.toUri()),
+                painter = image.toUri().toPainter(context.contentResolver),
                 contentDescription = "$image reviewImage"
             )
         }

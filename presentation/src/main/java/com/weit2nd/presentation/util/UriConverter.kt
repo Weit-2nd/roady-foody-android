@@ -1,16 +1,16 @@
 package com.weit2nd.presentation.util
 
-import android.content.Context
+import android.content.ContentResolver
 import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 
-fun uriToPainter(context: Context, imgUri: Uri): BitmapPainter {
+fun Uri.toPainter(contentResolver: ContentResolver): BitmapPainter {
     val bitmap = ImageDecoder.decodeBitmap(
         ImageDecoder.createSource(
-            context.contentResolver,
-            imgUri
+            contentResolver,
+            this,
         )
     )
     return BitmapPainter(bitmap.asImageBitmap())
