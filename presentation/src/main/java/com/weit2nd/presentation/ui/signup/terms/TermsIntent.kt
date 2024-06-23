@@ -9,4 +9,5 @@ sealed class TermsIntent {
     data class AgreeTerm(val term: Term, val isChecked: Boolean) : TermsIntent()
     data object UpdateAgreeAllWithTermAgreements : TermsIntent()
     data object VerifyCanProceed : TermsIntent()
+    data class NavToTermDetail(val termId: Long) : TermsIntent()
 }

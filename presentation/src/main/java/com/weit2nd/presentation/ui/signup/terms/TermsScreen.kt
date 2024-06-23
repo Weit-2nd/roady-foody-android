@@ -28,12 +28,20 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.terms.Term
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun TermsScreen(
     vm: TermsViewModel = hiltViewModel()
 ) {
     val state = vm.collectAsState()
+    vm.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is TermsSideEffect.NavToTermDetail -> {
+                // TODO: 약관 상세 화면으로 이동
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -69,6 +77,7 @@ fun TermsScreen(
                         term = term,
                         isChecked = state.value.checkedStatus[term] ?: false,
                         onCheckedChange = vm::onCheckedBoxChange,
+                        onDetailBtnClicked = vm::onDetailBtnClicked,
                     )
                 }
             }
@@ -76,7 +85,7 @@ fun TermsScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = state.value.canProceed,
-            onClick = { },
+            onClick = { }, // 다음 화면으로 이동
         ) {
             Text(text = "다음")
         }
@@ -110,6 +119,7 @@ fun TermCheckbox(
     term: Term,
     isChecked: Boolean,
     onCheckedChange: (term: Term, isChecked: Boolean) -> Unit,
+    onDetailBtnClicked: (Long) -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -131,7 +141,7 @@ fun TermCheckbox(
             Spacer(modifier = Modifier.padding(4.dp))
             Text(text = term.title)
         }
-        IconButton(onClick = { }) {
+        IconButton(onClick = { onDetailBtnClicked(term.id) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "NavigateToTermDetailButton"

@@ -5,6 +5,7 @@ import com.weit2nd.domain.usecase.terms.GetTermsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -28,6 +29,10 @@ class TermsViewModel @Inject constructor(
         TermsIntent.AgreeTerm(term, isChecked).post()
         TermsIntent.UpdateAgreeAllWithTermAgreements.post()
         TermsIntent.VerifyCanProceed.post()
+    }
+
+    fun onDetailBtnClicked(termId: Long) {
+        TermsIntent.NavToTermDetail(termId).post()
     }
 
     private fun TermsIntent.post() = intent {
@@ -88,6 +93,10 @@ class TermsViewModel @Inject constructor(
                         canProceed = canProceed
                     )
                 }
+            }
+
+            is TermsIntent.NavToTermDetail -> {
+                postSideEffect(TermsSideEffect.NavToTermDetail(termId))
             }
         }
     }
