@@ -51,8 +51,10 @@ fun TermsScreen(
                 thickness = 1.dp,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
-            AllAgreeCheckbox(
-                modifier = Modifier.fillMaxWidth()
+            AgreeAllCheckbox(
+                modifier = Modifier.fillMaxWidth(),
+                isChecked = state.value.agreeAll,
+                onCheckedChange = vm::onCheckedAllAgreeChange,
             )
             HorizontalDivider(
                 color = Color.DarkGray,
@@ -62,7 +64,12 @@ fun TermsScreen(
 
             LazyColumn {
                 items(state.value.terms) { term ->
-                    TermCheckbox(modifier = Modifier.fillMaxWidth(), term = term)
+                    TermCheckbox(
+                        modifier = Modifier.fillMaxWidth(),
+                        term = term,
+                        isChecked = state.value.checkedStatus[term] ?: false,
+                        onCheckedChange = vm::onCheckedBoxChange,
+                    )
                 }
             }
         }
@@ -76,14 +83,19 @@ fun TermsScreen(
 }
 
 @Composable
-fun AllAgreeCheckbox(
+fun AgreeAllCheckbox(
     modifier: Modifier = Modifier,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Checkbox(checked = false, onCheckedChange = {})
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = { onCheckedChange(it) },
+        )
         Text(
             text = "전체동의",
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
@@ -95,6 +107,8 @@ fun AllAgreeCheckbox(
 fun TermCheckbox(
     modifier: Modifier = Modifier,
     term: Term,
+    isChecked: Boolean,
+    onCheckedChange: (term: Term, isChecked: Boolean) -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -104,7 +118,10 @@ fun TermCheckbox(
             modifier = modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(checked = false, onCheckedChange = {})
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = { onCheckedChange(term, it) },
+            )
             Text(text = term.isRequired.toString())
             Spacer(modifier = Modifier.padding(4.dp))
             Text(text = term.title)
