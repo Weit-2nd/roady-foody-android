@@ -6,4 +6,5 @@ data class TermsState(
     val terms: List<Term> = emptyList(),
     val checkedStatus: Map<Term, Boolean> = emptyMap(),
     val agreeAll: Boolean = false,
+    val canProceed: Boolean = false,
 )

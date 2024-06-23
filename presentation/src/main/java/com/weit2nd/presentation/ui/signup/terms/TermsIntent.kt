@@ -8,4 +8,5 @@ sealed class TermsIntent {
     data class AgreeAll(val isChecked: Boolean) : TermsIntent()
     data class AgreeTerm(val term: Term, val isChecked: Boolean) : TermsIntent()
     data object UpdateAgreeAllWithTermAgreements : TermsIntent()
+    data object VerifyCanProceed : TermsIntent()
 }

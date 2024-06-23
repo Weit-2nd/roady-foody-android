@@ -75,6 +75,7 @@ fun TermsScreen(
         }
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = state.value.canProceed,
             onClick = { },
         ) {
             Text(text = "다음")
@@ -122,7 +123,11 @@ fun TermCheckbox(
                 checked = isChecked,
                 onCheckedChange = { onCheckedChange(term, it) },
             )
-            Text(text = term.isRequired.toString())
+            if (term.isRequired) {
+                Text(text = "[필수]")
+            } else {
+                Text(text = "[선택]")
+            }
             Spacer(modifier = Modifier.padding(4.dp))
             Text(text = term.title)
         }
