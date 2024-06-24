@@ -23,6 +23,7 @@ class TermsViewModel @Inject constructor(
 
     fun onCheckedAllAgreeChange(isChecked: Boolean) {
         TermsIntent.AgreeAll(isChecked).post()
+        TermsIntent.VerifyCanProceed.post()
     }
 
     fun onCheckedBoxChange(term: Term, isChecked: Boolean) {
