@@ -42,8 +42,7 @@ class TermsViewModel @Inject constructor(
                 val terms = getTermsUseCase.invoke()
                 reduce {
                     state.copy(
-                        terms = terms,
-                        checkedStatus = terms.associateWith { false }
+                        termStatuses = terms.map { TermStatus(it) }
                     )
                 }
             }
@@ -51,7 +50,9 @@ class TermsViewModel @Inject constructor(
             is TermsIntent.SetAllAgreement -> {
                 reduce {
                     state.copy(
-                        checkedStatus = container.stateFlow.value.terms.associateWith { isChecked },
+                        termStatuses = container.stateFlow.value.termStatuses.map {
+                            it.copy(isChecked = isChecked)
+                        },
                         agreeAll = isChecked
                     )
                 }
@@ -60,16 +61,15 @@ class TermsViewModel @Inject constructor(
             is TermsIntent.SetTermAgreement -> {
                 reduce {
                     state.copy(
-                        checkedStatus = container.stateFlow.value.checkedStatus.toMutableMap()
-                            .apply {
-                                this[term] = isChecked
-                            },
+                        termStatuses = container.stateFlow.value.termStatuses.map {
+                            if (it.term == term) it.copy(isChecked = isChecked) else it
+                        }
                     )
                 }
             }
 
             TermsIntent.UpdateAllAgreementWithTermAgreements -> {
-                if (container.stateFlow.value.checkedStatus.values.all { it }) {
+                if (container.stateFlow.value.termStatuses.all { it.isChecked }) {
                     reduce {
                         state.copy(
                             agreeAll = true
@@ -85,9 +85,9 @@ class TermsViewModel @Inject constructor(
             }
 
             TermsIntent.VerifyTermAgreements -> {
-                val canProceed = container.stateFlow.value.checkedStatus
-                    .filter { it.key.isRequired }
-                    .all { it.value }
+                val canProceed = container.stateFlow.value.termStatuses
+                    .filter { it.term.isRequired }
+                    .all { it.isChecked }
 
                 reduce {
                     state.copy(

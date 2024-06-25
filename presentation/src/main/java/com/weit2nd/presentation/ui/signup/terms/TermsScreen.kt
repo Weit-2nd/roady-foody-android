@@ -71,11 +71,11 @@ fun TermsScreen(
             )
 
             LazyColumn {
-                items(state.value.terms) { term ->
+                items(state.value.termStatuses) { termStatus ->
                     TermCheckbox(
                         modifier = Modifier.fillMaxWidth(),
-                        term = term,
-                        isChecked = state.value.checkedStatus[term] ?: false,
+                        term = termStatus.term,
+                        isChecked = termStatus.isChecked,
                         onCheckedChange = vm::onCheckedBoxChange,
                         onDetailBtnClicked = vm::onDetailBtnClicked,
                     )
