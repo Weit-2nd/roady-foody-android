@@ -133,11 +133,8 @@ fun TermCheckbox(
                 checked = isChecked,
                 onCheckedChange = { onCheckedChange(term, it) },
             )
-            if (term.isRequired) {
-                Text(text = "[필수]")
-            } else {
-                Text(text = "[선택]")
-            }
+            val termPrefix = if (term.isRequired) "[필수]" else "[선택]"
+            Text(text = termPrefix)
             Spacer(modifier = Modifier.padding(4.dp))
             Text(text = term.title)
         }
