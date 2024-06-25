@@ -23,13 +23,13 @@ class TermsViewModel @Inject constructor(
 
     fun onCheckedAllAgreeChange(isChecked: Boolean) {
         TermsIntent.AgreeAll(isChecked).post()
-        TermsIntent.VerifyCanProceed.post()
+        TermsIntent.VerifyTermAgreements.post()
     }
 
     fun onCheckedBoxChange(term: Term, isChecked: Boolean) {
         TermsIntent.AgreeTerm(term, isChecked).post()
         TermsIntent.UpdateAgreeAllWithTermAgreements.post()
-        TermsIntent.VerifyCanProceed.post()
+        TermsIntent.VerifyTermAgreements.post()
     }
 
     fun onDetailBtnClicked(termId: Long) {
@@ -84,7 +84,7 @@ class TermsViewModel @Inject constructor(
                 }
             }
 
-            TermsIntent.VerifyCanProceed -> {
+            TermsIntent.VerifyTermAgreements -> {
                 val canProceed = container.stateFlow.value.checkedStatus
                     .filter { it.key.isRequired }
                     .all { it.value }
