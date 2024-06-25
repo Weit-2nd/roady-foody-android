@@ -5,9 +5,9 @@ import com.weit2nd.domain.model.terms.Term
 sealed class TermsIntent {
 
     data object GetTerms : TermsIntent()
-    data class AgreeAll(val isChecked: Boolean) : TermsIntent()
-    data class AgreeTerm(val term: Term, val isChecked: Boolean) : TermsIntent()
-    data object UpdateAgreeAllWithTermAgreements : TermsIntent()
+    data class SetAllAgreement(val isChecked: Boolean) : TermsIntent()
+    data class SetTermAgreement(val term: Term, val isChecked: Boolean) : TermsIntent()
+    data object UpdateAllAgreementWithTermAgreements : TermsIntent()
     data object VerifyTermAgreements : TermsIntent()
     data class NavToTermDetail(val termId: Long) : TermsIntent()
 }

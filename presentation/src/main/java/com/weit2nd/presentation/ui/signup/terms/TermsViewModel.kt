@@ -22,13 +22,13 @@ class TermsViewModel @Inject constructor(
     }
 
     fun onCheckedAllAgreeChange(isChecked: Boolean) {
-        TermsIntent.AgreeAll(isChecked).post()
+        TermsIntent.SetAllAgreement(isChecked).post()
         TermsIntent.VerifyTermAgreements.post()
     }
 
     fun onCheckedBoxChange(term: Term, isChecked: Boolean) {
-        TermsIntent.AgreeTerm(term, isChecked).post()
-        TermsIntent.UpdateAgreeAllWithTermAgreements.post()
+        TermsIntent.SetTermAgreement(term, isChecked).post()
+        TermsIntent.UpdateAllAgreementWithTermAgreements.post()
         TermsIntent.VerifyTermAgreements.post()
     }
 
@@ -48,7 +48,7 @@ class TermsViewModel @Inject constructor(
                 }
             }
 
-            is TermsIntent.AgreeAll -> {
+            is TermsIntent.SetAllAgreement -> {
                 reduce {
                     state.copy(
                         checkedStatus = container.stateFlow.value.terms.associateWith { isChecked },
@@ -57,7 +57,7 @@ class TermsViewModel @Inject constructor(
                 }
             }
 
-            is TermsIntent.AgreeTerm -> {
+            is TermsIntent.SetTermAgreement -> {
                 reduce {
                     state.copy(
                         checkedStatus = container.stateFlow.value.checkedStatus.toMutableMap()
@@ -68,7 +68,7 @@ class TermsViewModel @Inject constructor(
                 }
             }
 
-            TermsIntent.UpdateAgreeAllWithTermAgreements -> {
+            TermsIntent.UpdateAllAgreementWithTermAgreements -> {
                 if (container.stateFlow.value.checkedStatus.values.all { it }) {
                     reduce {
                         state.copy(
