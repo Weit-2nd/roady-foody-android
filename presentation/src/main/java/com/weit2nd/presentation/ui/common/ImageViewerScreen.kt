@@ -37,6 +37,7 @@ data class ImageViewerData(
 fun ImageViewerScreen(
     images: List<String>,
     position: Int,
+    onExitBtnClick: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
         pageCount = { images.size },
@@ -79,7 +80,7 @@ fun ImageViewerScreen(
             modifier = Modifier
                 .padding(4.dp)
                 .align(Alignment.TopStart),
-            onClick = { },
+            onClick = { onExitBtnClick() },
         ) {
             Icon(
                 imageVector = Icons.Outlined.Close,

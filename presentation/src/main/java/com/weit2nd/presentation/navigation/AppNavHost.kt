@@ -152,18 +152,22 @@ private fun NavGraphBuilder.imageViewerComposable(
             type = ImageViewerDataType()
         }),
     ) { backStackEntry ->
-            val imageData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                backStackEntry.arguments?.getParcelable(
-                    ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY,
-                    ImageViewerDTO::class.java
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                backStackEntry.arguments?.getParcelable(
-                    ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY
-                ) as? ImageViewerDTO
-            }?.toImageViewerData() ?: ImageViewerData(emptyList(), 0)
-        ImageViewerScreen(imageData.images, imageData.position)
+        val imageData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            backStackEntry.arguments?.getParcelable(
+                ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY,
+                ImageViewerDTO::class.java
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            backStackEntry.arguments?.getParcelable(
+                ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY
+            ) as? ImageViewerDTO
+        }?.toImageViewerData() ?: ImageViewerData(emptyList(), 0)
+
+        ImageViewerScreen(
+            images = imageData.images,
+            position = imageData.position,
+            onExitBtnClick = { navController.popBackStack() })
     }
 }
 
