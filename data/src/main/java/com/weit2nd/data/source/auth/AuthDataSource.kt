@@ -1,9 +1,10 @@
 package com.weit2nd.data.source.auth
 
-class AuthDataSource {
+import com.kakao.sdk.auth.AuthApiClient
+import com.weit2nd.domain.exception.auth.AuthException
 
-    // TODO 로그인이 만들어지면 로그인 토큰을 가져오는 로직으로 변경
-    fun getToken(): Long {
-        return 12321
-    }
+class AuthDataSource {
+    fun getAccessToken(): String =
+        AuthApiClient.instance.tokenManagerProvider.manager.getToken()?.accessToken
+            ?: throw AuthException.TokenNotFoundException()
 }
