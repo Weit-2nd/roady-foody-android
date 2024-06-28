@@ -27,6 +27,11 @@ import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
+data class ImageViewerData(
+    val images: List<String>,
+    val position: Int,
+)
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ImageViewerScreen(

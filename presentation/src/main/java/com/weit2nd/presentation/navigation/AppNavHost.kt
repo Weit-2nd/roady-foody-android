@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.navigation
 
 import android.net.Uri
+import android.os.Build
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -15,10 +16,16 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.User
+import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
+import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
+import com.weit2nd.presentation.navigation.dto.toImageViewerData
 import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
+import com.weit2nd.presentation.navigation.type.ImageViewerDataType
+import com.weit2nd.presentation.ui.common.ImageViewerData
+import com.weit2nd.presentation.ui.common.ImageViewerScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.select.location.SelectLocationScreen
@@ -45,6 +52,7 @@ fun AppNavHost(
         selectPictureComposable(navController)
         selectLocationComposable(navController)
         selectLocationMapComposable(navController)
+        imageViewerComposable(navController)
     }
 }
 
@@ -135,6 +143,30 @@ private fun NavGraphBuilder.selectLocationMapComposable(
     }
 }
 
+private fun NavGraphBuilder.imageViewerComposable(
+    navController: NavHostController,
+) {
+    composable(
+        route = "${ImageViewerRoutes.GRAPH}/{${ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY}}",
+        arguments = listOf(navArgument(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY) {
+            type = ImageViewerDataType()
+        }),
+    ) { backStackEntry ->
+            val imageData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                backStackEntry.arguments?.getParcelable(
+                    ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY,
+                    ImageViewerDTO::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                backStackEntry.arguments?.getParcelable(
+                    ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY
+                ) as? ImageViewerDTO
+            }?.toImageViewerData() ?: ImageViewerData(emptyList(), 0)
+        ImageViewerScreen(imageData.images, imageData.position)
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -149,6 +181,16 @@ private fun NavHostController.navigateToSelectLocationMap(
 ) {
     val coordinateJson = Uri.encode(Gson().toJson(coordinate.toCoordinateDTO()))
     navigate("${SelectLocationMapRoutes.GRAPH}/$coordinateJson", builder)
+}
+
+private fun NavHostController.navigateToImageViewer(
+    images: List<String> = listOf(),
+    position: Int = 0,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val data = ImageViewerData(images, position)
+    val imageDataJson = Uri.encode(Gson().toJson(data.toImageViewerDTO()))
+    navigate("${ImageViewerRoutes.GRAPH}/$imageDataJson", builder)
 }
 
 object LoginNavRoutes {
@@ -175,4 +217,9 @@ object SelectLocationRoutes {
 object SelectLocationMapRoutes {
     const val GRAPH = "select_location_map"
     const val INITIAL_POSITION_KEY = "initial_position"
+}
+
+object ImageViewerRoutes {
+    const val GRAPH = "image_viewer"
+    const val IMAGES_VIEWER_DATA_KEY = "image_viewer_data"
 }
