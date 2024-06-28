@@ -1,5 +1,6 @@
 package com.weit2nd.data.source.pickimage
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.result.PickVisualMediaRequest
@@ -21,14 +22,24 @@ class PickImageActivity : AppCompatActivity() {
         val maximumSelect = intent.getIntExtra(MAXIMUM_SELECT_KEY, 1)
         val pickMedia = if (maximumSelect > 1) {
             registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(maximumSelect)) { images ->
+                images.forEach {
+                    takeUriPermission(it)
+                }
                 sendSelectedImagesAndFinish(images)
             }
         } else {
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
+                image?.let {
+                    takeUriPermission(it)
+                }
                 sendSelectedImagesAndFinish(listOfNotNull(image))
             }
         }
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    private fun takeUriPermission(image: Uri) {
+        contentResolver.takePersistableUriPermission(image, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
     private fun sendSelectedImagesAndFinish(
