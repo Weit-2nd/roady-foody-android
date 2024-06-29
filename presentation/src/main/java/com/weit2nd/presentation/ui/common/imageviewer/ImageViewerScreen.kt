@@ -1,4 +1,4 @@
-package com.weit2nd.presentation.ui.common
+package com.weit2nd.presentation.ui.common.imageviewer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,23 +25,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-
-data class ImageViewerData(
-    val images: List<String>,
-    val position: Int,
-)
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ImageViewerScreen(
-    imageViewerData: ImageViewerData,
+    vm: ImageViewerViewModel = hiltViewModel(),
     onExitBtnClick: () -> Unit,
 ) {
+    val state = vm.collectAsState()
+    vm.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            ImageViewerSideEffect.ExitImageViewer -> {
+                onExitBtnClick()
+            }
+        }
+    }
+
     val pagerState = rememberPagerState(
-        pageCount = { imageViewerData.images.size },
-        initialPage = imageViewerData.position,
+        pageCount = { state.value.imageViewerData.images.size },
+        initialPage = state.value.imageViewerData.position,
     )
     Box(
         modifier = Modifier
@@ -50,7 +57,7 @@ fun ImageViewerScreen(
     ) {
         HorizontalPager(state = pagerState) { page ->
             GlideImage(
-                model = imageViewerData.images[page],
+                model = state.value.imageViewerData.images[page],
                 contentDescription = "$page page Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit,
@@ -68,7 +75,7 @@ fun ImageViewerScreen(
             modifier = Modifier
                 .padding(4.dp)
                 .align(Alignment.TopStart),
-            onClick = { onExitBtnClick() },
+            onClick = vm::onClickExitButton,
         ) {
             Icon(
                 imageVector = Icons.Outlined.Close,

@@ -1,7 +1,6 @@
 package com.weit2nd.presentation.navigation
 
 import android.net.Uri
-import android.os.Build
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -16,16 +15,14 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.User
-import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
-import com.weit2nd.presentation.navigation.dto.toImageViewerData
 import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
-import com.weit2nd.presentation.ui.common.ImageViewerData
-import com.weit2nd.presentation.ui.common.ImageViewerScreen
+import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
+import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.select.location.SelectLocationScreen
@@ -151,21 +148,8 @@ private fun NavGraphBuilder.imageViewerComposable(
         arguments = listOf(navArgument(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY) {
             type = ImageViewerDataType()
         }),
-    ) { backStackEntry ->
-        val imageViewerData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            backStackEntry.arguments?.getParcelable(
-                ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY,
-                ImageViewerDTO::class.java
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            backStackEntry.arguments?.getParcelable(
-                ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY
-            ) as? ImageViewerDTO
-        }?.toImageViewerData() ?: ImageViewerData(emptyList(), 0)
-
+    ) {
         ImageViewerScreen(
-            imageViewerData = imageViewerData,
             onExitBtnClick = { navController.popBackStack() }
         )
     }

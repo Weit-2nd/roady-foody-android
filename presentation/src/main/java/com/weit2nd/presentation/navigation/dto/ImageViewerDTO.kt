@@ -1,7 +1,7 @@
 package com.weit2nd.presentation.navigation.dto
 
 import android.os.Parcelable
-import com.weit2nd.presentation.ui.common.ImageViewerData
+import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
