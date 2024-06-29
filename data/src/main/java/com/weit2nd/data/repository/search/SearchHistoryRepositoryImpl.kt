@@ -1,6 +1,6 @@
-package com.weit2nd.data.repository.searchhistory
+package com.weit2nd.data.repository.search
 
-import com.weit2nd.data.source.SearchHistoryDataSource
+import com.weit2nd.data.source.search.SearchHistoryDataSource
 import com.weit2nd.domain.repository.searchhistory.SearchHistoryRepository
 import javax.inject.Inject
 

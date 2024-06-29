@@ -1,4 +1,4 @@
-package com.weit2nd.domain.usecase.searchhistory
+package com.weit2nd.domain.usecase.search
 
 import com.weit2nd.domain.repository.searchhistory.SearchHistoryRepository
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.weit2nd.data.source
+package com.weit2nd.data.source.search
 
 import android.content.Context
 import androidx.datastore.core.DataStore

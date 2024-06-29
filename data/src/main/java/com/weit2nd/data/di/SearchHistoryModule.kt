@@ -1,8 +1,8 @@
 package com.weit2nd.data.di
 
 import android.content.Context
-import com.weit2nd.data.repository.searchhistory.SearchHistoryRepositoryImpl
-import com.weit2nd.data.source.SearchHistoryDataSource
+import com.weit2nd.data.repository.search.SearchHistoryRepositoryImpl
+import com.weit2nd.data.source.search.SearchHistoryDataSource
 import com.weit2nd.domain.repository.searchhistory.SearchHistoryRepository
 import dagger.Module
 import dagger.Provides
