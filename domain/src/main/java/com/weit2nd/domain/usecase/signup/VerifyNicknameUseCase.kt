@@ -8,7 +8,7 @@ class VerifyNicknameUseCase @Inject constructor(
     val repository: SignUpRepository,
 ) {
 
-    suspend operator fun invoke(nickname: String): NicknameState {
+    operator fun invoke(nickname: String): NicknameState {
         return repository.verifyNickname(nickname)
     }
 }
