@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -32,16 +33,15 @@ data class ImageViewerData(
     val position: Int,
 )
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ImageViewerScreen(
-    images: List<String>,
-    position: Int,
+    imageViewerData: ImageViewerData,
     onExitBtnClick: () -> Unit,
 ) {
     val pagerState = rememberPagerState(
-        pageCount = { images.size },
-        initialPage = position,
+        pageCount = { imageViewerData.images.size },
+        initialPage = imageViewerData.position,
     )
     Box(
         modifier = Modifier
@@ -50,32 +50,20 @@ fun ImageViewerScreen(
     ) {
         HorizontalPager(state = pagerState) { page ->
             GlideImage(
-                model = images[page],
+                model = imageViewerData.images[page],
                 contentDescription = "$page page Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit,
             )
         }
-        Row(
-            Modifier
+        PageIndicator(
+            modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(pagerState.pageCount) { index ->
-                val color =
-                    if (pagerState.currentPage == index) Color.White else Color.DarkGray
-                Box(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
-                )
-            }
-        }
+            pagerState = pagerState,
+        )
         IconButton(
             modifier = Modifier
                 .padding(4.dp)
@@ -86,6 +74,30 @@ fun ImageViewerScreen(
                 imageVector = Icons.Outlined.Close,
                 contentDescription = "exitPage",
                 tint = Color.White,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun PageIndicator(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(pagerState.pageCount) { index ->
+            val color =
+                if (pagerState.currentPage == index) Color.White else Color.DarkGray
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .background(color)
+                    .size(8.dp)
             )
         }
     }
