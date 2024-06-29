@@ -4,7 +4,7 @@ import com.weit2nd.domain.model.search.TouristSpot
 import com.weit2nd.domain.repository.search.SearchPlaceRepository
 import javax.inject.Inject
 
-class GetTouristSpotsUseCase @Inject constructor(
+class SearchTouristSpotsUseCase @Inject constructor(
     private val repository: SearchPlaceRepository,
 ) {
 
