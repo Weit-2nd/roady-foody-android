@@ -1,6 +1,6 @@
 package com.weit2nd.data.model.user
 
-data class SingUpRequest(
+data class SignUpRequest(
     val nickname: String,
     val agreedTermIds: List<Long>,
 )

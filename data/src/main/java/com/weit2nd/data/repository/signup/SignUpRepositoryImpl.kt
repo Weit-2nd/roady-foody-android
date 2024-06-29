@@ -1,7 +1,7 @@
 package com.weit2nd.data.repository.signup
 
 import com.squareup.moshi.Moshi
-import com.weit2nd.data.model.user.SingUpRequest
+import com.weit2nd.data.model.user.SignUpRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
 import com.weit2nd.data.util.getMultiPart
@@ -32,11 +32,11 @@ class SignUpRepositoryImpl @Inject constructor(
             formDataName = "profileImage",
             imageName = System.currentTimeMillis().toString(),
         )
-        val request = SingUpRequest(
+        val request = SignUpRequest(
             nickname = nickname,
             agreedTermIds = agreedTermIds,
         )
-        val signUpPart = moshi.adapter(SingUpRequest::class.java).getMultiPart(
+        val signUpPart = moshi.adapter(SignUpRequest::class.java).getMultiPart(
             formDataName = "signUpRequest",
             fileName = "signUpRequest",
             request = request,
