@@ -21,8 +21,8 @@ import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
-import com.weit2nd.presentation.ui.select.location.SelectLocationScreen
-import com.weit2nd.presentation.ui.select.location.map.SelectLocationMapScreen
+import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
+import com.weit2nd.presentation.ui.select.place.map.SelectLocationMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 
@@ -110,7 +110,7 @@ private fun NavGraphBuilder.selectLocationComposable(
     navController: NavHostController,
 ) {
     composable(SelectLocationRoutes.GRAPH) {
-        SelectLocationScreen(
+        SelectPlaceScreen(
             navToMap = {
                 navController.navigateToSelectLocationMap() {
                     popUpTo(SelectLocationMapRoutes.GRAPH) {
