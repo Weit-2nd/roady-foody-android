@@ -26,6 +26,7 @@ class TermsRepositoryImpl @Inject constructor(
 
     private fun TermDTO.toTerm(): Term =
         Term(
+            id = id,
             title = title,
             isRequired = isRequired,
         )

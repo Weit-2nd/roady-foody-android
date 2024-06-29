@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class TermDTO(
+    @field:Json(name = "id") val id: Long,
     @field:Json(name = "title") val title: String,
     @field:Json(name = "isRequired") val isRequired: Boolean,
 )

@@ -5,8 +5,5 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class TermsDTO(
-    @field:Json(name = "allTermsSize") val allTermsSize: Int,
-    @field:Json(name = "requiredTermsSize") val requiredTermsSize: Int,
-    @field:Json(name = "optionalTermsSize") val optionalTermsSize: Int,
     @field:Json(name = "terms") val terms: List<TermDTO>
 )
