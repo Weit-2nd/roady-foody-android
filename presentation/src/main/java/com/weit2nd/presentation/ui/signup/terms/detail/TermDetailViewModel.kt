@@ -22,7 +22,7 @@ class TermDetailViewModel @Inject constructor(
     override val container: Container<TermDetailState, TermDetailSideEffect> =
         container(TermDetailState())
 
-    private val termId: Long = savedStateHandle["termId"] ?: -1
+    private val termId: Long = savedStateHandle["termId"] ?: 1
 
     init {
         if (termId != -1L) {
@@ -34,6 +34,10 @@ class TermDetailViewModel @Inject constructor(
 
     fun onRetryClick() {
         TermDetailIntent.LoadTerm(termId = termId).post()
+    }
+
+    fun onNavigateClick() {
+        TermDetailIntent.NavToBack.post()
     }
 
 
