@@ -16,12 +16,16 @@ class ImageViewerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<ImageViewerState, ImageViewerSideEffect>() {
 
+    private val imageViewerData by lazy {
+        checkNotNull(
+            savedStateHandle.get<ImageViewerDTO>(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY)
+                ?.toImageViewerData()
+        )
+    }
     override val container = container<ImageViewerState, ImageViewerSideEffect>(
         ImageViewerState(
-            imageViewerData = checkNotNull(
-                savedStateHandle.get<ImageViewerDTO>(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY)
-                    ?.toImageViewerData()
-            )
+            images = imageViewerData.images,
+            position = imageViewerData.position,
         )
     )
 

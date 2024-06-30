@@ -47,8 +47,8 @@ fun ImageViewerScreen(
     }
 
     val pagerState = rememberPagerState(
-        pageCount = { state.value.imageViewerData.images.size },
-        initialPage = state.value.imageViewerData.position,
+        pageCount = { state.value.images.size },
+        initialPage = state.value.position,
     )
     Box(
         modifier = Modifier
@@ -57,7 +57,7 @@ fun ImageViewerScreen(
     ) {
         HorizontalPager(state = pagerState) { page ->
             GlideImage(
-                model = state.value.imageViewerData.images[page],
+                model = state.value.images[page],
                 contentDescription = "$page page Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit,
