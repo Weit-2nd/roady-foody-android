@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -25,6 +26,7 @@ import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
 import com.weit2nd.presentation.ui.select.place.map.SelectLocationMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
+import com.weit2nd.presentation.ui.signup.terms.detail.TermDetailScreen
 
 
 @Composable
@@ -45,6 +47,7 @@ fun AppNavHost(
         selectPictureComposable(navController)
         selectLocationComposable(navController)
         selectLocationMapComposable(navController)
+        termDetailComposable(navController)
     }
 }
 
@@ -135,6 +138,21 @@ private fun NavGraphBuilder.selectLocationMapComposable(
     }
 }
 
+private fun NavGraphBuilder.termDetailComposable(
+    navController: NavHostController,
+) {
+    composable(
+        "${TermDetailRoutes.GRAPH}/{${TermDetailRoutes.TERM_ID}}",
+        arguments = listOf(navArgument(TermDetailRoutes.TERM_ID) { type = NavType.LongType })
+    ) {
+        TermDetailScreen(
+            navToBack = {
+                navController.popBackStack()
+            }
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -149,6 +167,12 @@ private fun NavHostController.navigateToSelectLocationMap(
 ) {
     val coordinateJson = Uri.encode(Gson().toJson(coordinate.toCoordinateDTO()))
     navigate("${SelectLocationMapRoutes.GRAPH}/$coordinateJson", builder)
+}
+
+private fun NavHostController.navigateToTermDetail(
+    termId: Long,
+)  {
+    navigate("${TermDetailRoutes.GRAPH}/$termId")
 }
 
 object LoginNavRoutes {
@@ -170,6 +194,11 @@ object SelectPictureRoutes {
 
 object SelectLocationRoutes {
     const val GRAPH = "select_location"
+}
+
+object TermDetailRoutes {
+    const val GRAPH = "term_detail"
+    const val TERM_ID = "term_id"
 }
 
 object SelectLocationMapRoutes {

@@ -5,6 +5,7 @@ import com.weit2nd.domain.exception.term.TermIdNotFoundException
 import com.weit2nd.domain.usecase.terms.GetTermDetailUseCase
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.TermDetailRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -22,7 +23,7 @@ class TermDetailViewModel @Inject constructor(
     override val container: Container<TermDetailState, TermDetailSideEffect> =
         container(TermDetailState())
 
-    private val termId: Long = savedStateHandle["termId"] ?: 1
+    private val termId: Long = savedStateHandle[TermDetailRoutes.TERM_ID] ?: -1
 
     init {
         if (termId != -1L) {
