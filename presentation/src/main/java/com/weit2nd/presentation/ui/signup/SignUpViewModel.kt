@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.pickimage.PickSingleImageUseCase
 import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
+import com.weit2nd.domain.usecase.signup.SignUpUseCase
 import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ class SignUpViewModel @Inject constructor(
     private val verifyNicknameUseCase: VerifyNicknameUseCase,
     private val checkNicknameDuplicateUseCase: CheckNicknameDuplicateUseCase,
     private val pickSingleImageUseCase: PickSingleImageUseCase,
+    private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
     override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
@@ -53,11 +55,17 @@ class SignUpViewModel @Inject constructor(
         when (this@post) {
             SignUpIntent.RequestSignUp -> {
                 runCatching {
-                    // 회원가입 시도
+                    container.stateFlow.value.apply {
+                        signUpUseCase.invoke(
+                            image = profileImageUri.toString(),
+                            nickname = nickname,
+                            agreedTermIds = listOf(1, 2, 3), // todo 약관 화면과 연결하며 수정
+                        )
+                    }
                 }.onSuccess {
                     postSideEffect(SignUpSideEffect.NavToHome(User("으악")))
-                }.onFailure {
-                    // 회원가입 실패 문구 띄우기
+                }.onFailure { throwable ->
+                    throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
                 }
             }
 
