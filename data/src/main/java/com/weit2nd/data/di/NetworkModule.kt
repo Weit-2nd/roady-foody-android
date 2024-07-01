@@ -6,6 +6,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weit2nd.data.BuildConfig
 import com.weit2nd.data.R
 import com.weit2nd.data.interceptor.AuthInterceptor
+import com.weit2nd.data.interceptor.ErrorResponseInterceptor
 import com.weit2nd.data.util.LocalDateTimeConverter
 import dagger.Module
 import dagger.Provides
@@ -47,9 +48,11 @@ object NetworkModule {
     fun provideAuthOkHttpClient(
         authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
+        errorResponseInterceptor: ErrorResponseInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(errorResponseInterceptor)
         .build()
 
     @DefaultNetwork
