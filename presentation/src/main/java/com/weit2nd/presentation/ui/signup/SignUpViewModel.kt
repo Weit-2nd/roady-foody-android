@@ -57,7 +57,7 @@ class SignUpViewModel @Inject constructor(
                 runCatching {
                     container.stateFlow.value.apply {
                         signUpUseCase.invoke(
-                            image = profileImageUri.toString(),
+                            image = (profileImageUri ?: "").toString(),
                             nickname = nickname,
                             agreedTermIds = listOf(1, 2, 3), // todo 약관 화면과 연결하며 수정
                         )
