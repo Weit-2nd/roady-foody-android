@@ -1,7 +1,5 @@
 package com.weit2nd.presentation.ui.common
 
-import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,20 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 import com.gowtham.ratingbar.StepSize
 import com.weit2nd.domain.model.Review
-import com.weit2nd.presentation.R
 import com.weit2nd.presentation.util.LocalDateTimeFormatter.reviewDateFormatter
-import com.weit2nd.presentation.util.toPainter
 import java.time.LocalDateTime
 
 @Composable
@@ -40,8 +36,6 @@ fun ReviewItem(
     review: Review,
     onImageClick: (images: List<String>, position: Int) -> Unit,
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = modifier
     ) {
@@ -64,7 +58,6 @@ fun ReviewItem(
         }
 
         ReviewImages(
-            context = context,
             images = review.reviewImages,
             onImageClick = onImageClick,
         )
@@ -96,7 +89,6 @@ private fun UserInfo(
                 .clip(CircleShape)
                 .size(24.dp),
             imgUri = profileImage.toUri(),
-            defaultImage = painterResource(R.drawable.ic_launcher_background),
         )
         Text(
             text = nickname,
@@ -139,10 +131,10 @@ private fun ReviewDateAndRating(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun ReviewImages(
     modifier: Modifier = Modifier,
-    context: Context,
     images: List<String>,
     onImageClick: (images: List<String>, position: Int) -> Unit,
 ) {
@@ -151,10 +143,10 @@ private fun ReviewImages(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(images) { index, image ->
-            Image(
+            GlideImage(
+                model = image,
+                contentDescription = "$image reviewImage",
                 modifier = modifier.clickable { onImageClick(images, index) },
-                painter = image.toUri().toPainter(context.contentResolver),
-                contentDescription = "$image reviewImage"
             )
         }
     }

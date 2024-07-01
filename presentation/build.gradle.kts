@@ -102,4 +102,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.kakao.map)
     implementation(libs.ratingbar)
+    implementation(libs.compose)
 }
