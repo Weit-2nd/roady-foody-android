@@ -6,4 +6,8 @@ sealed class SignUpSideEffect {
     data class NavToHome(
         val user: User,
     ) : SignUpSideEffect()
+
+    data class ShowToast(
+        val message: String,
+    ) : SignUpSideEffect()
 }

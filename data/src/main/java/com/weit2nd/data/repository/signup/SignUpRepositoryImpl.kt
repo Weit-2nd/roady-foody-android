@@ -52,12 +52,12 @@ class SignUpRepositoryImpl @Inject constructor(
     }
 
     private fun throwSignUpException(throwable: Throwable) {
-        val message = throwable.message.toString()
         val exception = if (throwable is HttpException) {
+            val errorMessage = throwable.message()
             when (throwable.code()) {
-                HTTP_BAD_REQUEST -> SignUpException.BadRequestException(message)
-                HTTP_UNAUTHORIZED -> SignUpException.InvalidTokenException(message)
-                HTTP_CONFLICT -> SignUpException.DuplicateUserException(message)
+                HTTP_BAD_REQUEST -> SignUpException.BadRequestException(errorMessage)
+                HTTP_UNAUTHORIZED -> SignUpException.InvalidTokenException(errorMessage)
+                HTTP_CONFLICT -> SignUpException.DuplicateUserException(errorMessage)
                 else -> throwable
             }
         } else {

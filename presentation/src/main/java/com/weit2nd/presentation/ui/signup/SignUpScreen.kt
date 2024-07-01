@@ -1,5 +1,7 @@
 package com.weit2nd.presentation.ui.signup
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -39,10 +42,12 @@ fun SignUpScreen(
     navToHome: (User) -> Unit,
 ) {
     val state = vm.collectAsState()
+    val context = LocalContext.current
     vm.collectSideEffect { sideEffect ->
         handleSideEffects(
             sideEffect = sideEffect,
             navToHome = navToHome,
+            context = context,
         )
     }
 
@@ -87,10 +92,15 @@ fun SignUpScreen(
 private fun handleSideEffects(
     sideEffect: SignUpSideEffect,
     navToHome: (User) -> Unit,
+    context: Context,
 ) {
     when (sideEffect) {
         is SignUpSideEffect.NavToHome -> {
             navToHome(sideEffect.user)
+        }
+
+        is SignUpSideEffect.ShowToast -> {
+            Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
         }
     }
 }
