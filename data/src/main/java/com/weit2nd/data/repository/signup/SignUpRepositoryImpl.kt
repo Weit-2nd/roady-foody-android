@@ -1,6 +1,7 @@
 package com.weit2nd.data.repository.signup
 
 import com.squareup.moshi.Moshi
+import com.weit2nd.data.model.ErrorResponse
 import com.weit2nd.data.model.user.SignUpRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
@@ -52,12 +53,15 @@ class SignUpRepositoryImpl @Inject constructor(
     }
 
     private fun throwSignUpException(throwable: Throwable) {
-        val message = throwable.message.toString()
         val exception = if (throwable is HttpException) {
+            val value = throwable.response()?.errorBody()?.string()
+            val errorMessage =
+                value?.let { moshi.adapter(ErrorResponse::class.java).fromJson(it)?.errorMessage }
+                    ?: "NoErrorMessage"
             when (throwable.code()) {
-                HTTP_BAD_REQUEST -> SignUpException.BadRequestException(message)
-                HTTP_UNAUTHORIZED -> SignUpException.InvalidTokenException(message)
-                HTTP_CONFLICT -> SignUpException.DuplicateUserException(message)
+                HTTP_BAD_REQUEST -> SignUpException.BadRequestException(errorMessage)
+                HTTP_UNAUTHORIZED -> SignUpException.InvalidTokenException(errorMessage)
+                HTTP_CONFLICT -> SignUpException.DuplicateUserException(errorMessage)
                 else -> throwable
             }
         } else {
