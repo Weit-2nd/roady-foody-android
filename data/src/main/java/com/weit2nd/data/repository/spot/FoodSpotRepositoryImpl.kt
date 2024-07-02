@@ -5,6 +5,7 @@ import com.weit2nd.data.model.spot.ReportFoodSpotRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
+import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import javax.inject.Inject
 
@@ -53,7 +54,56 @@ class FoodSpotRepositoryImpl @Inject constructor(
         longitude: Double,
         latitude: Double,
         images: List<String>,
-    ) {
-        TODO("Not yet implemented")
+    ): ReportFoodSpotState {
+        val invalidImage = if (images.size > MAX_IMAGE_COUNT) {
+            null
+        } else {
+            findInvalidImage(images)
+        }
+        return when {
+            invalidImage != null -> {
+                ReportFoodSpotState.InvalidImage(invalidImage)
+            }
+            verifyCoordinate(longitude, latitude).not() -> {
+                ReportFoodSpotState.BadCoordinate
+            }
+            images.size > MAX_IMAGE_COUNT -> {
+                ReportFoodSpotState.TooManyImages
+            }
+            verifyName(name).not() -> {
+                ReportFoodSpotState.BadFoodSpotName
+            }
+            else -> {
+                ReportFoodSpotState.Valid
+            }
+        }
+    }
+
+    private fun verifyName(
+        name: String,
+    ): Boolean {
+        return name.isNotBlank() && foodSpotNameRegex.matches(name)
+    }
+
+    private fun verifyCoordinate(
+        longitude: Double,
+        latitude: Double,
+    ): Boolean {
+        return (longitude in MIN_COORDINATE..MAX_COORDINATE) &&
+                (latitude in MIN_COORDINATE..MAX_COORDINATE)
+    }
+
+    private fun findInvalidImage(
+        images: List<String>
+    ): String? {
+        // TODO 이미지 uri 검증
+        return null
+    }
+
+    companion object {
+        private const val MAX_COORDINATE = 180f
+        private const val MIN_COORDINATE = -180f
+        private const val MAX_IMAGE_COUNT = 3
+        private val foodSpotNameRegex = Regex("^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9!@#\$%^&*()\\-\\+ ]{1,20}\$")
     }
 }

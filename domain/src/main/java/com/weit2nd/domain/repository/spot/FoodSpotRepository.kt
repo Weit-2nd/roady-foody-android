@@ -1,5 +1,7 @@
 package com.weit2nd.domain.repository.spot
 
+import com.weit2nd.domain.model.spot.ReportFoodSpotState
+
 interface FoodSpotRepository {
     suspend fun reportFoodSpot(
         name: String,
@@ -16,5 +18,5 @@ interface FoodSpotRepository {
         longitude: Double,
         latitude: Double,
         images: List<String>,
-    )
+    ): ReportFoodSpotState
 }
