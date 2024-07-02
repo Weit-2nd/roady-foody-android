@@ -104,6 +104,7 @@ class LocalImageDatasource @Inject constructor(
     }
 
     private suspend fun getFormattedImageBytes(uri: String): ByteArray {
+        if (uri.isEmpty()) return ByteArray(0)
         val bitmap = getBitmapByUri(uri)
         val rotatedBitmap = bitmap.getRotatedBitmap(getRotate(uri))
         val scaledBitmap = rotatedBitmap.getScaledBitmap()
