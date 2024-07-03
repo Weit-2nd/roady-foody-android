@@ -7,7 +7,7 @@ import retrofit2.http.Part
 
 interface SpotService {
     @Multipart
-    @POST("/api/v1/auth")
+    @POST("/api/v1/food-spots")
     suspend fun reportFoodSpot(
         @Part reportRequest: MultipartBody.Part,
         @Part reportPhotos: List<MultipartBody.Part>?,
