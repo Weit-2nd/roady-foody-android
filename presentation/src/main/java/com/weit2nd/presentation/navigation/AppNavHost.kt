@@ -70,13 +70,6 @@ private fun NavGraphBuilder.splashComposable(
                     }
                 }
             },
-            navToSignUp = {
-                navController.navigate(SignUpNavRoutes.GRAPH) {
-                    popUpTo(SplashRoutes.GRAPH) {
-                        inclusive = true
-                    }
-                }
-            },
             navToHome = {
                 navController.navigateToHome(User("임시")) {
                     popUpTo(SplashRoutes.GRAPH) {

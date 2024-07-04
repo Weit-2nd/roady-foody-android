@@ -23,9 +23,6 @@ class SplashViewModel @Inject constructor() : BaseViewModel<SplashState, SplashS
             SplashIntent.NavToLogin -> {
                 postSideEffect(SplashSideEffect.NavToLogin)
             }
-            SplashIntent.NavToSignUp -> {
-                postSideEffect(SplashSideEffect.NavToSignUp)
-            }
         }
     }
 }

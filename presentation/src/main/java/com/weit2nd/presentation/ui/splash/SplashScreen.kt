@@ -20,7 +20,6 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SplashScreen(
     vm: SplashViewModel = hiltViewModel(),
     navToLogin: () -> Unit,
-    navToSignUp: () -> Unit,
     navToHome: () -> Unit,
 ) {
     val state = vm.collectAsState()
@@ -28,7 +27,6 @@ fun SplashScreen(
         when (sideEffect) {
             SplashSideEffect.NavToHome -> navToHome()
             SplashSideEffect.NavToLogin -> navToLogin()
-            SplashSideEffect.NavToSignUp -> navToSignUp()
         }
     }
 
