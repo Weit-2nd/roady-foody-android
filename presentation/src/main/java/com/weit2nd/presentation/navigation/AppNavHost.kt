@@ -31,6 +31,7 @@ import com.weit2nd.presentation.ui.select.place.map.SelectLocationMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.signup.terms.detail.TermDetailScreen
+import com.weit2nd.presentation.ui.splash.SplashScreen
 
 
 @Composable
@@ -41,10 +42,11 @@ fun AppNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = LoginNavRoutes.GRAPH,
+        startDestination = SplashRoutes.GRAPH,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
+        splashComposable(navController)
         loginComposable(navController)
         signUpComposable(navController)
         homeComposable(navController)
@@ -53,6 +55,36 @@ fun AppNavHost(
         selectLocationMapComposable(navController)
         termDetailComposable(navController)
         imageViewerComposable(navController)
+    }
+}
+
+private fun NavGraphBuilder.splashComposable(
+    navController: NavHostController,
+) {
+    composable(SplashRoutes.GRAPH) {
+        SplashScreen(
+            navToLogin = {
+                navController.navigate(LoginNavRoutes.GRAPH) {
+                    popUpTo(SplashRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            },
+            navToSignUp = {
+                navController.navigate(SignUpNavRoutes.GRAPH) {
+                    popUpTo(SplashRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            },
+            navToHome = {
+                navController.navigateToHome(User("임시")) {
+                    popUpTo(SplashRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            },
+        )
     }
 }
 
@@ -191,7 +223,7 @@ private fun NavHostController.navigateToSelectLocationMap(
 
 private fun NavHostController.navigateToTermDetail(
     termId: Long,
-)  {
+) {
     navigate("${TermDetailRoutes.GRAPH}/$termId")
 }
 
@@ -203,6 +235,10 @@ private fun NavHostController.navigateToImageViewer(
     val data = ImageViewerData(images, position)
     val imageDataJson = Uri.encode(Gson().toJson(data.toImageViewerDTO()))
     navigate("${ImageViewerRoutes.GRAPH}/$imageDataJson", builder)
+}
+
+object SplashRoutes {
+    const val GRAPH = "splash"
 }
 
 object LoginNavRoutes {
