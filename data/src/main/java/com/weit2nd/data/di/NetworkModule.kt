@@ -27,7 +27,7 @@ annotation class DefaultNetwork
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class AuthNetwork
+annotation class LoginNetwork
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,7 +44,7 @@ object NetworkModule {
         .addInterceptor(errorResponseInterceptor)
         .build()
 
-    @AuthNetwork
+    @LoginNetwork
     @Singleton
     @Provides
     fun provideAuthOkHttpClient(
@@ -73,12 +73,12 @@ object NetworkModule {
             .build()
     }
 
-    @AuthNetwork
+    @LoginNetwork
     @Singleton
     @Provides
     fun provideAuthRetrofit(
         @ApplicationContext context: Context,
-        @AuthNetwork okHttpClient: OkHttpClient,
+        @LoginNetwork okHttpClient: OkHttpClient,
         moshi: Moshi,
     ): Retrofit {
         return Retrofit.Builder()

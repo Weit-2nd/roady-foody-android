@@ -39,7 +39,7 @@ object LoginModule {
     @Provides
     @Singleton
     fun providesLoginService(
-        @AuthNetwork retrofit: Retrofit,
+        @LoginNetwork retrofit: Retrofit,
     ): LoginService {
         return retrofit.create(LoginService::class.java)
     }

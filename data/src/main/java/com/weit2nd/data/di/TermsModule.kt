@@ -34,7 +34,7 @@ object TermsModule {
     @ViewModelScoped
     @Provides
     fun providesTermsService(
-        @AuthNetwork retrofit: Retrofit,
+        @LoginNetwork retrofit: Retrofit,
     ): TermsService {
         return retrofit.create(TermsService::class.java)
     }
