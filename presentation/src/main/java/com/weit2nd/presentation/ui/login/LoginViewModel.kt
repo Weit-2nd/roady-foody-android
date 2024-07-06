@@ -29,6 +29,9 @@ class LoginViewModel @Inject constructor(
                         isLoading = true,
                     )
                 }
+                // TODO 로그인 UseCase는 Result로 반환되므로 runCatching 제거
+                // TODO 로그인 성공시 메인 화면으로 이동
+                // TODO UserNotFoundException이면 회원가입으로 이동
                 runCatching {
                     loginWithKakaoUseCase.invoke().getOrThrow()
                 }.onSuccess {
