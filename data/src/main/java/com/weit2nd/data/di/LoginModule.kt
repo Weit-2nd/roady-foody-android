@@ -8,7 +8,6 @@ import com.weit2nd.domain.repository.login.LoginRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -31,8 +30,10 @@ object LoginModule {
 
     @Singleton
     @Provides
-    fun providesLoginDataSource(): LoginDataSource {
-        return LoginDataSource()
+    fun providesLoginDataSource(
+        service: LoginService,
+    ): LoginDataSource {
+        return LoginDataSource(service)
     }
 
     @Provides
