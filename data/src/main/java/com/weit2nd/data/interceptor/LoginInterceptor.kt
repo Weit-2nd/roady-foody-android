@@ -9,7 +9,7 @@ class LoginInterceptor @Inject constructor(
     private val dataSource: AuthDataSource,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val authorization = BEARER_PREFIX + dataSource.getAccessToken()
+        val authorization = BEARER_PREFIX + dataSource.getSocialAccessToken()
         val newRequest = chain.request().newBuilder().apply {
             addHeader(AUTHORIZATION_HEADER, authorization)
         }
