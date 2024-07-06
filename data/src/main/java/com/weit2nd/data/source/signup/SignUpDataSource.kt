@@ -2,12 +2,12 @@ package com.weit2nd.data.source.signup
 
 import com.weit2nd.data.model.user.CheckNicknameDTO
 import com.weit2nd.data.service.CheckNicknameService
-import com.weit2nd.data.service.SignUpService
+import com.weit2nd.data.service.LoginService
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class SignUpDataSource @Inject constructor(
-    private val signUpService: SignUpService,
+    private val loginService: LoginService,
     private val checkNicknameService: CheckNicknameService,
 ) {
 
@@ -15,7 +15,7 @@ class SignUpDataSource @Inject constructor(
         image: MultipartBody.Part,
         signUpRequest: MultipartBody.Part,
     ) {
-        signUpService.signUp(
+        loginService.signUp(
             signUp = signUpRequest,
             image = image,
         )
