@@ -4,15 +4,17 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import com.weit2nd.data.model.LocalImageWithDirectory
 import com.weit2nd.data.util.getCompressedBytes
 import com.weit2nd.data.util.getRotatedBitmap
 import com.weit2nd.data.util.getScaledBitmap
+import com.weit2nd.domain.exception.imageuri.ImageUriException
 import com.weit2nd.domain.model.localimage.LocalImage
+import java.io.FileNotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
@@ -104,13 +106,36 @@ class LocalImageDatasource @Inject constructor(
     }
 
     private suspend fun getFormattedImageBytes(uri: String): ByteArray {
-        if (uri.isEmpty()) return ByteArray(0)
+        checkImageUriValid(uri)
         val bitmap = getBitmapByUri(uri)
         val rotatedBitmap = bitmap.getRotatedBitmap(getRotate(uri))
         val scaledBitmap = rotatedBitmap.getScaledBitmap()
         val bytes = scaledBitmap.getCompressedBytes()
         scaledBitmap.recycle()
         return bytes
+    }
+
+    private fun checkImageUriValid(uri: String) {
+        if (uri.isEmpty()) throw ImageUriException.EmptyUriException()
+        Uri.parse(uri).apply {
+            checkReadableUri(this)
+            checkImageType(this)
+        }
+    }
+
+    private fun checkReadableUri(uri: Uri) {
+        contentResolver.openInputStream(uri).use { inputStream ->
+            if (inputStream == null) {
+                throw FileNotFoundException("파일을 읽을 수 없습니다.")
+            }
+        }
+    }
+
+    private fun checkImageType(uri: Uri) {
+        val type = contentResolver.getType(uri)
+        if ((type != null && type.startsWith("image/")).not()) {
+            throw ImageUriException.NotImageException()
+        }
     }
 
     private suspend fun getBitmapByUri(uri: String): Bitmap = withContext(Dispatchers.IO) {
