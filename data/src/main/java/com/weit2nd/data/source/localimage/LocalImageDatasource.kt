@@ -106,36 +106,12 @@ class LocalImageDatasource @Inject constructor(
     }
 
     private suspend fun getFormattedImageBytes(uri: String): ByteArray {
-        checkImageUriValid(uri)
         val bitmap = getBitmapByUri(uri)
         val rotatedBitmap = bitmap.getRotatedBitmap(getRotate(uri))
         val scaledBitmap = rotatedBitmap.getScaledBitmap()
         val bytes = scaledBitmap.getCompressedBytes()
         scaledBitmap.recycle()
         return bytes
-    }
-
-    private fun checkImageUriValid(uri: String) {
-        if (uri.isEmpty()) throw NotImageException()
-        Uri.parse(uri).apply {
-            checkReadableUri(this)
-            checkImageType(this)
-        }
-    }
-
-    private fun checkReadableUri(uri: Uri) {
-        contentResolver.openInputStream(uri).use { inputStream ->
-            if (inputStream == null) {
-                throw FileNotFoundException()
-            }
-        }
-    }
-
-    private fun checkImageType(uri: Uri) {
-        val type = contentResolver.getType(uri)
-        if ((type != null && type.startsWith("image/")).not()) {
-            throw NotImageException()
-        }
     }
 
     private suspend fun getBitmapByUri(uri: String): Bitmap = withContext(Dispatchers.IO) {
@@ -154,5 +130,33 @@ class LocalImageDatasource @Inject constructor(
                 else -> 0f
             }
         } ?: 0f
+    }
+
+    fun checkImagesUriValid(images: List<String>): Boolean {
+        images.forEach { image ->
+            if (checkImageUriValid(image).not()) return false
+        }
+        return true
+    }
+
+    fun checkImageUriValid(uri: String): Boolean {
+        if (uri.isEmpty()) return false
+        Uri.parse(uri).apply {
+            return (checkReadableUri(this) && checkImageType(this))
+        }
+    }
+
+    private fun checkReadableUri(uri: Uri): Boolean {
+        contentResolver.openInputStream(uri).use { inputStream ->
+            if (inputStream == null) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun checkImageType(uri: Uri): Boolean {
+        val type = contentResolver.getType(uri)
+        return type != null && type.startsWith("image/")
     }
 }

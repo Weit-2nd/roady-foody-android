@@ -5,6 +5,7 @@ import com.weit2nd.data.model.user.SignUpRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
 import com.weit2nd.data.util.getMultiPart
+import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.user.SignUpException
 import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.domain.repository.signup.SignUpRepository
@@ -27,6 +28,8 @@ class SignUpRepositoryImpl @Inject constructor(
         nickname: String,
         agreedTermIds: List<Long>,
     ) {
+        if (localImageDatasource.checkImageUriValid(image).not()) throw NotImageException()
+
         val imagePart = localImageDatasource.getImageMultipartBodyPart(
             uri = image,
             formDataName = "profileImage",
