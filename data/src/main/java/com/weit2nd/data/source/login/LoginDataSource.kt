@@ -4,13 +4,17 @@ import android.app.Activity
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.weit2nd.data.model.login.LoginToken
+import com.weit2nd.data.service.LoginService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class LoginDataSource @Inject constructor() {
+class LoginDataSource @Inject constructor(
+    private val loginService: LoginService,
+) {
     suspend fun loginWithKakaoTalk(
         activity: Activity,
     ): Result<Unit> = callbackFlow {
@@ -42,7 +46,7 @@ class LoginDataSource @Inject constructor() {
         awaitClose { /* Do Nothing */ }
     }.first()
 
-    suspend fun loginToServer() {
-        // TODO: 6/2/24 (minseonglove) 서버 로그인
+    suspend fun loginToServer(): LoginToken {
+        return loginService.signIn()
     }
 }

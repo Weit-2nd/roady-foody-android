@@ -3,7 +3,7 @@ package com.weit2nd.data.di
 import com.squareup.moshi.Moshi
 import com.weit2nd.data.repository.signup.SignUpRepositoryImpl
 import com.weit2nd.data.service.CheckNicknameService
-import com.weit2nd.data.service.SignUpService
+import com.weit2nd.data.service.LoginService
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
 import com.weit2nd.domain.repository.signup.SignUpRepository
@@ -35,21 +35,13 @@ object SignUpModule {
     @ViewModelScoped
     @Provides
     fun providesSignUpDataSource(
-        signUpService: SignUpService,
+        loginService: LoginService,
         checkNicknameService: CheckNicknameService,
     ): SignUpDataSource {
         return SignUpDataSource(
-            signUpService = signUpService,
+            loginService = loginService,
             checkNicknameService = checkNicknameService,
         )
-    }
-
-    @Provides
-    @ViewModelScoped
-    fun providesUserRegistrationService(
-        @AuthNetwork retrofit: Retrofit,
-    ): SignUpService {
-        return retrofit.create(SignUpService::class.java)
     }
 
     @Provides

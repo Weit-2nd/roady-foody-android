@@ -5,7 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weit2nd.data.BuildConfig
 import com.weit2nd.data.R
-import com.weit2nd.data.interceptor.AuthInterceptor
+import com.weit2nd.data.interceptor.LoginInterceptor
 import com.weit2nd.data.interceptor.ErrorResponseInterceptor
 import com.weit2nd.data.util.LocalDateTimeConverter
 import dagger.Module
@@ -27,7 +27,7 @@ annotation class DefaultNetwork
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class AuthNetwork
+annotation class LoginNetwork
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,15 +44,15 @@ object NetworkModule {
         .addInterceptor(errorResponseInterceptor)
         .build()
 
-    @AuthNetwork
+    @LoginNetwork
     @Singleton
     @Provides
-    fun provideAuthOkHttpClient(
-        authInterceptor: AuthInterceptor,
+    fun provideLoginOkHttpClient(
+        loginInterceptor: LoginInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
         errorResponseInterceptor: ErrorResponseInterceptor,
     ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
+        .addInterceptor(loginInterceptor)
         .addInterceptor(loggingInterceptor)
         .addInterceptor(errorResponseInterceptor)
         .build()
@@ -73,12 +73,12 @@ object NetworkModule {
             .build()
     }
 
-    @AuthNetwork
+    @LoginNetwork
     @Singleton
     @Provides
-    fun provideAuthRetrofit(
+    fun provideLoginRetrofit(
         @ApplicationContext context: Context,
-        @AuthNetwork okHttpClient: OkHttpClient,
+        @LoginNetwork okHttpClient: OkHttpClient,
         moshi: Moshi,
     ): Retrofit {
         return Retrofit.Builder()

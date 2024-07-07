@@ -3,9 +3,14 @@ package com.weit2nd.data.repository.login
 import com.kakao.sdk.user.UserApiClient
 import com.weit2nd.data.source.login.LoginDataSource
 import com.weit2nd.data.util.ActivityProvider
+import com.weit2nd.domain.exception.UnknownException
+import com.weit2nd.domain.exception.user.LoginException
 import com.weit2nd.domain.repository.login.LoginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.internal.http.HTTP_NOT_FOUND
+import okhttp3.internal.http.HTTP_UNAUTHORIZED
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
@@ -25,8 +30,35 @@ class LoginRepositoryImpl @Inject constructor(
         if (kakaoLoginResult.isFailure) {
             return@withContext Result.failure(kakaoLoginResult.exceptionOrNull() ?: Exception())
         }
-        // TODO: 6/2/24 (minseonglove) 카카오 로그인을 성공했으면 서버 로그인 시도
-        loginDataSource.loginToServer()
-        return@withContext Result.success(Unit)
+        // 서버 로그인
+        loginToServer()
+    }
+
+    override suspend fun loginToServer(): Result<Unit> {
+        val serverLoginResult = runCatching {
+            loginDataSource.loginToServer()
+        }
+        return if (serverLoginResult.isSuccess) {
+            // TODO 응답으로 받은 토큰 저장
+            Result.success(Unit)
+        } else {
+            val throwable = serverLoginResult.exceptionOrNull() ?: UnknownException()
+            Result.failure(handleLoginException(throwable))
+        }
+    }
+
+    private fun handleLoginException(throwable: Throwable): Throwable {
+        return when (throwable) {
+            is HttpException -> handleLoginHttpException(throwable)
+            else -> throwable
+        }
+    }
+
+    private fun handleLoginHttpException(throwable: HttpException): Throwable {
+        return when (throwable.code()) {
+            HTTP_NOT_FOUND -> LoginException.UserNotFoundException()
+            HTTP_UNAUTHORIZED -> LoginException.InvalidTokenException()
+            else -> throwable
+        }
     }
 }

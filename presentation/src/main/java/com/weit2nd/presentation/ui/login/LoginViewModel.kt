@@ -1,7 +1,7 @@
 package com.weit2nd.presentation.ui.login
 
 import android.util.Log
-import com.weit2nd.domain.usecase.login.LoginUseCase
+import com.weit2nd.domain.usecase.login.LoginWithKakaoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase,
+    private val loginWithKakaoUseCase: LoginWithKakaoUseCase,
 ): BaseViewModel<LoginState, LoginSideEffect>() {
 
     override val container = container<LoginState, LoginSideEffect>(LoginState())
@@ -29,8 +29,11 @@ class LoginViewModel @Inject constructor(
                         isLoading = true,
                     )
                 }
+                // TODO 로그인 UseCase는 Result로 반환되므로 runCatching 제거
+                // TODO 로그인 성공시 메인 화면으로 이동
+                // TODO UserNotFoundException이면 회원가입으로 이동
                 runCatching {
-                    loginUseCase.invoke().getOrThrow()
+                    loginWithKakaoUseCase.invoke().getOrThrow()
                 }.onSuccess {
                     postSideEffect(LoginSideEffect.NavToSignUp)
                 }.onFailure {

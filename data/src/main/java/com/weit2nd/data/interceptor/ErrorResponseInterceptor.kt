@@ -16,7 +16,6 @@ class ErrorResponseInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val response = chain.proceed(request)
-
         if (!response.isSuccessful) {
             val errorBody = response.peekBody(Long.MAX_VALUE).string()
             val errorResponse: ErrorResponse? = errorAdapter.fromJson(errorBody)
