@@ -42,7 +42,7 @@ object SpotModule {
     @Provides
     @ViewModelScoped
     fun providesFoodSpotService(
-        @LoginNetwork retrofit: Retrofit,
+        @AuthNetwork retrofit: Retrofit,
     ): SpotService {
         return retrofit.create(SpotService::class.java)
     }

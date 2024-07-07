@@ -34,7 +34,7 @@ object SearchPlaceModule {
     @ViewModelScoped
     @Provides
     fun providesSearchService(
-        @LoginNetwork retrofit: Retrofit,
+        @AuthNetwork retrofit: Retrofit,
     ): SearchService {
         return retrofit.create(SearchService::class.java)
     }
