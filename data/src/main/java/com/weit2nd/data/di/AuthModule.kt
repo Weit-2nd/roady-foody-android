@@ -1,5 +1,6 @@
 package com.weit2nd.data.di
 
+import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
 import com.weit2nd.data.source.auth.AuthDataSource
 import dagger.Module
@@ -13,10 +14,18 @@ import javax.inject.Singleton
 object AuthModule {
     @Singleton
     @Provides
-    fun providesAuthInterceptor(
+    fun providesLoginInterceptor(
         dataSource: AuthDataSource,
     ): LoginInterceptor {
         return LoginInterceptor(dataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAuthInterceptor(
+        dataSource: AuthDataSource,
+    ): AuthInterceptor {
+        return AuthInterceptor(dataSource)
     }
 
     @Singleton
