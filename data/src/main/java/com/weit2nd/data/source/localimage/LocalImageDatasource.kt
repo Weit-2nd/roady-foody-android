@@ -12,7 +12,7 @@ import com.weit2nd.data.model.LocalImageWithDirectory
 import com.weit2nd.data.util.getCompressedBytes
 import com.weit2nd.data.util.getRotatedBitmap
 import com.weit2nd.data.util.getScaledBitmap
-import com.weit2nd.domain.exception.imageuri.ImageUriException
+import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.model.localimage.LocalImage
 import java.io.FileNotFoundException
 import kotlinx.coroutines.Dispatchers
@@ -116,7 +116,7 @@ class LocalImageDatasource @Inject constructor(
     }
 
     private fun checkImageUriValid(uri: String) {
-        if (uri.isEmpty()) throw ImageUriException.EmptyUriException()
+        if (uri.isEmpty()) throw NotImageException()
         Uri.parse(uri).apply {
             checkReadableUri(this)
             checkImageType(this)
@@ -126,7 +126,7 @@ class LocalImageDatasource @Inject constructor(
     private fun checkReadableUri(uri: Uri) {
         contentResolver.openInputStream(uri).use { inputStream ->
             if (inputStream == null) {
-                throw FileNotFoundException("파일을 읽을 수 없습니다.")
+                throw FileNotFoundException()
             }
         }
     }
@@ -134,7 +134,7 @@ class LocalImageDatasource @Inject constructor(
     private fun checkImageType(uri: Uri) {
         val type = contentResolver.getType(uri)
         if ((type != null && type.startsWith("image/")).not()) {
-            throw ImageUriException.NotImageException()
+            throw NotImageException()
         }
     }
 
