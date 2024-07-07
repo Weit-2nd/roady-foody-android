@@ -1,5 +1,6 @@
 package com.weit2nd.data.source.signup
 
+import com.weit2nd.data.model.login.LoginToken
 import com.weit2nd.data.model.user.CheckNicknameDTO
 import com.weit2nd.data.service.CheckNicknameService
 import com.weit2nd.data.service.LoginService
@@ -14,8 +15,8 @@ class SignUpDataSource @Inject constructor(
     suspend fun signUp(
         image: MultipartBody.Part,
         signUpRequest: MultipartBody.Part,
-    ) {
-        loginService.signUp(
+    ): LoginToken {
+        return loginService.signUp(
             signUp = signUpRequest,
             image = image,
         )

@@ -14,7 +14,7 @@ interface LoginService {
     suspend fun signUp(
         @Part signUp: MultipartBody.Part,
         @Part image: MultipartBody.Part,
-    )
+    ): LoginToken
 
     @GET("/api/v1/auth")
     suspend fun signIn(): LoginToken
