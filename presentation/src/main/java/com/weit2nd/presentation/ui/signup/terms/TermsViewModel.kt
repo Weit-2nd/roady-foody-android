@@ -36,6 +36,10 @@ class TermsViewModel @Inject constructor(
         TermsIntent.NavToTermDetail(termId).post()
     }
 
+    fun onSignUpBtnClicked() {
+        TermsIntent.NavToSignUp.post()
+    }
+
     private fun TermsIntent.post() = intent {
         when (this@post) {
             TermsIntent.GetTerms -> {
@@ -98,6 +102,12 @@ class TermsViewModel @Inject constructor(
 
             is TermsIntent.NavToTermDetail -> {
                 postSideEffect(TermsSideEffect.NavToTermDetail(termId))
+            }
+
+            TermsIntent.NavToSignUp -> {
+                val agreedTermIds = container.stateFlow.value.termStatuses.filter { it.isChecked }
+                    .map { it.term.id }
+                postSideEffect(TermsSideEffect.NavToSignUp(agreedTermIds))
             }
         }
     }

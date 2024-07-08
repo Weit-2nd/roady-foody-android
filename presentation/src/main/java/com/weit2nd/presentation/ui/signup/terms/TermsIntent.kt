@@ -10,4 +10,5 @@ sealed class TermsIntent {
     data object UpdateAllAgreementWithTermAgreements : TermsIntent()
     data object VerifyTermAgreements : TermsIntent()
     data class NavToTermDetail(val termId: Long) : TermsIntent()
+    data object NavToSignUp : TermsIntent()
 }

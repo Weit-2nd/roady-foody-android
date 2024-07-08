@@ -42,6 +42,10 @@ fun TermsScreen(
             is TermsSideEffect.NavToTermDetail -> {
                 navToTermDetail(sideEffect.termId)
             }
+
+            is TermsSideEffect.NavToSignUp -> {
+                navToSignUp(sideEffect.termIds)
+            }
         }
     }
 
@@ -87,7 +91,7 @@ fun TermsScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = state.value.canProceed,
-            onClick = { }, // 다음 화면으로 이동
+            onClick = vm::onSignUpBtnClicked,
         ) {
             Text(text = "다음")
         }

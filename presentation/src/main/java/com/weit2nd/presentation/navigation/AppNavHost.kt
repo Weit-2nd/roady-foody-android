@@ -112,7 +112,7 @@ private fun NavGraphBuilder.termsComposable(
     composable(route = TermsRoutes.GRAPH) {
         TermsScreen(
             navToSignUp = { ids ->
-                navController.navigate(SignUpNavRoutes.GRAPH) {
+                navController.navigateToSignUp(ids) {
                     popUpTo(TermsRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -143,7 +143,10 @@ private fun NavGraphBuilder.termDetailComposable(
 private fun NavGraphBuilder.signUpComposable(
     navController: NavHostController,
 ) {
-    composable(route = SignUpNavRoutes.GRAPH) {
+    composable(
+        route = "${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.TERM_IDS}}",
+        arguments = listOf(navArgument(SignUpNavRoutes.TERM_IDS) { type = NavType.StringType })
+    ) {
         SignUpScreen(
             navToHome = { user ->
                 navController.navigateToHome(user) {
@@ -241,6 +244,14 @@ private fun NavHostController.navigateToTermDetail(
     navigate("${TermDetailRoutes.GRAPH}/$termId")
 }
 
+private fun NavHostController.navigateToSignUp(
+    termIds: List<Long>,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val ids = termIds.joinToString(",")
+    navigate("${SignUpNavRoutes.GRAPH}/$ids", builder)
+}
+
 private fun NavHostController.navigateToImageViewer(
     images: List<String> = listOf(),
     position: Int = 0,
@@ -270,6 +281,7 @@ object TermDetailRoutes {
 
 object SignUpNavRoutes {
     const val GRAPH = "signup"
+    const val TERM_IDS = "agreed_term_ids"
 }
 
 object HomeNavRoutes {

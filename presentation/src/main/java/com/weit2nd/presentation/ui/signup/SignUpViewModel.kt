@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.signup
 
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.model.User
@@ -9,6 +10,7 @@ import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
 import com.weit2nd.domain.usecase.signup.SignUpUseCase
 import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.SignUpNavRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -20,13 +22,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val verifyNicknameUseCase: VerifyNicknameUseCase,
     private val checkNicknameDuplicateUseCase: CheckNicknameDuplicateUseCase,
     private val pickSingleImageUseCase: PickSingleImageUseCase,
     private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
-    override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
+    private val agreedTermIds by lazy {
+        savedStateHandle.get<String>(SignUpNavRoutes.TERM_IDS)
+            ?.split(",")?.map { it.toLong() } ?: emptyList()
+    }
+    override val container = container<SignUpState, SignUpSideEffect>(
+        SignUpState(agreedTermIds = agreedTermIds)
+    )
     private var nicknameDuplicateCheckJob: Job = Job().apply { complete() }
 
     fun onSignUpButtonClick() {
@@ -60,7 +69,7 @@ class SignUpViewModel @Inject constructor(
                         signUpUseCase.invoke(
                             image = (profileImageUri ?: "").toString(),
                             nickname = nickname,
-                            agreedTermIds = listOf(1, 2, 3), // todo 약관 화면과 연결하며 수정
+                            agreedTermIds = agreedTermIds,
                         )
                     }
                 }.onSuccess {
