@@ -113,8 +113,8 @@ private fun NavGraphBuilder.termsComposable(
 ) {
     composable(route = TermsRoutes.GRAPH) {
         TermsScreen(
-            navToSignUp = { ids ->
-                navController.navigateToSignUp(ids) {
+            navToSignUp = { agreedTermIds ->
+                navController.navigateToSignUp(agreedTermIds) {
                     popUpTo(TermsRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -247,11 +247,11 @@ private fun NavHostController.navigateToTermDetail(
 }
 
 private fun NavHostController.navigateToSignUp(
-    termIds: List<Long>,
+    agreedTermIds: List<Long>,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val termIdsJson = Uri.encode(Gson().toJson(termIds.toTermIdsDTO()))
-    navigate("${SignUpNavRoutes.GRAPH}/$termIdsJson", builder)
+    val agreedTermIdsJson = Uri.encode(Gson().toJson(agreedTermIds.toTermIdsDTO()))
+    navigate("${SignUpNavRoutes.GRAPH}/$agreedTermIdsJson", builder)
 }
 
 private fun NavHostController.navigateToImageViewer(
