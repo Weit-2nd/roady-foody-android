@@ -37,9 +37,7 @@ class SignUpViewModel @Inject constructor(
                 ?.toTermIds()
         )
     }
-    override val container = container<SignUpState, SignUpSideEffect>(
-        SignUpState(agreedTermIds = agreedTermIds)
-    )
+    override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
     private var nicknameDuplicateCheckJob: Job = Job().apply { complete() }
 
     fun onSignUpButtonClick() {
