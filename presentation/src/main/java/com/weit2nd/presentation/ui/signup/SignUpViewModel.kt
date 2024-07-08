@@ -67,7 +67,7 @@ class SignUpViewModel @Inject constructor(
         when (this@post) {
             SignUpIntent.RequestSignUp -> {
                 runCatching {
-                    container.stateFlow.value.apply {
+                    state.apply {
                         signUpUseCase.invoke(
                             image = (profileImageUri ?: "").toString(),
                             nickname = nickname,

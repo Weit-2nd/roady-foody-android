@@ -54,13 +54,13 @@ class MapViewModel @Inject constructor(
                 postSideEffect(
                     MapSideEffect.RefreshMarkers(
                         map,
-                        container.stateFlow.value.restaurants
+                        state.restaurants
                     )
                 )
             }
 
             is MapIntent.RequestCameraMove -> {
-                container.stateFlow.value.map?.let { map ->
+                state.map?.let { map ->
                     postSideEffect(MapSideEffect.MoveCamera(map, position))
                 }
             }
