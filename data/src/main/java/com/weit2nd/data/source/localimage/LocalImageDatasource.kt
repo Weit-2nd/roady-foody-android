@@ -4,15 +4,17 @@ import android.content.ContentResolver
 import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import com.weit2nd.data.model.LocalImageWithDirectory
 import com.weit2nd.data.util.getCompressedBytes
 import com.weit2nd.data.util.getRotatedBitmap
 import com.weit2nd.data.util.getScaledBitmap
+import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.model.localimage.LocalImage
+import java.io.FileNotFoundException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
@@ -104,7 +106,6 @@ class LocalImageDatasource @Inject constructor(
     }
 
     private suspend fun getFormattedImageBytes(uri: String): ByteArray {
-        if (uri.isEmpty()) return ByteArray(0)
         val bitmap = getBitmapByUri(uri)
         val rotatedBitmap = bitmap.getRotatedBitmap(getRotate(uri))
         val scaledBitmap = rotatedBitmap.getScaledBitmap()
@@ -129,5 +130,30 @@ class LocalImageDatasource @Inject constructor(
                 else -> 0f
             }
         } ?: 0f
+    }
+
+    fun checkImagesUriValid(images: List<String>): Boolean {
+        return images.all { image -> checkImageUriValid(image) }
+    }
+
+    fun checkImageUriValid(uri: String): Boolean {
+        if (uri.isEmpty()) return false
+        Uri.parse(uri).apply {
+            return (checkReadableUri(this) && checkImageType(this))
+        }
+    }
+
+    private fun checkReadableUri(uri: Uri): Boolean {
+        contentResolver.openInputStream(uri).use { inputStream ->
+            if (inputStream == null) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun checkImageType(uri: Uri): Boolean {
+        val type = contentResolver.getType(uri)
+        return type != null && type.startsWith("image/")
     }
 }

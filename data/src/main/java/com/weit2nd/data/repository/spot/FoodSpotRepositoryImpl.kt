@@ -5,6 +5,7 @@ import com.weit2nd.data.model.spot.ReportFoodSpotRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
+import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import javax.inject.Inject
@@ -23,6 +24,8 @@ class FoodSpotRepositoryImpl @Inject constructor(
         closed: Boolean,
         images: List<String>,
     ) {
+        if (localImageDatasource.checkImagesUriValid(images).not()) throw NotImageException()
+
         val imageParts = images.map { image ->
             localImageDatasource.getImageMultipartBodyPart(
                 uri = image,
@@ -64,15 +67,19 @@ class FoodSpotRepositoryImpl @Inject constructor(
             invalidImage != null -> {
                 ReportFoodSpotState.InvalidImage(invalidImage)
             }
+
             verifyCoordinate(longitude, latitude).not() -> {
                 ReportFoodSpotState.BadCoordinate
             }
+
             images.size > MAX_IMAGE_COUNT -> {
                 ReportFoodSpotState.TooManyImages
             }
+
             verifyName(name).not() -> {
                 ReportFoodSpotState.BadFoodSpotName
             }
+
             else -> {
                 ReportFoodSpotState.Valid
             }

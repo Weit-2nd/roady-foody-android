@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.signup
 
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
+import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.pickimage.PickSingleImageUseCase
 import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
@@ -65,7 +66,11 @@ class SignUpViewModel @Inject constructor(
                 }.onSuccess {
                     postSideEffect(SignUpSideEffect.NavToHome(User("으악")))
                 }.onFailure { throwable ->
-                    throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
+                    if (throwable is NotImageException) {
+                        postSideEffect(SignUpSideEffect.ShowToast("업로드된 파일이 이미지 형식이 아닙니다."))
+                    } else {
+                        throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
+                    }
                 }
             }
 
