@@ -36,7 +36,7 @@ class LoginViewModel @Inject constructor(
                     .onSuccess { postSideEffect(LoginSideEffect.NavToHome(User("test"))) }
                     .onFailure { throwable ->
                         if (throwable is LoginException.UserNotFoundException) {
-                            postSideEffect(LoginSideEffect.NavToSignUp)
+                            postSideEffect(LoginSideEffect.NavToTermAgreement)
                         } else {
                             Log.e("LoginError", "$throwable")
                             reduce {

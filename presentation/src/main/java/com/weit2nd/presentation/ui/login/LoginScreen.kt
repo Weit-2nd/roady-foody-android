@@ -20,7 +20,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun LoginScreen(
     vm: LoginViewModel = hiltViewModel(),
     navToHome: (User) -> Unit,
-    navToSignUp: () -> Unit,
+    navToTermAgreement: () -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
@@ -29,8 +29,8 @@ fun LoginScreen(
                 navToHome(sideEffect.user)
             }
 
-            is LoginSideEffect.NavToSignUp -> {
-                navToSignUp()
+            is LoginSideEffect.NavToTermAgreement -> {
+                navToTermAgreement()
             }
         }
     }

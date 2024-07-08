@@ -30,6 +30,7 @@ import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
 import com.weit2nd.presentation.ui.select.place.map.SelectLocationMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
+import com.weit2nd.presentation.ui.signup.terms.TermsScreen
 import com.weit2nd.presentation.ui.signup.terms.detail.TermDetailScreen
 import com.weit2nd.presentation.ui.splash.SplashScreen
 
@@ -48,6 +49,7 @@ fun AppNavHost(
     ) {
         splashComposable(navController)
         loginComposable(navController)
+        termsComposable(navController)
         signUpComposable(navController)
         homeComposable(navController)
         selectPictureComposable(navController)
@@ -93,12 +95,46 @@ private fun NavGraphBuilder.loginComposable(
                     }
                 }
             },
-            navToSignUp = {
-                navController.navigate(SignUpNavRoutes.GRAPH) {
+            navToTermAgreement = {
+                navController.navigate(TermsRoutes.GRAPH) {
                     popUpTo(LoginNavRoutes.GRAPH) {
                         inclusive = true
                     }
                 }
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.termsComposable(
+    navController: NavHostController,
+) {
+    composable(route = TermsRoutes.GRAPH) {
+        TermsScreen(
+            navToSignUp = { ids ->
+                navController.navigate(SignUpNavRoutes.GRAPH) {
+                    popUpTo(TermsRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            },
+            navToTermDetail = { id ->
+                navController.navigateToTermDetail(id)
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.termDetailComposable(
+    navController: NavHostController,
+) {
+    composable(
+        "${TermDetailRoutes.GRAPH}/{${TermDetailRoutes.TERM_ID}}",
+        arguments = listOf(navArgument(TermDetailRoutes.TERM_ID) { type = NavType.LongType })
+    ) {
+        TermDetailScreen(
+            navToBack = {
+                navController.popBackStack()
             }
         )
     }
@@ -168,21 +204,6 @@ private fun NavGraphBuilder.selectLocationMapComposable(
     }
 }
 
-private fun NavGraphBuilder.termDetailComposable(
-    navController: NavHostController,
-) {
-    composable(
-        "${TermDetailRoutes.GRAPH}/{${TermDetailRoutes.TERM_ID}}",
-        arguments = listOf(navArgument(TermDetailRoutes.TERM_ID) { type = NavType.LongType })
-    ) {
-        TermDetailScreen(
-            navToBack = {
-                navController.popBackStack()
-            }
-        )
-    }
-}
-
 private fun NavGraphBuilder.imageViewerComposable(
     navController: NavHostController,
 ) {
@@ -238,6 +259,15 @@ object LoginNavRoutes {
     const val GRAPH = "login"
 }
 
+object TermsRoutes {
+    const val GRAPH = "terms"
+}
+
+object TermDetailRoutes {
+    const val GRAPH = "term_detail"
+    const val TERM_ID = "term_id"
+}
+
 object SignUpNavRoutes {
     const val GRAPH = "signup"
 }
@@ -253,11 +283,6 @@ object SelectPictureRoutes {
 
 object SelectLocationRoutes {
     const val GRAPH = "select_location"
-}
-
-object TermDetailRoutes {
-    const val GRAPH = "term_detail"
-    const val TERM_ID = "term_id"
 }
 
 object SelectLocationMapRoutes {
