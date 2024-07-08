@@ -133,10 +133,7 @@ class LocalImageDatasource @Inject constructor(
     }
 
     fun checkImagesUriValid(images: List<String>): Boolean {
-        images.forEach { image ->
-            if (checkImageUriValid(image).not()) return false
-        }
-        return true
+        return images.all { image -> checkImageUriValid(image) }
     }
 
     fun checkImageUriValid(uri: String): Boolean {
