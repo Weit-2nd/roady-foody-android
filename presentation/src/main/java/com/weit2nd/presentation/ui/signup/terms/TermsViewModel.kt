@@ -36,6 +36,10 @@ class TermsViewModel @Inject constructor(
         TermsIntent.NavToTermDetail(termId).post()
     }
 
+    fun onSignUpBtnClicked() {
+        TermsIntent.NavToSignUp.post()
+    }
+
     private fun TermsIntent.post() = intent {
         when (this@post) {
             TermsIntent.GetTerms -> {
@@ -50,7 +54,7 @@ class TermsViewModel @Inject constructor(
             is TermsIntent.SetAllAgreement -> {
                 reduce {
                     state.copy(
-                        termStatuses = container.stateFlow.value.termStatuses.map {
+                        termStatuses = state.termStatuses.map {
                             it.copy(isChecked = isChecked)
                         },
                         agreeAll = isChecked
@@ -61,7 +65,7 @@ class TermsViewModel @Inject constructor(
             is TermsIntent.SetTermAgreement -> {
                 reduce {
                     state.copy(
-                        termStatuses = container.stateFlow.value.termStatuses.map {
+                        termStatuses = state.termStatuses.map {
                             if (it.term == term) it.copy(isChecked = isChecked) else it
                         }
                     )
@@ -69,7 +73,7 @@ class TermsViewModel @Inject constructor(
             }
 
             TermsIntent.UpdateAllAgreementWithTermAgreements -> {
-                if (container.stateFlow.value.termStatuses.all { it.isChecked }) {
+                if (state.termStatuses.all { it.isChecked }) {
                     reduce {
                         state.copy(
                             agreeAll = true
@@ -85,7 +89,7 @@ class TermsViewModel @Inject constructor(
             }
 
             TermsIntent.VerifyTermAgreements -> {
-                val canProceed = container.stateFlow.value.termStatuses
+                val canProceed = state.termStatuses
                     .filter { it.term.isRequired }
                     .all { it.isChecked }
 
@@ -98,6 +102,12 @@ class TermsViewModel @Inject constructor(
 
             is TermsIntent.NavToTermDetail -> {
                 postSideEffect(TermsSideEffect.NavToTermDetail(termId))
+            }
+
+            TermsIntent.NavToSignUp -> {
+                val agreedTermIds = state.termStatuses.filter { it.isChecked }
+                    .map { it.term.id }
+                postSideEffect(TermsSideEffect.NavToSignUp(agreedTermIds))
             }
         }
     }

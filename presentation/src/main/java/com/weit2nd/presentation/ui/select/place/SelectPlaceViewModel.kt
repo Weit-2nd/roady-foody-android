@@ -37,7 +37,7 @@ class SelectPlaceViewModel @Inject constructor(
             SelectPlaceIntent.SearchPlace -> {
                 runCatching {
                     val result =
-                        searchPlacesWithWordUseCase(searchWord = container.stateFlow.value.userInput)
+                        searchPlacesWithWordUseCase(searchWord = state.userInput)
                     reduce {
                         state.copy(
                             searchResults = result

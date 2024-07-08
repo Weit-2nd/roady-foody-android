@@ -32,13 +32,19 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun TermsScreen(
-    vm: TermsViewModel = hiltViewModel()
+    vm: TermsViewModel = hiltViewModel(),
+    navToSignUp: (termIds: List<Long>) -> Unit,
+    navToTermDetail: (Long) -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is TermsSideEffect.NavToTermDetail -> {
-                // TODO: 약관 상세 화면으로 이동
+                navToTermDetail(sideEffect.termId)
+            }
+
+            is TermsSideEffect.NavToSignUp -> {
+                navToSignUp(sideEffect.termIds)
             }
         }
     }
@@ -85,7 +91,7 @@ fun TermsScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             enabled = state.value.canProceed,
-            onClick = { }, // 다음 화면으로 이동
+            onClick = vm::onSignUpBtnClicked,
         ) {
             Text(text = "다음")
         }

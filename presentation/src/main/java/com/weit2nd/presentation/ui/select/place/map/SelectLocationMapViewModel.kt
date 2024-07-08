@@ -112,7 +112,7 @@ class SelectLocationMapViewModel @Inject constructor(
             }
 
             is SelectLocationMapIntent.RequestCameraMove -> {
-                container.stateFlow.value.map?.let { map ->
+                state.map?.let { map ->
                     postSideEffect(SelectLocationMapSideEffect.MoveCamera(map, position))
                 }
             }
