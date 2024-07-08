@@ -11,6 +11,8 @@ import com.weit2nd.domain.usecase.signup.SignUpUseCase
 import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SignUpNavRoutes
+import com.weit2nd.presentation.navigation.dto.TermIdsDTO
+import com.weit2nd.presentation.navigation.dto.toTermIds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -30,8 +32,10 @@ class SignUpViewModel @Inject constructor(
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
 
     private val agreedTermIds by lazy {
-        savedStateHandle.get<String>(SignUpNavRoutes.TERM_IDS)
-            ?.split(",")?.map { it.toLong() } ?: emptyList()
+        checkNotNull(
+            savedStateHandle.get<TermIdsDTO>(SignUpNavRoutes.TERM_IDS)
+                ?.toTermIds()
+        )
     }
     override val container = container<SignUpState, SignUpSideEffect>(
         SignUpState(agreedTermIds = agreedTermIds)

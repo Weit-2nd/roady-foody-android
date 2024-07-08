@@ -18,10 +18,12 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
+import com.weit2nd.presentation.navigation.dto.toTermIdsDTO
 import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
+import com.weit2nd.presentation.navigation.type.TermIdsType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
@@ -145,7 +147,7 @@ private fun NavGraphBuilder.signUpComposable(
 ) {
     composable(
         route = "${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.TERM_IDS}}",
-        arguments = listOf(navArgument(SignUpNavRoutes.TERM_IDS) { type = NavType.StringType })
+        arguments = listOf(navArgument(SignUpNavRoutes.TERM_IDS) { type = TermIdsType() })
     ) {
         SignUpScreen(
             navToHome = { user ->
@@ -248,8 +250,8 @@ private fun NavHostController.navigateToSignUp(
     termIds: List<Long>,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val ids = termIds.joinToString(",")
-    navigate("${SignUpNavRoutes.GRAPH}/$ids", builder)
+    val termIdsJson = Uri.encode(Gson().toJson(termIds.toTermIdsDTO()))
+    navigate("${SignUpNavRoutes.GRAPH}/$termIdsJson", builder)
 }
 
 private fun NavHostController.navigateToImageViewer(
