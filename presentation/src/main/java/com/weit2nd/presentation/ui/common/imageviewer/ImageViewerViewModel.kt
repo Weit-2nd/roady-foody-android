@@ -6,8 +6,6 @@ import com.weit2nd.presentation.navigation.ImageViewerRoutes
 import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 

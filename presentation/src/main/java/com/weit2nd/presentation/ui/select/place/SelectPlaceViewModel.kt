@@ -3,8 +3,6 @@ package com.weit2nd.presentation.ui.select.place
 import com.weit2nd.domain.usecase.search.SearchPlacesWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.orbitmvi.orbit.syntax.simple.intent
-import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
