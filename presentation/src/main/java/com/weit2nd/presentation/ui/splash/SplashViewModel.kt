@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.splash
 
+import com.weit2nd.domain.usecase.login.LoginWithKakaoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -8,20 +9,21 @@ import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor() : BaseViewModel<SplashState, SplashSideEffect>() {
+class SplashViewModel @Inject constructor(
+    private val loginWithKakaoUseCase: LoginWithKakaoUseCase,
+) : BaseViewModel<SplashState, SplashSideEffect>() {
     override val container = container<SplashState, SplashSideEffect>(SplashState())
 
-    fun onSplashEnd() {
-        SplashIntent.NavToLogin.post()  // 임시 이동
+    fun onCreate() {
+        SplashIntent.RequestLogin.post()
     }
 
     private fun SplashIntent.post() = intent {
         when (this@post) {
-            SplashIntent.NavToHome -> {
-                postSideEffect(SplashSideEffect.NavToHome)
-            }
-            SplashIntent.NavToLogin -> {
-                postSideEffect(SplashSideEffect.NavToLogin)
+            SplashIntent.RequestLogin -> {
+                loginWithKakaoUseCase.invoke()
+                    .onSuccess { postSideEffect(SplashSideEffect.NavToHome) }
+                    .onFailure { postSideEffect(SplashSideEffect.NavToLogin) }
             }
         }
     }
