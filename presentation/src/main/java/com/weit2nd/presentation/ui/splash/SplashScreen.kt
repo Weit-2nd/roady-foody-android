@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -38,8 +37,7 @@ fun SplashScreen(
             targetValue = 1f,
             animationSpec = tween(1500)
         )
-        delay(1000L)    // 로그인 시도 시간 임시 설정
-        vm.onSplashEnd()
+        vm.onCreate()
     }
 
     Box(
