@@ -13,37 +13,38 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginWithKakaoUseCase: LoginWithKakaoUseCase,
 ) : BaseViewModel<LoginState, LoginSideEffect>() {
-
     override val container = container<LoginState, LoginSideEffect>(LoginState())
 
     fun onLoginButtonClick() {
         LoginIntent.RequestLogin.post()
     }
 
-    private fun LoginIntent.post() = intent {
-        when (this@post) {
-            LoginIntent.RequestLogin -> {
-                reduce {
-                    state.copy(
-                        isLoading = true,
-                    )
-                }
+    private fun LoginIntent.post() =
+        intent {
+            when (this@post) {
+                LoginIntent.RequestLogin -> {
+                    reduce {
+                        state.copy(
+                            isLoading = true,
+                        )
+                    }
 
-                loginWithKakaoUseCase.invoke()
-                    .onSuccess { postSideEffect(LoginSideEffect.NavToHome(User("test"))) }
-                    .onFailure { throwable ->
-                        if (throwable is LoginException.UserNotFoundException) {
-                            postSideEffect(LoginSideEffect.NavToTermAgreement)
-                        } else {
-                            Log.e("LoginError", "$throwable")
-                            reduce {
-                                state.copy(
-                                    isLoading = false,
-                                )
+                    loginWithKakaoUseCase
+                        .invoke()
+                        .onSuccess { postSideEffect(LoginSideEffect.NavToHome(User("test"))) }
+                        .onFailure { throwable ->
+                            if (throwable is LoginException.UserNotFoundException) {
+                                postSideEffect(LoginSideEffect.NavToTermAgreement)
+                            } else {
+                                Log.e("LoginError", "$throwable")
+                                reduce {
+                                    state.copy(
+                                        isLoading = false,
+                                    )
+                                }
                             }
                         }
-                    }
+                }
             }
         }
-    }
 }

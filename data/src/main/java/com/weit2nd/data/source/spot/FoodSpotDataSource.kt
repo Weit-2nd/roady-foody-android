@@ -8,7 +8,6 @@ import javax.inject.Inject
 class FoodSpotDataSource @Inject constructor(
     private val service: SpotService,
 ) {
-
     suspend fun reportFoodSpot(
         reportRequest: MultipartBody.Part,
         reportPhotos: List<MultipartBody.Part>?,

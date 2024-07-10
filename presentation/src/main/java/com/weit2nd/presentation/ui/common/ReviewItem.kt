@@ -37,7 +37,7 @@ fun ReviewItem(
     onImageClick: (images: List<String>, position: Int) -> Unit,
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -45,9 +45,10 @@ fun ReviewItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserInfo(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp),
                 profileImage = review.profileImage,
                 nickname = review.nickname,
             )
@@ -65,10 +66,11 @@ fun ReviewItem(
         Text(
             modifier = Modifier.padding(top = 8.dp),
             text = review.reviewDetail,
-            style = TextStyle(
-                fontSize = 14.sp,
-                color = Color.Black
-            ),
+            style =
+                TextStyle(
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                ),
         )
     }
 }
@@ -77,7 +79,7 @@ fun ReviewItem(
 private fun UserInfo(
     modifier: Modifier = Modifier,
     profileImage: String,
-    nickname: String
+    nickname: String,
 ) {
     Row(
         modifier = modifier,
@@ -85,17 +87,19 @@ private fun UserInfo(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProfileImage(
-            modifier = Modifier
-                .clip(CircleShape)
-                .size(24.dp),
+            modifier =
+                Modifier
+                    .clip(CircleShape)
+                    .size(24.dp),
             imgUri = profileImage.toUri(),
         )
         Text(
             text = nickname,
-            style = TextStyle(
-                fontSize = 12.sp,
-                color = Color.Black
-            ),
+            style =
+                TextStyle(
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -106,17 +110,18 @@ private fun UserInfo(
 private fun ReviewDateAndRating(
     modifier: Modifier = Modifier,
     date: LocalDateTime,
-    rating: Float
+    rating: Float,
 ) {
     Column(
         modifier = modifier,
     ) {
         Text(
             text = reviewDateFormatter.format(date),
-            style = TextStyle(
-                fontSize = 12.sp,
-                color = Color.Black
-            ),
+            style =
+                TextStyle(
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                ),
         )
         RatingBar(
             value = rating,
@@ -140,7 +145,7 @@ private fun ReviewImages(
 ) {
     LazyRow(
         modifier = modifier.padding(top = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         itemsIndexed(images) { index, image ->
             GlideImage(

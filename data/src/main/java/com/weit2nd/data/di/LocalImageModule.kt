@@ -14,12 +14,9 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object LocalImageModule {
-
     @ViewModelScoped
     @Provides
-    fun provideLocalImageRepository(
-        localImageDatasource: LocalImageDatasource,
-    ): LocalImageRepository {
+    fun provideLocalImageRepository(localImageDatasource: LocalImageDatasource): LocalImageRepository {
         return LocalImageRepositoryImpl(localImageDatasource)
     }
 

@@ -14,6 +14,6 @@ fun HtmlText(
     AndroidView(
         modifier = modifier,
         factory = { context -> TextView(context) },
-        update = { it.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT) }
+        update = { it.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT) },
     )
 }

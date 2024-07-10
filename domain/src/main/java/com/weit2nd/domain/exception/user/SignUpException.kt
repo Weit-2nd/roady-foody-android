@@ -3,7 +3,6 @@ package com.weit2nd.domain.exception.user
 sealed class SignUpException(
     message: String,
 ) : Throwable(message) {
-
     class BadRequestException(
         message: String,
     ) : SignUpException(message)

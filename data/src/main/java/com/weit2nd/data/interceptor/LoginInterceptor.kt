@@ -10,9 +10,10 @@ class LoginInterceptor @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val authorization = BEARER_PREFIX + dataSource.getSocialAccessToken()
-        val newRequest = chain.request().newBuilder().apply {
-            addHeader(AUTHORIZATION_HEADER, authorization)
-        }
+        val newRequest =
+            chain.request().newBuilder().apply {
+                addHeader(AUTHORIZATION_HEADER, authorization)
+            }
         return chain.proceed(newRequest.build())
     }
 

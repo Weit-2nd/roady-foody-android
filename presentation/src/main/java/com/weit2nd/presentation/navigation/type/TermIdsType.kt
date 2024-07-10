@@ -7,7 +7,10 @@ import com.google.gson.Gson
 import com.weit2nd.presentation.navigation.dto.TermIdsDTO
 
 class TermIdsType : NavType<TermIdsDTO>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): TermIdsDTO? {
+    override fun get(
+        bundle: Bundle,
+        key: String,
+    ): TermIdsDTO? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle.getParcelable(key, TermIdsDTO::class.java)
         } else {
@@ -19,7 +22,11 @@ class TermIdsType : NavType<TermIdsDTO>(isNullableAllowed = false) {
         return Gson().fromJson(value, TermIdsDTO::class.java)
     }
 
-    override fun put(bundle: Bundle, key: String, value: TermIdsDTO) {
+    override fun put(
+        bundle: Bundle,
+        key: String,
+        value: TermIdsDTO,
+    ) {
         bundle.putParcelable(key, value)
     }
 }

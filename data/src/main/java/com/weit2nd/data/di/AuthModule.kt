@@ -14,17 +14,13 @@ import javax.inject.Singleton
 object AuthModule {
     @Singleton
     @Provides
-    fun providesLoginInterceptor(
-        dataSource: AuthDataSource,
-    ): LoginInterceptor {
+    fun providesLoginInterceptor(dataSource: AuthDataSource): LoginInterceptor {
         return LoginInterceptor(dataSource)
     }
 
     @Singleton
     @Provides
-    fun providesAuthInterceptor(
-        dataSource: AuthDataSource,
-    ): AuthInterceptor {
+    fun providesAuthInterceptor(dataSource: AuthDataSource): AuthInterceptor {
         return AuthInterceptor(dataSource)
     }
 

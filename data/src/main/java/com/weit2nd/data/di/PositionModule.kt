@@ -15,7 +15,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object PositionModule {
-
     @ViewModelScoped
     @Provides
     fun provideCurrentPositionRepository(

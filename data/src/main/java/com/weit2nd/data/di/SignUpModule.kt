@@ -18,7 +18,6 @@ import retrofit2.Retrofit
 @Module
 @InstallIn(ViewModelComponent::class)
 object SignUpModule {
-
     @ViewModelScoped
     @Provides
     fun providesSignUpRepository(

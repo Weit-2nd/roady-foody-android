@@ -12,12 +12,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RestaurantHiltModule {
-
     @Singleton
     @Provides
-    fun providesRestaurantRepository(
-        restaurantDataSource: RestaurantDataSource,
-    ): RestaurantRepository {
+    fun providesRestaurantRepository(restaurantDataSource: RestaurantDataSource): RestaurantRepository {
         return RestaurantRepositoryImpl(
             restaurantDataSource = restaurantDataSource,
         )

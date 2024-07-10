@@ -7,7 +7,10 @@ import com.google.gson.Gson
 import com.weit2nd.presentation.navigation.dto.CoordinateDTO
 
 class CoordinateType : NavType<CoordinateDTO>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): CoordinateDTO? {
+    override fun get(
+        bundle: Bundle,
+        key: String,
+    ): CoordinateDTO? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle.getParcelable(key, CoordinateDTO::class.java)
         } else {
@@ -19,7 +22,11 @@ class CoordinateType : NavType<CoordinateDTO>(isNullableAllowed = false) {
         return Gson().fromJson(value, CoordinateDTO::class.java)
     }
 
-    override fun put(bundle: Bundle, key: String, value: CoordinateDTO) {
+    override fun put(
+        bundle: Bundle,
+        key: String,
+        value: CoordinateDTO,
+    ) {
         bundle.putParcelable(key, value)
     }
 }

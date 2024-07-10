@@ -14,5 +14,4 @@ class PickImageRepositoryImpl @Inject constructor(
     override suspend fun pickImages(maximumSelect: Int): List<String> {
         return dataSource.pickImages(maximumSelect).map { it.toString() }
     }
-
 }

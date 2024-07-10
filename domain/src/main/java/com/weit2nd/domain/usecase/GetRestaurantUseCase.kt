@@ -11,7 +11,7 @@ class GetRestaurantUseCase @Inject constructor(
         startLat: Double,
         startLng: Double,
         endLat: Double,
-        endLng: Double
+        endLng: Double,
     ): List<Restaurant> {
         return repository.getRestaurants(startLat, startLng, endLat, endLng)
     }

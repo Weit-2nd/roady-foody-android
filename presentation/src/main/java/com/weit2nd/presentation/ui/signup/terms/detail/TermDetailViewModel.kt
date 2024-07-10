@@ -16,7 +16,6 @@ class TermDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val termDetailUseCase: GetTermDetailUseCase,
 ) : BaseViewModel<TermDetailState, TermDetailSideEffect>() {
-
     override val container: Container<TermDetailState, TermDetailSideEffect> =
         container(TermDetailState())
 
@@ -38,46 +37,46 @@ class TermDetailViewModel @Inject constructor(
         TermDetailIntent.NavToBack.post()
     }
 
-
-    private fun TermDetailIntent.post() = intent {
-        when (this@post) {
-            is TermDetailIntent.LoadTerm -> {
-                reduce {
-                    state.copy(
-                        isRetryNeeded = false,
-                    )
-                }
-                runCatching {
-                    termDetailUseCase(termId)
-                }.onSuccess { termDetail ->
+    private fun TermDetailIntent.post() =
+        intent {
+            when (this@post) {
+                is TermDetailIntent.LoadTerm -> {
                     reduce {
                         state.copy(
-                            title = termDetail.title,
-                            contents =  termDetail.content,
-                            isRequired = termDetail.isRequired,
+                            isRetryNeeded = false,
                         )
                     }
-                }.onFailure {
-                    if (it is TermIdNotFoundException) {
-                        postSideEffect(TermDetailSideEffect.ShowToast(R.string.term_detail_id_not_found))
-                        postSideEffect(TermDetailSideEffect.NavToBack)
-                    } else {
-                        postSideEffect(TermDetailSideEffect.ShowToast(R.string.term_detail_network_error))
+                    runCatching {
+                        termDetailUseCase(termId)
+                    }.onSuccess { termDetail ->
                         reduce {
                             state.copy(
-                                isRetryNeeded = true,
+                                title = termDetail.title,
+                                contents = termDetail.content,
+                                isRequired = termDetail.isRequired,
                             )
+                        }
+                    }.onFailure {
+                        if (it is TermIdNotFoundException) {
+                            postSideEffect(TermDetailSideEffect.ShowToast(R.string.term_detail_id_not_found))
+                            postSideEffect(TermDetailSideEffect.NavToBack)
+                        } else {
+                            postSideEffect(TermDetailSideEffect.ShowToast(R.string.term_detail_network_error))
+                            reduce {
+                                state.copy(
+                                    isRetryNeeded = true,
+                                )
+                            }
                         }
                     }
                 }
-            }
-            TermDetailIntent.NavToBack -> {
-                postSideEffect(TermDetailSideEffect.NavToBack)
-            }
-            TermDetailIntent.MissingTermId -> {
-                postSideEffect(TermDetailSideEffect.ShowToast(R.string.term_detail_id_not_found))
-                postSideEffect(TermDetailSideEffect.NavToBack)
+                TermDetailIntent.NavToBack -> {
+                    postSideEffect(TermDetailSideEffect.NavToBack)
+                }
+                TermDetailIntent.MissingTermId -> {
+                    postSideEffect(TermDetailSideEffect.ShowToast(R.string.term_detail_id_not_found))
+                    postSideEffect(TermDetailSideEffect.NavToBack)
+                }
             }
         }
-    }
 }

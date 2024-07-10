@@ -7,12 +7,14 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UserDTO(
     val name: String,
-): Parcelable
+) : Parcelable
 
-fun UserDTO.toUser(): User = User(
-    name = name,
-)
+fun UserDTO.toUser(): User =
+    User(
+        name = name,
+    )
 
-fun User.toUserDTO(): UserDTO = UserDTO(
-    name = name,
-)
+fun User.toUserDTO(): UserDTO =
+    UserDTO(
+        name = name,
+    )

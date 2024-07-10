@@ -1,6 +1,6 @@
 package com.weit2nd.domain.model
 
-enum class NicknameState{
+enum class NicknameState {
     EMPTY,
     INVALID_LENGTH,
     INVALID_CHARACTERS,

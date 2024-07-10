@@ -14,20 +14,15 @@ import retrofit2.Retrofit
 @Module
 @InstallIn(ViewModelComponent::class)
 object SearchPlaceModule {
-
     @ViewModelScoped
     @Provides
-    fun providesSearchPlaceRepository(
-        searchLocationDataSource: SearchPlaceDataSource,
-    ): SearchPlaceRepository {
+    fun providesSearchPlaceRepository(searchLocationDataSource: SearchPlaceDataSource): SearchPlaceRepository {
         return SearchPlaceRepositoryImpl(searchLocationDataSource)
     }
 
     @ViewModelScoped
     @Provides
-    fun providesSearchPlaceDatasource(
-        service: SearchService,
-    ): SearchPlaceDataSource {
+    fun providesSearchPlaceDatasource(service: SearchService): SearchPlaceDataSource {
         return SearchPlaceDataSource(service)
     }
 

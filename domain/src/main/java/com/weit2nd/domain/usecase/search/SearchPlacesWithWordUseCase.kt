@@ -7,7 +7,6 @@ import javax.inject.Inject
 class SearchPlacesWithWordUseCase @Inject constructor(
     val repository: SearchPlaceRepository,
 ) {
-
     suspend operator fun invoke(
         count: Int = DEFAULT_COUNT,
         searchWord: String,

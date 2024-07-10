@@ -32,7 +32,7 @@ fun CurrentPositionBtn(
 private fun handleSideEffects(
     sideEffect: CurrentPositionSideEffect,
     onClick: (LatLng) -> Unit,
-    onError: (Throwable) -> Unit
+    onError: (Throwable) -> Unit,
 ) {
     when (sideEffect) {
         is CurrentPositionSideEffect.PositionRequestSuccess -> {

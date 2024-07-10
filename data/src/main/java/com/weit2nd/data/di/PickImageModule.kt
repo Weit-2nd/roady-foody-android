@@ -13,20 +13,15 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object PickImageModule {
-
     @Singleton
     @Provides
-    fun providesPickImageRepository(
-        dataSource: PickImageDataSource,
-    ): PickImageRepository {
+    fun providesPickImageRepository(dataSource: PickImageDataSource): PickImageRepository {
         return PickImageRepositoryImpl(dataSource)
     }
 
     @Singleton
     @Provides
-    fun providesPickImageDataSource(
-        activityProvider: ActivityProvider,
-    ): PickImageDataSource {
+    fun providesPickImageDataSource(activityProvider: ActivityProvider): PickImageDataSource {
         return PickImageDataSource(activityProvider)
     }
 }

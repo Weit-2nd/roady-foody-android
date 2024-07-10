@@ -6,7 +6,6 @@ import javax.inject.Inject
 class LoginWithKakaoUseCase @Inject constructor(
     private val repository: LoginRepository,
 ) {
-
     /**
      * 카카오로 로그인 합니다.
      *

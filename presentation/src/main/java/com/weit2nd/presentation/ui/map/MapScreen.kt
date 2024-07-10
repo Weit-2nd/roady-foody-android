@@ -32,7 +32,6 @@ import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
-
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
@@ -44,18 +43,19 @@ fun MapScreen(
         handleSideEffects(sideEffect)
     }
     val context = LocalContext.current
-    val mapView = remember {
-        MapView(context).apply {
-            start(
-                mapLifeCycleCallback(),
-                kakaoMapReadyCallback(
-                    vm::onMapReady,
-                    vm::onCameraMoveEnd,
-                    position,
-                ),
-            )
+    val mapView =
+        remember {
+            MapView(context).apply {
+                start(
+                    mapLifeCycleCallback(),
+                    kakaoMapReadyCallback(
+                        vm::onMapReady,
+                        vm::onCameraMoveEnd,
+                        position,
+                    ),
+                )
+            }
         }
-    }
 
     LaunchedEffect(state.value.restaurants) {
         state.value.map?.let {
@@ -68,14 +68,15 @@ fun MapScreen(
     Box(modifier = modifier) {
         AndroidView(
             modifier = modifier,
-            factory = { mapView }
+            factory = { mapView },
         )
 
         CurrentPositionBtn(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(end = 16.dp, bottom = 24.dp),
-            onClick = vm::onClickCurrentPositionBtn
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 16.dp, bottom = 24.dp),
+            onClick = vm::onClickCurrentPositionBtn,
         )
     }
 }
@@ -92,20 +93,24 @@ private fun handleSideEffects(sideEffect: MapSideEffect) {
     }
 }
 
-private fun moveCamera(map: KakaoMap, position: LatLng) {
+private fun moveCamera(
+    map: KakaoMap,
+    position: LatLng,
+) {
     val cameraUpdate = CameraUpdateFactory.newCenterPosition(position)
     map.moveCamera(cameraUpdate)
 }
 
-private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
-    override fun onMapDestroy() {
-        Log.d("KakaoMap", "onMapDestroy")
-    }
+private fun mapLifeCycleCallback() =
+    object : MapLifeCycleCallback() {
+        override fun onMapDestroy() {
+            Log.d("KakaoMap", "onMapDestroy")
+        }
 
-    override fun onMapError(error: Exception) {
-        Log.e("KakaoMap", "onMapError: ", error)
+        override fun onMapError(error: Exception) {
+            Log.e("KakaoMap", "onMapError: ", error)
+        }
     }
-}
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
@@ -149,8 +154,9 @@ private fun drawMarkers(
         map.labelManager?.layer?.removeAll()
     }
     restaurants.forEach {
-        val styles = map.labelManager
-            ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.star_on)))
+        val styles =
+            map.labelManager
+                ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.star_on)))
         val options = LabelOptions.from(it.position).setStyles(styles)
         map.labelManager?.layer?.addLabel(options)
     }
@@ -161,19 +167,20 @@ private fun DisposableEffectWithLifeCycle(
     // 오류로 compose.ui의 LocalLifecycleOwner 사용
     lifecycleOwner: LifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
     onResume: () -> Unit,
-    onPause: () -> Unit
+    onPause: () -> Unit,
 ) {
     val currentOnResume by rememberUpdatedState(onResume)
     val currentOnPause by rememberUpdatedState(onPause)
 
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                currentOnResume()
-            } else if (event == Lifecycle.Event.ON_PAUSE) {
-                currentOnPause()
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    currentOnResume()
+                } else if (event == Lifecycle.Event.ON_PAUSE) {
+                    currentOnPause()
+                }
             }
-        }
 
         lifecycleOwner.lifecycle.addObserver(observer)
 

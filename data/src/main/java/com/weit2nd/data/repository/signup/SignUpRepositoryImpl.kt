@@ -22,7 +22,6 @@ class SignUpRepositoryImpl @Inject constructor(
     private val localImageDatasource: LocalImageDatasource,
     private val moshi: Moshi,
 ) : SignUpRepository {
-
     private val nicknameCondition = '가'..'힣'
 
     override suspend fun registerUser(
@@ -32,20 +31,23 @@ class SignUpRepositoryImpl @Inject constructor(
     ) {
         if (localImageDatasource.checkImageUriValid(image).not()) throw NotImageException()
 
-        val imagePart = localImageDatasource.getImageMultipartBodyPart(
-            uri = image,
-            formDataName = "profileImage",
-            imageName = System.currentTimeMillis().toString(),
-        )
-        val request = SignUpRequest(
-            nickname = nickname,
-            agreedTermIds = agreedTermIds,
-        )
-        val signUpPart = moshi.adapter(SignUpRequest::class.java).getMultiPart(
-            formDataName = "signUpRequest",
-            fileName = "signUpRequest",
-            request = request,
-        )
+        val imagePart =
+            localImageDatasource.getImageMultipartBodyPart(
+                uri = image,
+                formDataName = "profileImage",
+                imageName = System.currentTimeMillis().toString(),
+            )
+        val request =
+            SignUpRequest(
+                nickname = nickname,
+                agreedTermIds = agreedTermIds,
+            )
+        val signUpPart =
+            moshi.adapter(SignUpRequest::class.java).getMultiPart(
+                formDataName = "signUpRequest",
+                fileName = "signUpRequest",
+                request = request,
+            )
         runCatching {
             signUpDataSource.signUp(
                 image = imagePart,
@@ -60,17 +62,18 @@ class SignUpRepositoryImpl @Inject constructor(
     }
 
     private fun throwSignUpException(throwable: Throwable) {
-        val exception = if (throwable is HttpException) {
-            val errorMessage = throwable.message()
-            when (throwable.code()) {
-                HTTP_BAD_REQUEST -> SignUpException.BadRequestException(errorMessage)
-                HTTP_UNAUTHORIZED -> SignUpException.InvalidTokenException(errorMessage)
-                HTTP_CONFLICT -> SignUpException.DuplicateUserException(errorMessage)
-                else -> throwable
+        val exception =
+            if (throwable is HttpException) {
+                val errorMessage = throwable.message()
+                when (throwable.code()) {
+                    HTTP_BAD_REQUEST -> SignUpException.BadRequestException(errorMessage)
+                    HTTP_UNAUTHORIZED -> SignUpException.InvalidTokenException(errorMessage)
+                    HTTP_CONFLICT -> SignUpException.DuplicateUserException(errorMessage)
+                    else -> throwable
+                }
+            } else {
+                throwable
             }
-        } else {
-            throwable
-        }
         throw exception
     }
 

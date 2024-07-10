@@ -9,12 +9,17 @@ import javax.inject.Inject
 class LocalImageRepositoryImpl @Inject constructor(
     private val localImageDatasource: LocalImageDatasource,
 ) : LocalImageRepository {
-    override suspend fun getImages(path: String?, count: Int?, offset: Int): List<LocalImage> {
+    override suspend fun getImages(
+        path: String?,
+        count: Int?,
+        offset: Int,
+    ): List<LocalImage> {
         return localImageDatasource.getImages(path, count, offset).map { it.localImage }
     }
 
     override suspend fun getAlbums(): List<LocalAlbum> {
-        return localImageDatasource.getImages()
+        return localImageDatasource
+            .getImages()
             .groupBy { it.directory }
             .map { (directory, localImages) ->
                 LocalAlbum(

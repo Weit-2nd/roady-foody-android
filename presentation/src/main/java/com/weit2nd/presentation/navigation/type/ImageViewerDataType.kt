@@ -7,7 +7,10 @@ import com.google.gson.Gson
 import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 
 class ImageViewerDataType : NavType<ImageViewerDTO>(isNullableAllowed = false) {
-    override fun get(bundle: Bundle, key: String): ImageViewerDTO? {
+    override fun get(
+        bundle: Bundle,
+        key: String,
+    ): ImageViewerDTO? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle.getParcelable(key, ImageViewerDTO::class.java)
         } else {
@@ -19,7 +22,11 @@ class ImageViewerDataType : NavType<ImageViewerDTO>(isNullableAllowed = false) {
         return Gson().fromJson(value, ImageViewerDTO::class.java)
     }
 
-    override fun put(bundle: Bundle, key: String, value: ImageViewerDTO) {
+    override fun put(
+        bundle: Bundle,
+        key: String,
+        value: ImageViewerDTO,
+    ) {
         bundle.putParcelable(key, value)
     }
 }

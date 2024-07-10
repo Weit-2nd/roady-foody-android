@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface TermsService {
-
     @GET("/api/v1/terms")
     suspend fun getTerms(): TermsDTO
 

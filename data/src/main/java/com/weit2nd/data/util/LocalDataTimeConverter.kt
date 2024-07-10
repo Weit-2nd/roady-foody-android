@@ -11,11 +11,12 @@ import java.time.format.DateTimeFormatter
 annotation class StringToLocalDateTime
 
 class LocalDateTimeConverter {
-
     private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     @ToJson
-    fun toJson(@StringToLocalDateTime localDate: LocalDateTime): String {
+    fun toJson(
+        @StringToLocalDateTime localDate: LocalDateTime,
+    ): String {
         return dateFormat.format(localDate)
     }
 

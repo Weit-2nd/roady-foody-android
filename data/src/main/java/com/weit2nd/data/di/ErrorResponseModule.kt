@@ -11,12 +11,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ErrorResponseModule {
-
     @Singleton
     @Provides
-    fun providesErrorResponseInterceptor(
-        moshi: Moshi,
-    ): ErrorResponseInterceptor {
+    fun providesErrorResponseInterceptor(moshi: Moshi): ErrorResponseInterceptor {
         return ErrorResponseInterceptor(moshi)
     }
 }

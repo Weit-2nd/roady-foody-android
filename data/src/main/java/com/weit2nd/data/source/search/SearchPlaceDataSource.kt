@@ -11,7 +11,6 @@ import javax.inject.Inject
 class SearchPlaceDataSource @Inject constructor(
     private val service: SearchService,
 ) {
-
     suspend fun getTourismSpot(
         count: Int,
         searchWord: String,
@@ -38,7 +37,7 @@ class SearchPlaceDataSource @Inject constructor(
             name = "위치이름",
             address = "서울 중구 세종대로${coordinate.latitude}",
             latitude = 0.0,
-            longitude = 0.0
+            longitude = 0.0,
         )
     }
 }

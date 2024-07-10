@@ -12,9 +12,7 @@ import com.weit2nd.presentation.ui.map.MapScreen
 import org.orbitmvi.orbit.compose.collectAsState
 
 @Composable
-fun HomeScreen(
-    vm: HomeViewModel = hiltViewModel(),
-) {
+fun HomeScreen(vm: HomeViewModel = hiltViewModel()) {
     val state = vm.collectAsState()
     Surface {
         Box(

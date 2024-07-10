@@ -47,70 +47,72 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SelectLocationMapScreen(
-    vm: SelectLocationMapViewModel = hiltViewModel(),
-) {
+fun SelectLocationMapScreen(vm: SelectLocationMapViewModel = hiltViewModel()) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         handleSideEffects(sideEffect)
     }
     val context = LocalContext.current
-    val mapView = remember {
-        MapView(context).apply {
-            start(
-                mapLifeCycleCallback(),
-                kakaoMapReadyCallback(
-                    vm::onMapReady,
-                    onCameraMoveStart = vm::onCameraMoveStart,
-                    onCameraMoveEnd = vm::onCameraMoveEnd,
-                    selectMarkerOffset = state.value.selectMarkerOffset,
-                    position = state.value.initialPosition.run { LatLng.from(latitude, longitude) },
-                ),
-            )
+    val mapView =
+        remember {
+            MapView(context).apply {
+                start(
+                    mapLifeCycleCallback(),
+                    kakaoMapReadyCallback(
+                        vm::onMapReady,
+                        onCameraMoveStart = vm::onCameraMoveStart,
+                        onCameraMoveEnd = vm::onCameraMoveEnd,
+                        selectMarkerOffset = state.value.selectMarkerOffset,
+                        position = state.value.initialPosition.run { LatLng.from(latitude, longitude) },
+                    ),
+                )
+            }
         }
-    }
 
     DisposableEffectWithLifeCycle(onResume = mapView::resume, onPause = mapView::pause)
 
     var mapRectSize by remember { mutableStateOf(IntSize.Zero) }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         Box(
-            modifier = Modifier
-                .weight(3f)
-                .onGloballyPositioned { layoutCoordinates ->
-                    mapRectSize = layoutCoordinates.size
-                },
-            contentAlignment = Alignment.TopStart
+            modifier =
+                Modifier
+                    .weight(3f)
+                    .onGloballyPositioned { layoutCoordinates ->
+                        mapRectSize = layoutCoordinates.size
+                    },
+            contentAlignment = Alignment.TopStart,
         ) {
             AndroidView(
                 modifier = Modifier,
-                factory = { mapView }
+                factory = { mapView },
             )
 
             CurrentPositionBtn(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 16.dp, bottom = 24.dp),
-                onClick = vm::onClickCurrentPositionBtn
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 16.dp, bottom = 24.dp),
+                onClick = vm::onClickCurrentPositionBtn,
             )
 
             PositionSelectMarker(
-                modifier = Modifier
-                    .onGloballyPositioned { layoutCoordinates ->
-                        val imageSize = layoutCoordinates.size
-                        val centerX = mapRectSize.width / 2 - imageSize.width / 2
-                        val centerY = mapRectSize.height / 2 - imageSize.height / 2
-                        vm.onGloballyPositioned(IntOffset(centerX, centerY))
-                    }
-                    .offset { state.value.selectMarkerOffset },
+                modifier =
+                    Modifier
+                        .onGloballyPositioned { layoutCoordinates ->
+                            val imageSize = layoutCoordinates.size
+                            val centerX = mapRectSize.width / 2 - imageSize.width / 2
+                            val centerY = mapRectSize.height / 2 - imageSize.height / 2
+                            vm.onGloballyPositioned(IntOffset(centerX, centerY))
+                        }.offset { state.value.selectMarkerOffset },
             )
         }
         LocationInfoView(
-            modifier = Modifier
-                .weight(1f)
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(16.dp),
             isLoading = state.value.isLoading,
             location = state.value.location,
             onClick = {},
@@ -128,13 +130,11 @@ private fun handleSideEffects(sideEffect: SelectLocationMapSideEffect) {
 }
 
 @Composable
-private fun PositionSelectMarker(
-    modifier: Modifier = Modifier,
-) {
+private fun PositionSelectMarker(modifier: Modifier = Modifier) {
     Image(
         modifier = modifier,
         painter = painterResource(android.R.drawable.ic_menu_mylocation),
-        contentDescription = "positionSelectMarker"
+        contentDescription = "positionSelectMarker",
     )
 }
 
@@ -152,11 +152,12 @@ private fun LocationInfoView(
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = location.address,
-            style = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            ),
+            style =
+                TextStyle(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                ),
         )
         Button(
             modifier = Modifier.fillMaxWidth(),
@@ -168,15 +169,16 @@ private fun LocationInfoView(
     }
 }
 
-private fun mapLifeCycleCallback() = object : MapLifeCycleCallback() {
-    override fun onMapDestroy() {
-        Log.d("KakaoMap", "onMapDestroy")
-    }
+private fun mapLifeCycleCallback() =
+    object : MapLifeCycleCallback() {
+        override fun onMapDestroy() {
+            Log.d("KakaoMap", "onMapDestroy")
+        }
 
-    override fun onMapError(error: Exception) {
-        Log.e("KakaoMap", "onMapError: ", error)
+        override fun onMapError(error: Exception) {
+            Log.e("KakaoMap", "onMapError: ", error)
+        }
     }
-}
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
@@ -213,19 +215,20 @@ private fun DisposableEffectWithLifeCycle(
     // 오류로 compose.ui의 LocalLifecycleOwner 사용
     lifecycleOwner: LifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
     onResume: () -> Unit,
-    onPause: () -> Unit
+    onPause: () -> Unit,
 ) {
     val currentOnResume by rememberUpdatedState(onResume)
     val currentOnPause by rememberUpdatedState(onPause)
 
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                currentOnResume()
-            } else if (event == Lifecycle.Event.ON_PAUSE) {
-                currentOnPause()
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    currentOnResume()
+                } else if (event == Lifecycle.Event.ON_PAUSE) {
+                    currentOnPause()
+                }
             }
-        }
 
         lifecycleOwner.lifecycle.addObserver(observer)
 
@@ -234,4 +237,3 @@ private fun DisposableEffectWithLifeCycle(
         }
     }
 }
-

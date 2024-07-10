@@ -16,9 +16,10 @@ class HomeViewModel @Inject constructor(
     override val container =
         container<HomeState, HomeSideEffect>(
             HomeState(
-                user = checkNotNull(
-                    savedStateHandle.get<UserDTO>(HomeNavRoutes.USER_STATE_KEY)?.toUser()
-                )
-            )
+                user =
+                    checkNotNull(
+                        savedStateHandle.get<UserDTO>(HomeNavRoutes.USER_STATE_KEY)?.toUser(),
+                    ),
+            ),
         )
 }

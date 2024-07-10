@@ -50,20 +50,21 @@ fun TermsScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
             Text(
                 text = "약관을 확인해주세요.",
-                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
             )
             HorizontalDivider(
                 color = Color.DarkGray,
                 thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
             AgreeAllCheckbox(
                 modifier = Modifier.fillMaxWidth(),
@@ -73,7 +74,7 @@ fun TermsScreen(
             HorizontalDivider(
                 color = Color.DarkGray,
                 thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
 
             LazyColumn {
@@ -106,7 +107,7 @@ fun AgreeAllCheckbox(
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Checkbox(
             checked = isChecked,
@@ -114,7 +115,7 @@ fun AgreeAllCheckbox(
         )
         Text(
             text = "전체동의",
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
         )
     }
 }
@@ -147,7 +148,7 @@ fun TermCheckbox(
         IconButton(onClick = { onDetailBtnClicked(term.id) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "NavigateToTermDetailButton"
+                contentDescription = "NavigateToTermDetailButton",
             )
         }
     }

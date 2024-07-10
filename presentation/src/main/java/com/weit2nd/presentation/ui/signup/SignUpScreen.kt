@@ -60,17 +60,19 @@ fun SignUpScreen(
         ) {
             Spacer(modifier = Modifier.padding(24.dp))
             ProfileImage(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(200.dp),
+                modifier =
+                    Modifier
+                        .clip(CircleShape)
+                        .size(200.dp),
                 imgUri = state.value.profileImageUri,
-                onProfileImageClick = vm::onProfileImageClick
+                onProfileImageClick = vm::onProfileImageClick,
             )
             Spacer(modifier = Modifier.padding(16.dp))
             NicknameSetting(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
                 nickname = state.value.nickname,
                 nicknameState = state.value.nicknameState,
                 isLoading = state.value.isLoading,
@@ -82,7 +84,7 @@ fun SignUpScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = vm::onSignUpButtonClick,
-            enabled = state.value.nicknameState == NicknameState.CAN_SIGN_UP
+            enabled = state.value.nicknameState == NicknameState.CAN_SIGN_UP,
         ) {
             Text(text = stringResource(R.string.sign_up))
         }
@@ -122,31 +124,33 @@ private fun NicknameSetting(
             nickname = nickname,
             onInputValueChange = onInputValueChange,
             isNicknameValid = (nicknameState == NicknameState.VALID) && !isLoading,
-            onDuplicationBtnClick = onDuplicationBtnClick
+            onDuplicationBtnClick = onDuplicationBtnClick,
         )
 
         Text(
             modifier = Modifier.padding(8.dp),
             textAlign = TextAlign.Center,
-            color = if (nicknameState == NicknameState.CAN_SIGN_UP) {
-                Color.Blue
-            } else {
-                Color.Red
-            },
-            text = getNicknameStateMessage(nicknameState)
+            color =
+                if (nicknameState == NicknameState.CAN_SIGN_UP) {
+                    Color.Blue
+                } else {
+                    Color.Red
+                },
+            text = getNicknameStateMessage(nicknameState),
         )
     }
 }
 
 @Composable
-private fun getNicknameStateMessage(nicknameState: NicknameState) = when (nicknameState) {
-    NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
-    NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
-    NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
-    NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
-    NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
-    else -> ""
-}
+private fun getNicknameStateMessage(nicknameState: NicknameState) =
+    when (nicknameState) {
+        NicknameState.INVALID_LENGTH -> stringResource(R.string.nickname_invalid_length)
+        NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
+        NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
+        NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
+        NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
+        else -> ""
+    }
 
 @Composable
 fun NicknameTextField(
@@ -156,7 +160,6 @@ fun NicknameTextField(
     isNicknameValid: Boolean,
     onDuplicationBtnClick: () -> Unit,
 ) {
-
     var userInput by remember { mutableStateOf(TextFieldValue(nickname)) }
 
     TextField(
@@ -176,7 +179,7 @@ fun NicknameTextField(
             )
         },
         modifier = modifier,
-        singleLine = true
+        singleLine = true,
     )
 }
 
@@ -184,12 +187,12 @@ fun NicknameTextField(
 private fun DuplicationCheckButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    enable: Boolean
+    enable: Boolean,
 ) {
     Button(
         modifier = modifier,
         onClick = onClick,
-        enabled = enable
+        enabled = enable,
     ) {
         Text(text = stringResource(R.string.nickname_duplicate_check))
     }

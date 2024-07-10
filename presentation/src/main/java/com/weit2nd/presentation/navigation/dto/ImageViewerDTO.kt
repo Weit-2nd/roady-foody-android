@@ -10,10 +10,14 @@ data class ImageViewerDTO(
     val position: Int,
 ) : Parcelable
 
-fun ImageViewerDTO.toImageViewerData(): ImageViewerData = ImageViewerData(
-    images = images, position = position
-)
+fun ImageViewerDTO.toImageViewerData(): ImageViewerData =
+    ImageViewerData(
+        images = images,
+        position = position,
+    )
 
-fun ImageViewerData.toImageViewerDTO(): ImageViewerDTO = ImageViewerDTO(
-    images = images, position = position
-)
+fun ImageViewerData.toImageViewerDTO(): ImageViewerDTO =
+    ImageViewerDTO(
+        images = images,
+        position = position,
+    )

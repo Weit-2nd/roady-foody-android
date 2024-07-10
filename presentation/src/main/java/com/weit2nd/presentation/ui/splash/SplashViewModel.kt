@@ -16,13 +16,15 @@ class SplashViewModel @Inject constructor(
         SplashIntent.RequestLogin.post()
     }
 
-    private fun SplashIntent.post() = intent {
-        when (this@post) {
-            SplashIntent.RequestLogin -> {
-                loginToServerUseCase.invoke()
-                    .onSuccess { postSideEffect(SplashSideEffect.NavToHome) }
-                    .onFailure { postSideEffect(SplashSideEffect.NavToLogin) }
+    private fun SplashIntent.post() =
+        intent {
+            when (this@post) {
+                SplashIntent.RequestLogin -> {
+                    loginToServerUseCase
+                        .invoke()
+                        .onSuccess { postSideEffect(SplashSideEffect.NavToHome) }
+                        .onFailure { postSideEffect(SplashSideEffect.NavToLogin) }
+                }
             }
         }
-    }
 }

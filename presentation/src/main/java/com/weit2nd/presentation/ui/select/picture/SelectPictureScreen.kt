@@ -9,14 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.gun0912.tedpermission.coroutine.TedPermission
 import org.orbitmvi.orbit.compose.collectAsState
-import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SelectPictureScreen(
-    vm: SelectPictureViewModel = hiltViewModel(),
-) {
+fun SelectPictureScreen(vm: SelectPictureViewModel = hiltViewModel()) {
     val state = vm.collectAsState()
     LaunchedEffect(Unit) {
         vm.onCreate()
@@ -27,7 +23,7 @@ fun SelectPictureScreen(
     }
     Scaffold {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Text(text = "이미지 선택 화면")
         }

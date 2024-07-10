@@ -27,11 +27,11 @@ class SignUpViewModel @Inject constructor(
     private val pickSingleImageUseCase: PickSingleImageUseCase,
     private val signUpUseCase: SignUpUseCase,
 ) : BaseViewModel<SignUpState, SignUpSideEffect>() {
-
     private val agreedTermIds by lazy {
         checkNotNull(
-            savedStateHandle.get<TermIdsDTO>(SignUpNavRoutes.TERM_IDS)
-                ?.toTermIds()
+            savedStateHandle
+                .get<TermIdsDTO>(SignUpNavRoutes.TERM_IDS)
+                ?.toTermIds(),
         )
     }
     override val container = container<SignUpState, SignUpSideEffect>(SignUpState())
@@ -57,77 +57,84 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun setLoadingState() {
-        SignUpIntent.SetLoadingState(container.stateFlow.value.isLoading.not()).post()
+        SignUpIntent
+            .SetLoadingState(
+                container.stateFlow.value.isLoading
+                    .not(),
+            ).post()
     }
 
-    private fun SignUpIntent.post() = intent {
-        when (this@post) {
-            SignUpIntent.RequestSignUp -> {
-                runCatching {
-                    state.apply {
-                        signUpUseCase.invoke(
-                            image = (profileImageUri ?: "").toString(),
-                            nickname = nickname,
-                            agreedTermIds = agreedTermIds,
-                        )
-                    }
-                }.onSuccess {
-                    postSideEffect(SignUpSideEffect.NavToHome(User("으악")))
-                }.onFailure { throwable ->
-                    if (throwable is NotImageException) {
-                        postSideEffect(SignUpSideEffect.ShowToast("업로드된 파일이 이미지 형식이 아닙니다."))
-                    } else {
-                        throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
-                    }
-                }
-            }
-
-            SignUpIntent.ChangeProfileImage -> {
-                val result = pickSingleImageUseCase.invoke()
-                if (result != null) {
-                    reduce {
-                        state.copy(
-                            profileImageUri = result.toUri()
-                        )
-                    }
-                }
-            }
-
-            is SignUpIntent.VerifyNickname -> {
-                val nicknameState = verifyNicknameUseCase.invoke(nickname)
-                reduce {
-                    state.copy(
-                        nickname = nickname,
-                        nicknameState = nicknameState,
-                    )
-                }
-            }
-
-            is SignUpIntent.CheckNicknameDuplication -> {
-                setLoadingState()
-                nicknameDuplicateCheckJob = viewModelScope.launch {
+    private fun SignUpIntent.post() =
+        intent {
+            when (this@post) {
+                SignUpIntent.RequestSignUp -> {
                     runCatching {
-                        val nicknameState = checkNicknameDuplicateUseCase.invoke(nickname)
+                        state.apply {
+                            signUpUseCase.invoke(
+                                image = (profileImageUri ?: "").toString(),
+                                nickname = nickname,
+                                agreedTermIds = agreedTermIds,
+                            )
+                        }
+                    }.onSuccess {
+                        postSideEffect(SignUpSideEffect.NavToHome(User("으악")))
+                    }.onFailure { throwable ->
+                        if (throwable is NotImageException) {
+                            postSideEffect(SignUpSideEffect.ShowToast("업로드된 파일이 이미지 형식이 아닙니다."))
+                        } else {
+                            throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
+                        }
+                    }
+                }
+
+                SignUpIntent.ChangeProfileImage -> {
+                    val result = pickSingleImageUseCase.invoke()
+                    if (result != null) {
                         reduce {
                             state.copy(
-                                nicknameState = nicknameState,
+                                profileImageUri = result.toUri(),
                             )
                         }
                     }
-                }.apply {
-                    invokeOnCompletion {
-                        setLoadingState()
+                }
+
+                is SignUpIntent.VerifyNickname -> {
+                    val nicknameState = verifyNicknameUseCase.invoke(nickname)
+                    reduce {
+                        state.copy(
+                            nickname = nickname,
+                            nicknameState = nicknameState,
+                        )
+                    }
+                }
+
+                is SignUpIntent.CheckNicknameDuplication -> {
+                    setLoadingState()
+                    nicknameDuplicateCheckJob =
+                        viewModelScope
+                            .launch {
+                                runCatching {
+                                    val nicknameState = checkNicknameDuplicateUseCase.invoke(nickname)
+                                    reduce {
+                                        state.copy(
+                                            nicknameState = nicknameState,
+                                        )
+                                    }
+                                }
+                            }.apply {
+                                invokeOnCompletion {
+                                    setLoadingState()
+                                }
+                            }
+                }
+
+                is SignUpIntent.SetLoadingState -> {
+                    reduce {
+                        state.copy(
+                            isLoading = isLoading,
+                        )
                     }
                 }
             }
-
-            is SignUpIntent.SetLoadingState -> {
-                reduce {
-                    state.copy(
-                        isLoading = isLoading,
-                    )
-                }
-            }
         }
-    }
 }

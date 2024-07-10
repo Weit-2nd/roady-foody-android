@@ -7,7 +7,6 @@ import javax.inject.Inject
 class CheckNicknameDuplicateUseCase @Inject constructor(
     val repository: SignUpRepository,
 ) {
-
     suspend operator fun invoke(nickname: String): NicknameState {
         return repository.checkNicknameValidation(nickname)
     }

@@ -16,7 +16,6 @@ import retrofit2.Retrofit
 @Module
 @InstallIn(ViewModelComponent::class)
 object SpotModule {
-
     @Provides
     @ViewModelScoped
     fun providesFoodSpotRepository(
@@ -33,9 +32,7 @@ object SpotModule {
 
     @Provides
     @ViewModelScoped
-    fun providesFoodSpotDataSource(
-        service: SpotService,
-    ): FoodSpotDataSource {
+    fun providesFoodSpotDataSource(service: SpotService): FoodSpotDataSource {
         return FoodSpotDataSource(service)
     }
 

@@ -15,19 +15,18 @@ import javax.inject.Inject
 class SearchHistoryDataSource @Inject constructor(
     private val context: Context,
 ) {
-
     private val Context.placeSearchHistoryDataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "searchHistory"
+        name = "searchHistory",
     )
 
     suspend fun getSearchHistories(): List<String> {
         return context.placeSearchHistoryDataStore.data
             .catch {
                 emit(emptyPreferences())
-            }
-            .map { preference ->
+            }.map { preference ->
                 preference[KEY_SEARCH_HISTORY] ?: emptyList()
-            }.first().toList()
+            }.first()
+            .toList()
     }
 
     suspend fun setSearchHistory(searchWords: List<String>) {
@@ -36,7 +35,7 @@ class SearchHistoryDataSource @Inject constructor(
         }
     }
 
-    private companion object{
+    private companion object {
         val KEY_SEARCH_HISTORY = stringSetPreferencesKey(name = "search_history")
     }
 }

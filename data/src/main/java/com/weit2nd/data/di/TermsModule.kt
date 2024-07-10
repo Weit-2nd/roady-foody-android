@@ -14,20 +14,15 @@ import retrofit2.Retrofit
 @Module
 @InstallIn(ViewModelComponent::class)
 object TermsModule {
-
     @ViewModelScoped
     @Provides
-    fun providesTermsRepository(
-        dataSource: TermsDataSource,
-    ): TermsRepository {
+    fun providesTermsRepository(dataSource: TermsDataSource): TermsRepository {
         return TermsRepositoryImpl(dataSource)
     }
 
     @ViewModelScoped
     @Provides
-    fun providesTermsDataSource(
-        service: TermsService,
-    ): TermsDataSource {
+    fun providesTermsDataSource(service: TermsService): TermsDataSource {
         return TermsDataSource(service)
     }
 

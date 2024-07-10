@@ -7,7 +7,6 @@ import javax.inject.Inject
 class VerifyNicknameUseCase @Inject constructor(
     val repository: SignUpRepository,
 ) {
-
     operator fun invoke(nickname: String): NicknameState {
         return repository.verifyNickname(nickname)
     }

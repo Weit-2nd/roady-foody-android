@@ -41,29 +41,32 @@ fun SelectPlaceScreen(
         Text(
             modifier = Modifier.padding(16.dp),
             text = "가게 위치를 설정해주세요",
-            style = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            ),
+            style =
+                TextStyle(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                ),
         )
         LocationTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             onValueChange = vm::onValueChange,
-            onSearch = vm::onLocationSearch
+            onSearch = vm::onLocationSearch,
         )
         Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-            onClick = { navToMap() }
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp),
+            onClick = { navToMap() },
         ) {
             Text(text = "지도에서 찾기")
         }
         LazyColumn(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             items(state.value.searchResults) { item ->
                 SearchPlaceItem(item)
@@ -82,17 +85,19 @@ private fun LocationTextField(
     TextField(
         modifier = modifier,
         value = userInput,
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search
-        ),
+        keyboardOptions =
+            KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search,
+            ),
         placeholder = { Text(text = "지번, 도로명, 건물명으로 검색") },
         onValueChange = { newValue ->
             userInput = newValue
             onValueChange(newValue.text)
         },
-        keyboardActions = KeyboardActions(
-            onSearch = { onSearch() }
-        ),
+        keyboardActions =
+            KeyboardActions(
+                onSearch = { onSearch() },
+            ),
     )
 }
 
@@ -106,8 +111,7 @@ private fun SearchPlaceItem(place: Place) {
         Text(
             text = place.addressName,
             fontSize = 16.sp,
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
     }
 }
-

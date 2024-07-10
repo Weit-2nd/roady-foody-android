@@ -11,7 +11,6 @@ class SignUpDataSource @Inject constructor(
     private val loginService: LoginService,
     private val checkNicknameService: CheckNicknameService,
 ) {
-
     suspend fun signUp(
         image: MultipartBody.Part,
         signUpRequest: MultipartBody.Part,
@@ -22,9 +21,7 @@ class SignUpDataSource @Inject constructor(
         )
     }
 
-    suspend fun checkNicknameDuplication(
-        nickname: String,
-    ): CheckNicknameDTO {
+    suspend fun checkNicknameDuplication(nickname: String): CheckNicknameDTO {
         return checkNicknameService.checkNickname(nickname)
     }
 }

@@ -9,8 +9,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SelectPlaceViewModel @Inject constructor(
     private val searchPlacesWithWordUseCase: SearchPlacesWithWordUseCase,
-) :
-    BaseViewModel<SelectPlaceState, SelectPlaceSideEffect>() {
+) : BaseViewModel<SelectPlaceState, SelectPlaceSideEffect>() {
     override val container =
         container<SelectPlaceState, SelectPlaceSideEffect>(SelectPlaceState())
 
@@ -22,27 +21,28 @@ class SelectPlaceViewModel @Inject constructor(
         SelectPlaceIntent.SearchPlace.post()
     }
 
-    private fun SelectPlaceIntent.post() = intent {
-        when (this@post) {
-            is SelectPlaceIntent.StoreSearchWord -> {
-                reduce {
-                    state.copy(
-                        userInput = input,
-                    )
-                }
-            }
-
-            SelectPlaceIntent.SearchPlace -> {
-                runCatching {
-                    val result =
-                        searchPlacesWithWordUseCase(searchWord = state.userInput)
+    private fun SelectPlaceIntent.post() =
+        intent {
+            when (this@post) {
+                is SelectPlaceIntent.StoreSearchWord -> {
                     reduce {
                         state.copy(
-                            searchResults = result
+                            userInput = input,
                         )
+                    }
+                }
+
+                SelectPlaceIntent.SearchPlace -> {
+                    runCatching {
+                        val result =
+                            searchPlacesWithWordUseCase(searchWord = state.userInput)
+                        reduce {
+                            state.copy(
+                                searchResults = result,
+                            )
+                        }
                     }
                 }
             }
         }
-    }
 }

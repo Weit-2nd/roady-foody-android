@@ -19,27 +19,31 @@ class LoginRepositoryImpl @Inject constructor(
     private val authDataSource: AuthDataSource,
     private val activityProvider: ActivityProvider,
 ) : LoginRepository {
-    override suspend fun loginWithKakao(): Result<Unit> = withContext(Dispatchers.IO) {
-        val currentActivity = activityProvider.currentActivity
-            ?: return@withContext Result.failure(NullPointerException("현재 올라온 activity가 없음"))
-        // 카카오 로그인 시도
-        val isKakaoTalkLoginAvailable = UserApiClient.instance.isKakaoTalkLoginAvailable(currentActivity)
-        val kakaoLoginResult = if (isKakaoTalkLoginAvailable) {
-            loginDataSource.loginWithKakaoTalk(currentActivity)
-        } else {
-            loginDataSource.loginWithKakaoAccount(currentActivity)
+    override suspend fun loginWithKakao(): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            val currentActivity =
+                activityProvider.currentActivity
+                    ?: return@withContext Result.failure(NullPointerException("현재 올라온 activity가 없음"))
+            // 카카오 로그인 시도
+            val isKakaoTalkLoginAvailable = UserApiClient.instance.isKakaoTalkLoginAvailable(currentActivity)
+            val kakaoLoginResult =
+                if (isKakaoTalkLoginAvailable) {
+                    loginDataSource.loginWithKakaoTalk(currentActivity)
+                } else {
+                    loginDataSource.loginWithKakaoAccount(currentActivity)
+                }
+            if (kakaoLoginResult.isFailure) {
+                return@withContext Result.failure(kakaoLoginResult.exceptionOrNull() ?: Exception())
+            }
+            // 서버 로그인
+            loginToServer()
         }
-        if (kakaoLoginResult.isFailure) {
-            return@withContext Result.failure(kakaoLoginResult.exceptionOrNull() ?: Exception())
-        }
-        // 서버 로그인
-        loginToServer()
-    }
 
     override suspend fun loginToServer(): Result<Unit> {
-        val serverLoginResult = runCatching {
-            loginDataSource.loginToServer()
-        }
+        val serverLoginResult =
+            runCatching {
+                loginDataSource.loginToServer()
+            }
         return if (serverLoginResult.isSuccess) {
             val token = serverLoginResult.getOrThrow()
             authDataSource.setAccessToken(token.accessToken)
