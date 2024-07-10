@@ -16,7 +16,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object LoginModule {
-
     @Singleton
     @Provides
     fun providesLoginRepository(
@@ -33,9 +32,7 @@ object LoginModule {
 
     @Singleton
     @Provides
-    fun providesLoginDataSource(
-        service: LoginService,
-    ): LoginDataSource {
+    fun providesLoginDataSource(service: LoginService): LoginDataSource {
         return LoginDataSource(service)
     }
 

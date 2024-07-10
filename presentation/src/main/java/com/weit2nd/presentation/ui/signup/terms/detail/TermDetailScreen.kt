@@ -45,7 +45,7 @@ fun TermDetailScreen(
         }
     }
     Scaffold(
-        topBar = { 
+        topBar = {
             TermDetailTopBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = state.title,
@@ -55,10 +55,11 @@ fun TermDetailScreen(
     ) {
         Box {
             TermContents(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
+                modifier =
+                    Modifier
+                        .padding(it)
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
                 text = state.contents,
             )
             if (state.isRetryNeeded) {
@@ -90,7 +91,7 @@ private fun TermDetailTopBar(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_navigate),
-                contentDescription = "navigate to back"
+                contentDescription = "navigate to back",
             )
         }
         Text(text = title)
@@ -100,7 +101,7 @@ private fun TermDetailTopBar(
 @Composable
 private fun TermContents(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
 ) {
     HtmlText(
         modifier = modifier,

@@ -8,7 +8,7 @@ sealed class MapIntent {
         val startLat: Double,
         val startLng: Double,
         val endLat: Double,
-        val endLng: Double
+        val endLng: Double,
     ) : MapIntent()
 
     data class RefreshMarkers(
@@ -16,6 +16,6 @@ sealed class MapIntent {
     ) : MapIntent()
 
     data class RequestCameraMove(
-        val position: LatLng
+        val position: LatLng,
     ) : MapIntent()
 }

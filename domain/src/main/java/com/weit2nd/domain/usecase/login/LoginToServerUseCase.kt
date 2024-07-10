@@ -6,7 +6,6 @@ import javax.inject.Inject
 class LoginToServerUseCase @Inject constructor(
     private val repository: LoginRepository,
 ) {
-
     /**
      * 우리 서버로 바로 로그인 합니다.
      *

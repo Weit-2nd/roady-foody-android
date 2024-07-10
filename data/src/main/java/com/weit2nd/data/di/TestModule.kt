@@ -16,9 +16,7 @@ import javax.inject.Singleton
 object TestModule {
     @Singleton
     @Provides
-    fun providesTestRepository(
-        testDataSource: TestDataSource,
-    ): TestRepository {
+    fun providesTestRepository(testDataSource: TestDataSource): TestRepository {
         return TestRepositoryImpl(
             testDataSource = testDataSource,
         )
@@ -26,9 +24,7 @@ object TestModule {
 
     @Singleton
     @Provides
-    fun providesTestDataSource(
-        testService: TestService,
-    ): TestDataSource {
+    fun providesTestDataSource(testService: TestService): TestDataSource {
         return TestDataSource(
             service = testService,
         )

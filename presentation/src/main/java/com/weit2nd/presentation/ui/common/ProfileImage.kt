@@ -22,9 +22,10 @@ fun ProfileImage(
     GlideImage(
         model = imgUri,
         contentDescription = "ProfileImage",
-        modifier = modifier
-            .clip(CircleShape)
-            .clickable { onProfileImageClick() },
+        modifier =
+            modifier
+                .clip(CircleShape)
+                .clickable { onProfileImageClick() },
         contentScale = ContentScale.Crop,
     ) {
         it.fallback(defaultImage)

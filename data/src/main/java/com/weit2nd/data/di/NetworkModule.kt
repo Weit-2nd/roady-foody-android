@@ -6,8 +6,8 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weit2nd.data.BuildConfig
 import com.weit2nd.data.R
 import com.weit2nd.data.interceptor.AuthInterceptor
-import com.weit2nd.data.interceptor.LoginInterceptor
 import com.weit2nd.data.interceptor.ErrorResponseInterceptor
+import com.weit2nd.data.interceptor.LoginInterceptor
 import com.weit2nd.data.util.LocalDateTimeConverter
 import dagger.Module
 import dagger.Provides
@@ -37,17 +37,18 @@ annotation class AuthNetwork
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     @DefaultNetwork
     @Singleton
     @Provides
     fun provideDefaultOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor,
         errorResponseInterceptor: ErrorResponseInterceptor,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(errorResponseInterceptor)
-        .build()
+    ): OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(errorResponseInterceptor)
+            .build()
 
     @LoginNetwork
     @Singleton
@@ -56,11 +57,13 @@ object NetworkModule {
         loginInterceptor: LoginInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
         errorResponseInterceptor: ErrorResponseInterceptor,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loginInterceptor)
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(errorResponseInterceptor)
-        .build()
+    ): OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(loginInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(errorResponseInterceptor)
+            .build()
 
     @AuthNetwork
     @Singleton
@@ -69,11 +72,13 @@ object NetworkModule {
         authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
         errorResponseInterceptor: ErrorResponseInterceptor,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor(errorResponseInterceptor)
-        .build()
+    ): OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(errorResponseInterceptor)
+            .build()
 
     @DefaultNetwork
     @Singleton
@@ -83,7 +88,8 @@ object NetworkModule {
         @DefaultNetwork okHttpClient: OkHttpClient,
         moshi: Moshi,
     ): Retrofit {
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -99,7 +105,8 @@ object NetworkModule {
         @LoginNetwork okHttpClient: OkHttpClient,
         moshi: Moshi,
     ): Retrofit {
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -115,7 +122,8 @@ object NetworkModule {
         @AuthNetwork okHttpClient: OkHttpClient,
         moshi: Moshi,
     ): Retrofit {
-        return Retrofit.Builder()
+        return Retrofit
+            .Builder()
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -126,18 +134,21 @@ object NetworkModule {
     @Singleton
     @Provides
     fun providesHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        val level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
-        } else {
-            HttpLoggingInterceptor.Level.NONE
-        }
+        val level =
+            if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         return HttpLoggingInterceptor().setLevel(level)
     }
 
     @Singleton
     @Provides
-    fun provideMoshi(): Moshi = Moshi.Builder()
-        .add(LocalDateTimeConverter())
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    fun provideMoshi(): Moshi =
+        Moshi
+            .Builder()
+            .add(LocalDateTimeConverter())
+            .add(KotlinJsonAdapterFactory())
+            .build()
 }

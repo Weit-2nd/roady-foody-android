@@ -13,28 +13,28 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PickImageActivity : AppCompatActivity() {
-
     @Inject
     lateinit var pickImageDataSource: PickImageDataSource
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val maximumSelect = intent.getIntExtra(MAXIMUM_SELECT_KEY, 1)
-        val pickMedia = if (maximumSelect > 1) {
-            registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(maximumSelect)) { images ->
-                images.forEach {
-                    takeUriPermission(it)
+        val pickMedia =
+            if (maximumSelect > 1) {
+                registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(maximumSelect)) { images ->
+                    images.forEach {
+                        takeUriPermission(it)
+                    }
+                    sendSelectedImagesAndFinish(images)
                 }
-                sendSelectedImagesAndFinish(images)
-            }
-        } else {
-            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
-                image?.let {
-                    takeUriPermission(it)
+            } else {
+                registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { image ->
+                    image?.let {
+                        takeUriPermission(it)
+                    }
+                    sendSelectedImagesAndFinish(listOfNotNull(image))
                 }
-                sendSelectedImagesAndFinish(listOfNotNull(image))
             }
-        }
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
@@ -42,14 +42,13 @@ class PickImageActivity : AppCompatActivity() {
         contentResolver.takePersistableUriPermission(image, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
-    private fun sendSelectedImagesAndFinish(
-        images: List<Uri>
-    ) {
-        lifecycleScope.launch {
-            pickImageDataSource.emitImages(images)
-        }.invokeOnCompletion {
-            finish()
-        }
+    private fun sendSelectedImagesAndFinish(images: List<Uri>) {
+        lifecycleScope
+            .launch {
+                pickImageDataSource.emitImages(images)
+            }.invokeOnCompletion {
+                finish()
+            }
     }
 
     companion object {

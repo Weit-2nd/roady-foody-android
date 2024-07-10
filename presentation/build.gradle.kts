@@ -31,7 +31,7 @@ android {
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
-            "\"${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}\""
+            "\"${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}\"",
         )
     }
 
@@ -40,7 +40,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }

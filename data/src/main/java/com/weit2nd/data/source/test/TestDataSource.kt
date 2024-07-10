@@ -6,9 +6,8 @@ import javax.inject.Inject
 class TestDataSource @Inject constructor(
     private val service: TestService,
 ) {
-    suspend fun getSuccess(
-        name: String
-    ): String = service.getSuccess(
-        name = name,
-    )
+    suspend fun getSuccess(name: String): String =
+        service.getSuccess(
+            name = name,
+        )
 }

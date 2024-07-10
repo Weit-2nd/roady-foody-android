@@ -15,36 +15,34 @@ import javax.inject.Inject
 class LoginDataSource @Inject constructor(
     private val loginService: LoginService,
 ) {
-    suspend fun loginWithKakaoTalk(
-        activity: Activity,
-    ): Result<Unit> = callbackFlow {
-        UserApiClient.instance.loginWithKakaoTalk(activity) { _, error ->
-            if (error != null) {
-                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                    trySend(Result.failure(error))
+    suspend fun loginWithKakaoTalk(activity: Activity): Result<Unit> =
+        callbackFlow {
+            UserApiClient.instance.loginWithKakaoTalk(activity) { _, error ->
+                if (error != null) {
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        trySend(Result.failure(error))
+                    }
+                    launch {
+                        trySend(loginWithKakaoAccount(activity))
+                    }
+                } else {
+                    trySend(Result.success(Unit))
                 }
-                launch {
-                    trySend(loginWithKakaoAccount(activity))
-                }
-            } else {
-                trySend(Result.success(Unit))
             }
-        }
-        awaitClose { /* Do Nothing */ }
-    }.first()
+            awaitClose { /* Do Nothing */ }
+        }.first()
 
-    suspend fun loginWithKakaoAccount(
-        activity: Activity,
-    ): Result<Unit> = callbackFlow<Result<Unit>> {
-        UserApiClient.instance.loginWithKakaoAccount(activity) { _, error ->
-            if (error != null) {
-                trySend(Result.failure(error))
-            } else {
-                trySend(Result.success(Unit))
+    suspend fun loginWithKakaoAccount(activity: Activity): Result<Unit> =
+        callbackFlow<Result<Unit>> {
+            UserApiClient.instance.loginWithKakaoAccount(activity) { _, error ->
+                if (error != null) {
+                    trySend(Result.failure(error))
+                } else {
+                    trySend(Result.success(Unit))
+                }
             }
-        }
-        awaitClose { /* Do Nothing */ }
-    }.first()
+            awaitClose { /* Do Nothing */ }
+        }.first()
 
     suspend fun loginToServer(): LoginToken {
         return loginService.signIn()

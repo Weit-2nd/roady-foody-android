@@ -13,16 +13,21 @@ class RestaurantRepositoryImpl @Inject constructor(
         startLat: Double,
         startLng: Double,
         endLat: Double,
-        endLng: Double
+        endLng: Double,
     ): List<Restaurant> {
-        return restaurantDataSource.getRestaurants(
-            startLat, startLng, endLat, endLng
-        ).map { it.toRestaurant() }
+        return restaurantDataSource
+            .getRestaurants(
+                startLat,
+                startLng,
+                endLat,
+                endLng,
+            ).map { it.toRestaurant() }
     }
 
-    private fun RestaurantDTO.toRestaurant() = Restaurant(
-        id = id,
-        latitude = latitude,
-        longitude = longitude,
-    )
+    private fun RestaurantDTO.toRestaurant() =
+        Restaurant(
+            id = id,
+            latitude = latitude,
+            longitude = longitude,
+        )
 }

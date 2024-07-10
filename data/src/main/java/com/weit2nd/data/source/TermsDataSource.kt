@@ -12,9 +12,7 @@ class TermsDataSource @Inject constructor(
         return service.getTerms().terms
     }
 
-    suspend fun getTermDetail(
-        id: Long,
-    ): TermDetailDTO {
+    suspend fun getTermDetail(id: Long): TermDetailDTO {
         return service.getTermDetail(
             id = id,
         )

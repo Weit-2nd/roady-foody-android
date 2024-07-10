@@ -15,36 +15,40 @@ import javax.inject.Inject
 class SearchPlaceRepositoryImpl @Inject constructor(
     private val dataSource: SearchPlaceDataSource,
 ) : SearchPlaceRepository {
-
     override suspend fun searchTouristSpot(
         count: Int,
         searchWord: String,
     ): List<TouristSpot> {
-        return dataSource.getTourismSpot(
-            count = count,
-            searchWord = searchWord,
-        ).items.toTouristSpots()
+        return dataSource
+            .getTourismSpot(
+                count = count,
+                searchWord = searchWord,
+            ).items
+            .toTouristSpots()
     }
 
     override suspend fun searchPlacesWithWord(
         count: Int,
         searchWord: String,
     ): List<Place> {
-        return dataSource.getLocationsWithWord(
-            count = count,
-            searchWord = searchWord,
-        ).items.toPlaces()
+        return dataSource
+            .getLocationsWithWord(
+                count = count,
+                searchWord = searchWord,
+            ).items
+            .toPlaces()
     }
 
     override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location {
         return dataSource.getLocationWithCoordinate(coordinate).toLocation()
     }
 
-    private fun LocationDTO.toLocation() = Location(
-        name = name,
-        address = address,
-        coordinate = Coordinate(latitude = latitude, longitude = longitude),
-    )
+    private fun LocationDTO.toLocation() =
+        Location(
+            name = name,
+            address = address,
+            coordinate = Coordinate(latitude = latitude, longitude = longitude),
+        )
 
     private fun List<PlaceDTO>.toPlaces(): List<Place> {
         return this.map { it.toPlace() }

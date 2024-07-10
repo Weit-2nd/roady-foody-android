@@ -6,7 +6,6 @@ import javax.inject.Inject
 class SignUpUseCase @Inject constructor(
     private val repository: SignUpRepository,
 ) {
-
     /**
      * 회원가입을 합니다.
      * @param image 프로필 사진 uri

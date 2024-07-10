@@ -6,7 +6,6 @@ import android.os.Bundle
 import javax.inject.Inject
 
 class ActivityProvider @Inject constructor() : Application.ActivityLifecycleCallbacks {
-
     var currentActivity: Activity? = null
         private set
 
@@ -18,7 +17,10 @@ class ActivityProvider @Inject constructor() : Application.ActivityLifecycleCall
         application.unregisterActivityLifecycleCallbacks(this)
     }
 
-    override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
+    override fun onActivityCreated(
+        activity: Activity,
+        bundle: Bundle?,
+    ) {
         currentActivity = activity
     }
 
@@ -34,7 +36,10 @@ class ActivityProvider @Inject constructor() : Application.ActivityLifecycleCall
 
     override fun onActivityStopped(activity: Activity) = Unit
 
-    override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) = Unit
+    override fun onActivitySaveInstanceState(
+        activity: Activity,
+        bundle: Bundle,
+    ) = Unit
 
     override fun onActivityDestroyed(activity: Activity) {
         if (currentActivity == activity) {

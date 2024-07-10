@@ -10,10 +10,14 @@ data class CoordinateDTO(
     val longitude: Double,
 ) : Parcelable
 
-fun CoordinateDTO.toCoordinate(): Coordinate = Coordinate(
-    latitude = latitude, longitude = longitude,
-)
+fun CoordinateDTO.toCoordinate(): Coordinate =
+    Coordinate(
+        latitude = latitude,
+        longitude = longitude,
+    )
 
-fun Coordinate.toCoordinateDTO(): CoordinateDTO = CoordinateDTO(
-    latitude = latitude, longitude = longitude,
-)
+fun Coordinate.toCoordinateDTO(): CoordinateDTO =
+    CoordinateDTO(
+        latitude = latitude,
+        longitude = longitude,
+    )

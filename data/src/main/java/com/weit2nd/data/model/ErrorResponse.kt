@@ -8,5 +8,5 @@ data class ErrorResponse(
     @Json(name = "code")
     val code: Long,
     @Json(name = "errorMessage")
-    val errorMessage: String
+    val errorMessage: String,
 )

@@ -25,12 +25,14 @@ class SelectLocationMapViewModel @Inject constructor(
     override val container =
         container<SelectLocationMapState, SelectLocationMapSideEffect>(
             SelectLocationMapState(
-                initialPosition = checkNotNull(
-                    savedStateHandle.get<CoordinateDTO>(
-                        SelectLocationMapRoutes.INITIAL_POSITION_KEY
-                    )?.toCoordinate()
-                )
-            )
+                initialPosition =
+                    checkNotNull(
+                        savedStateHandle
+                            .get<CoordinateDTO>(
+                                SelectLocationMapRoutes.INITIAL_POSITION_KEY,
+                            )?.toCoordinate(),
+                    ),
+            ),
         )
     private var searchLocationJob: Job = Job().apply { complete() }
 
@@ -55,64 +57,68 @@ class SelectLocationMapViewModel @Inject constructor(
         SelectLocationMapIntent.RequestCameraMove(currentPosition).post()
     }
 
-    private fun SelectLocationMapIntent.post() = intent {
-        when (this@post) {
-            is SelectLocationMapIntent.StoreMap -> {
-                reduce {
-                    state.copy(
-                        map = map
-                    )
-                }
-            }
-
-            is SelectLocationMapIntent.StoreSelectMarkerOffset -> {
-                reduce {
-                    state.copy(
-                        selectMarkerOffset = offset,
-                    )
-                }
-            }
-
-            SelectLocationMapIntent.StartLocatingMap -> {
-                reduce {
-                    state.copy(
-                        isLoading = true,
-                    )
-                }
-            }
-
-            is SelectLocationMapIntent.SearchLocation -> {
-                if (coordinate == null) return@intent
-                searchLocationJob = viewModelScope.launch {
-                    val location = searchLocationWithCoordinateUseCase.invoke(
-                        Coordinate(
-                            latitude = coordinate.latitude,
-                            longitude = coordinate.longitude
-                        )
-                    )
+    private fun SelectLocationMapIntent.post() =
+        intent {
+            when (this@post) {
+                is SelectLocationMapIntent.StoreMap -> {
                     reduce {
                         state.copy(
-                            location = location
+                            map = map,
                         )
                     }
-                }.apply {
-                    invokeOnCompletion {
-                        intent {
-                            reduce {
-                                state.copy(
-                                    isLoading = false,
-                                )
-                            }
-                        }
+                }
+
+                is SelectLocationMapIntent.StoreSelectMarkerOffset -> {
+                    reduce {
+                        state.copy(
+                            selectMarkerOffset = offset,
+                        )
                     }
                 }
-            }
 
-            is SelectLocationMapIntent.RequestCameraMove -> {
-                state.map?.let { map ->
-                    postSideEffect(SelectLocationMapSideEffect.MoveCamera(map, position))
+                SelectLocationMapIntent.StartLocatingMap -> {
+                    reduce {
+                        state.copy(
+                            isLoading = true,
+                        )
+                    }
+                }
+
+                is SelectLocationMapIntent.SearchLocation -> {
+                    if (coordinate == null) return@intent
+                    searchLocationJob =
+                        viewModelScope
+                            .launch {
+                                val location =
+                                    searchLocationWithCoordinateUseCase.invoke(
+                                        Coordinate(
+                                            latitude = coordinate.latitude,
+                                            longitude = coordinate.longitude,
+                                        ),
+                                    )
+                                reduce {
+                                    state.copy(
+                                        location = location,
+                                    )
+                                }
+                            }.apply {
+                                invokeOnCompletion {
+                                    intent {
+                                        reduce {
+                                            state.copy(
+                                                isLoading = false,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                }
+
+                is SelectLocationMapIntent.RequestCameraMove -> {
+                    state.map?.let { map ->
+                        postSideEffect(SelectLocationMapSideEffect.MoveCamera(map, position))
+                    }
                 }
             }
         }
-    }
 }

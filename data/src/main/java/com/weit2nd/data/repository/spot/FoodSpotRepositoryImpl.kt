@@ -26,26 +26,30 @@ class FoodSpotRepositoryImpl @Inject constructor(
     ) {
         if (localImageDatasource.checkImagesUriValid(images).not()) throw NotImageException()
 
-        val imageParts = images.map { image ->
-            localImageDatasource.getImageMultipartBodyPart(
-                uri = image,
-                formDataName = "reportPhotos",
-                imageName = System.nanoTime().toString(),
+        val imageParts =
+            images
+                .map { image ->
+                    localImageDatasource.getImageMultipartBodyPart(
+                        uri = image,
+                        formDataName = "reportPhotos",
+                        imageName = System.nanoTime().toString(),
+                    )
+                }.takeIf { it.isNotEmpty() }
+        val request =
+            ReportFoodSpotRequest(
+                name = name,
+                longitude = longitude,
+                latitude = latitude,
+                foodTruck = isFoodTruck,
+                open = open,
+                closed = closed,
             )
-        }.takeIf { it.isNotEmpty() }
-        val request = ReportFoodSpotRequest(
-            name = name,
-            longitude = longitude,
-            latitude = latitude,
-            foodTruck = isFoodTruck,
-            open = open,
-            closed = closed,
-        )
-        val reportFoodSpotPart = moshi.adapter(ReportFoodSpotRequest::class.java).getMultiPart(
-            formDataName = "reportRequest",
-            fileName = "reportRequest",
-            request = request,
-        )
+        val reportFoodSpotPart =
+            moshi.adapter(ReportFoodSpotRequest::class.java).getMultiPart(
+                formDataName = "reportRequest",
+                fileName = "reportRequest",
+                request = request,
+            )
         foodSpotDataSource.reportFoodSpot(
             reportRequest = reportFoodSpotPart,
             reportPhotos = imageParts,
@@ -58,11 +62,12 @@ class FoodSpotRepositoryImpl @Inject constructor(
         latitude: Double,
         images: List<String>,
     ): ReportFoodSpotState {
-        val invalidImage = if (images.size > MAX_IMAGE_COUNT) {
-            null
-        } else {
-            findInvalidImage(images)
-        }
+        val invalidImage =
+            if (images.size > MAX_IMAGE_COUNT) {
+                null
+            } else {
+                findInvalidImage(images)
+            }
         return when {
             invalidImage != null -> {
                 ReportFoodSpotState.InvalidImage(invalidImage)
@@ -86,9 +91,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun verifyName(
-        name: String,
-    ): Boolean {
+    private fun verifyName(name: String): Boolean {
         return name.isNotBlank() && foodSpotNameRegex.matches(name)
     }
 
@@ -97,12 +100,10 @@ class FoodSpotRepositoryImpl @Inject constructor(
         latitude: Double,
     ): Boolean {
         return (longitude in MIN_COORDINATE..MAX_COORDINATE) &&
-                (latitude in MIN_COORDINATE..MAX_COORDINATE)
+            (latitude in MIN_COORDINATE..MAX_COORDINATE)
     }
 
-    private fun findInvalidImage(
-        images: List<String>
-    ): String? {
+    private fun findInvalidImage(images: List<String>): String? {
         // TODO 이미지 uri 검증
         return null
     }

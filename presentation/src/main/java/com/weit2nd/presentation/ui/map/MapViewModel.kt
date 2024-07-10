@@ -12,10 +12,14 @@ import javax.inject.Inject
 class MapViewModel @Inject constructor(
     private val getRestaurantUseCase: GetRestaurantUseCase,
 ) : BaseViewModel<MapState, MapSideEffect>() {
-
     override val container = container<MapState, MapSideEffect>(MapState())
 
-    fun onCameraMoveEnd(startLat: Double, startLng: Double, endLat: Double, endLng: Double) {
+    fun onCameraMoveEnd(
+        startLat: Double,
+        startLng: Double,
+        endLat: Double,
+        endLng: Double,
+    ) {
         MapIntent.RequestRestaurants(startLat, startLng, endLat, endLng).post()
     }
 
@@ -27,41 +31,46 @@ class MapViewModel @Inject constructor(
         MapIntent.RequestCameraMove(currentPosition).post()
     }
 
-    private fun MapIntent.post() = intent {
-        when (this@post) {
-            is MapIntent.RequestRestaurants -> {
-                runCatching {
-                    val restaurants = getRestaurantUseCase.invoke(
-                        startLat, startLng, endLat, endLng
-                    ).map { it.toRestaurantState() }
+    private fun MapIntent.post() =
+        intent {
+            when (this@post) {
+                is MapIntent.RequestRestaurants -> {
+                    runCatching {
+                        val restaurants =
+                            getRestaurantUseCase
+                                .invoke(
+                                    startLat,
+                                    startLng,
+                                    endLat,
+                                    endLng,
+                                ).map { it.toRestaurantState() }
+                        reduce {
+                            state.copy(
+                                restaurants = restaurants,
+                            )
+                        }
+                    }
+                }
+
+                is MapIntent.RefreshMarkers -> {
                     reduce {
                         state.copy(
-                            restaurants = restaurants
+                            map = map,
                         )
+                    }
+                    postSideEffect(
+                        MapSideEffect.RefreshMarkers(
+                            map,
+                            state.restaurants,
+                        ),
+                    )
+                }
+
+                is MapIntent.RequestCameraMove -> {
+                    state.map?.let { map ->
+                        postSideEffect(MapSideEffect.MoveCamera(map, position))
                     }
                 }
             }
-
-            is MapIntent.RefreshMarkers -> {
-                reduce {
-                    state.copy(
-                        map = map
-                    )
-                }
-                postSideEffect(
-                    MapSideEffect.RefreshMarkers(
-                        map,
-                        state.restaurants
-                    )
-                )
-            }
-
-            is MapIntent.RequestCameraMove -> {
-                state.map?.let { map ->
-                    postSideEffect(MapSideEffect.MoveCamera(map, position))
-                }
-            }
         }
-    }
-
 }

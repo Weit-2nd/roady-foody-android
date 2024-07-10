@@ -11,23 +11,23 @@ import javax.inject.Inject
 class SelectPictureViewModel @Inject constructor(
     private val getLocalImagesUseCase: GetLocalImagesUseCase,
 ) : BaseViewModel<SelectPictureState, SelectPictureSideEffect>() {
-
     override val container = container<SelectPictureState, SelectPictureSideEffect>(SelectPictureState())
 
     fun onCreate() {
         SelectPictureIntent.RefreshImages.post()
     }
 
-    private fun SelectPictureIntent.post() = intent {
-        when (this@post) {
-            SelectPictureIntent.RefreshImages -> {
-                val images = getLocalImagesUseCase.invoke().toPersistentList()
-                reduce {
-                    state.copy(
-                        images = images,
-                    )
+    private fun SelectPictureIntent.post() =
+        intent {
+            when (this@post) {
+                SelectPictureIntent.RefreshImages -> {
+                    val images = getLocalImagesUseCase.invoke().toPersistentList()
+                    reduce {
+                        state.copy(
+                            images = images,
+                        )
+                    }
                 }
             }
         }
-    }
 }

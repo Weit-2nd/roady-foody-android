@@ -7,7 +7,6 @@ import javax.inject.Inject
 class SearchTouristSpotsUseCase @Inject constructor(
     private val repository: SearchPlaceRepository,
 ) {
-
     /**
      * 키워드로 관광지 정보를 가져옵니다.
      * @param count 가져올 개수 (default 10)

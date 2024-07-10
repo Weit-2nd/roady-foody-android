@@ -19,20 +19,21 @@ class TermsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTermDetail(termId: Long): TermDetail {
-        val result = runCatching {
-            dataSource.getTermDetail(
-                id = termId
-            ).toTermDetail()
-        }.onFailure {
-            if (it is HttpException && it.code() == HTTP_NOT_FOUND) {
-                throw TermIdNotFoundException()
+        val result =
+            runCatching {
+                dataSource
+                    .getTermDetail(
+                        id = termId,
+                    ).toTermDetail()
+            }.onFailure {
+                if (it is HttpException && it.code() == HTTP_NOT_FOUND) {
+                    throw TermIdNotFoundException()
+                }
             }
-        }
         return result.getOrThrow()
     }
 
-    private fun List<TermDTO>.toTerms(): List<Term> =
-        this.map { it.toTerm() }
+    private fun List<TermDTO>.toTerms(): List<Term> = this.map { it.toTerm() }
 
     private fun TermDTO.toTerm(): Term =
         Term(

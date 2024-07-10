@@ -8,7 +8,6 @@ import javax.inject.Inject
 class SearchLocationWithCoordinateUseCase @Inject constructor(
     val repository: SearchPlaceRepository,
 ) {
-
     suspend operator fun invoke(coordinate: Coordinate): Location {
         return repository.searchLocationWithCoordinate(coordinate)
     }

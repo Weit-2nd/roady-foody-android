@@ -29,21 +29,23 @@ fun SplashScreen(
         }
     }
 
-    val alpha = remember {
-        Animatable(0f)
-    }
+    val alpha =
+        remember {
+            Animatable(0f)
+        }
     LaunchedEffect(Unit) {
         alpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(1500)
+            animationSpec = tween(1500),
         )
         vm.onCreate()
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .alpha(alpha.value),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .alpha(alpha.value),
         contentAlignment = Alignment.Center,
     ) {
         Text(

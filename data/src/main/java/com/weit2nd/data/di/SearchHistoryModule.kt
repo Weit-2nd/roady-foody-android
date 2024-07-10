@@ -14,12 +14,9 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object SearchHistoryModule {
-
     @ViewModelScoped
     @Provides
-    fun providesSearchHistoryRepository(
-        dataSource: SearchHistoryDataSource,
-    ): SearchHistoryRepository {
+    fun providesSearchHistoryRepository(dataSource: SearchHistoryDataSource): SearchHistoryRepository {
         return SearchHistoryRepositoryImpl(dataSource)
     }
 

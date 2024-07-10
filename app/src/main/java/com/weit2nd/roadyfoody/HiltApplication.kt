@@ -9,7 +9,6 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class HiltApplication : Application() {
-
     @Inject
     lateinit var activityProvider: ActivityProvider
 

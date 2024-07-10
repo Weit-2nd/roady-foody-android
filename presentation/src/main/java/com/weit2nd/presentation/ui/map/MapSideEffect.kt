@@ -4,10 +4,9 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 
 sealed class MapSideEffect {
-
     data class RefreshMarkers(
         val map: KakaoMap,
-        val restaurantMarkers: List<RestaurantState>
+        val restaurantMarkers: List<RestaurantState>,
     ) : MapSideEffect()
 
     data class MoveCamera(

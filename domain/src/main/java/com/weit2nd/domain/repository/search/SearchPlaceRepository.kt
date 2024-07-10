@@ -6,7 +6,6 @@ import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.search.TouristSpot
 
 interface SearchPlaceRepository {
-
     suspend fun searchTouristSpot(
         count: Int,
         searchWord: String,
@@ -16,5 +15,6 @@ interface SearchPlaceRepository {
         count: Int,
         searchWord: String,
     ): List<Place>
+
     suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location
 }

@@ -8,7 +8,6 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 interface LoginService {
-
     @Multipart
     @POST("/api/v1/auth")
     suspend fun signUp(

@@ -33,15 +33,14 @@ suspend fun Bitmap.getCompressedBytes(
  * Bitmap의 width, height 모두 maximumSize 보다 크다면
  * width, height 중 크기가 작은 값을 maximumSize로 잡고 비율에 맞게 리사이징을 합니다.
  */
-suspend fun Bitmap.getScaledBitmap(
-    maximumSize: Int = DEFAULT_RESIZE,
-): Bitmap =
+suspend fun Bitmap.getScaledBitmap(maximumSize: Int = DEFAULT_RESIZE): Bitmap =
     withContext(Dispatchers.IO) {
-        val (width, height) = getScaledWidthAndHeight(
-            width = width,
-            height = height,
-            maximumSize = maximumSize,
-        )
+        val (width, height) =
+            getScaledWidthAndHeight(
+                width = width,
+                height = height,
+                maximumSize = maximumSize,
+            )
         Bitmap.createScaledBitmap(this@getScaledBitmap, width, height, false)
     }
 

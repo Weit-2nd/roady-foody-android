@@ -5,9 +5,11 @@ import com.weit2nd.domain.model.Restaurant
 
 data class RestaurantState(
     val id: Long,
-    val position: LatLng
+    val position: LatLng,
 )
 
-fun Restaurant.toRestaurantState(): RestaurantState = RestaurantState(
-    id = id, position = LatLng.from(latitude, longitude)
-)
+fun Restaurant.toRestaurantState(): RestaurantState =
+    RestaurantState(
+        id = id,
+        position = LatLng.from(latitude, longitude),
+    )

@@ -46,14 +46,16 @@ fun ImageViewerScreen(
         }
     }
 
-    val pagerState = rememberPagerState(
-        pageCount = { state.value.images.size },
-        initialPage = state.value.position,
-    )
+    val pagerState =
+        rememberPagerState(
+            pageCount = { state.value.images.size },
+            initialPage = state.value.position,
+        )
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
     ) {
         HorizontalPager(state = pagerState) { page ->
             GlideImage(
@@ -64,17 +66,19 @@ fun ImageViewerScreen(
             )
         }
         PageIndicator(
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 8.dp),
+            modifier =
+                Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 8.dp),
             pagerState = pagerState,
         )
         IconButton(
-            modifier = Modifier
-                .padding(4.dp)
-                .align(Alignment.TopStart),
+            modifier =
+                Modifier
+                    .padding(4.dp)
+                    .align(Alignment.TopStart),
             onClick = vm::onClickExitButton,
         ) {
             Icon(
@@ -94,17 +98,18 @@ private fun PageIndicator(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         repeat(pagerState.pageCount) { index ->
             val color =
                 if (pagerState.currentPage == index) Color.White else Color.DarkGray
             Box(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .background(color)
-                    .size(8.dp)
+                modifier =
+                    Modifier
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                        .size(8.dp),
             )
         }
     }

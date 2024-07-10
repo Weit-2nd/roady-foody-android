@@ -11,7 +11,6 @@ import javax.inject.Inject
 class CurrentPositionViewModel @Inject constructor(
     private val getCurrentPositionUseCase: GetCurrentPositionUseCase,
 ) : BaseViewModel<CurrentPositionState, CurrentPositionSideEffect>() {
-
     override val container =
         container<CurrentPositionState, CurrentPositionSideEffect>(CurrentPositionState())
 
@@ -19,30 +18,32 @@ class CurrentPositionViewModel @Inject constructor(
         CurrentPositionIntent.RequestCurrentPosition.post()
     }
 
-    private fun CurrentPositionIntent.post() = intent {
-        when (this@post) {
-            CurrentPositionIntent.RequestCurrentPosition -> {
-                reduce {
-                    state.copy(
-                        isLoading = true,
-                    )
-                }
-                runCatching {
-                    val location = getCurrentPositionUseCase.invoke()
-                    val currentPosition = LatLng.from(
-                        location.latitude,
-                        location.longitude
-                    )
-                    postSideEffect(CurrentPositionSideEffect.PositionRequestSuccess(currentPosition))
-                }.onFailure {
-                    postSideEffect(CurrentPositionSideEffect.PositionRequestFailed(it))
-                }
-                reduce {
-                    state.copy(
-                        isLoading = false,
-                    )
+    private fun CurrentPositionIntent.post() =
+        intent {
+            when (this@post) {
+                CurrentPositionIntent.RequestCurrentPosition -> {
+                    reduce {
+                        state.copy(
+                            isLoading = true,
+                        )
+                    }
+                    runCatching {
+                        val location = getCurrentPositionUseCase.invoke()
+                        val currentPosition =
+                            LatLng.from(
+                                location.latitude,
+                                location.longitude,
+                            )
+                        postSideEffect(CurrentPositionSideEffect.PositionRequestSuccess(currentPosition))
+                    }.onFailure {
+                        postSideEffect(CurrentPositionSideEffect.PositionRequestFailed(it))
+                    }
+                    reduce {
+                        state.copy(
+                            isLoading = false,
+                        )
+                    }
                 }
             }
         }
-    }
 }

@@ -5,9 +5,8 @@ import com.weit2nd.domain.repository.terms.TermsRepository
 import javax.inject.Inject
 
 class GetTermsUseCase @Inject constructor(
-    private val repository: TermsRepository
+    private val repository: TermsRepository,
 ) {
-
     /**
      * 약관 목록을 가져옵니다.
      */

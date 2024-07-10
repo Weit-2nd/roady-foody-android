@@ -7,6 +7,6 @@ interface RestaurantRepository {
         startLat: Double,
         startLng: Double,
         endLat: Double,
-        endLng: Double
+        endLng: Double,
     ): List<Restaurant>
 }

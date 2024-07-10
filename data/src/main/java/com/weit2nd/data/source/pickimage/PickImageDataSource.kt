@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.first
 class PickImageDataSource(
     private val activityProvider: ActivityProvider,
 ) {
-
     private val selectImageEvent = MutableSharedFlow<List<Uri>>()
 
     suspend fun pickImage(): Uri? {
@@ -18,31 +17,27 @@ class PickImageDataSource(
         return selectImageEvent.first().firstOrNull()
     }
 
-    suspend fun pickImages(
-        maximumSelect: Int,
-    ): List<Uri> {
+    suspend fun pickImages(maximumSelect: Int): List<Uri> {
         startPickImage(maximumSelect)
         return selectImageEvent.first()
     }
 
-    suspend fun emitImages(
-        images: List<Uri>
-    ) {
+    suspend fun emitImages(images: List<Uri>) {
         selectImageEvent.emit(images)
     }
 
-    private fun startPickImage(
-        maximumSelect: Int = 1,
-    ) {
-        val bundle = Bundle().apply {
-            putInt(PickImageActivity.MAXIMUM_SELECT_KEY, maximumSelect)
-        }
-        val intent = Intent(
-            activityProvider.currentActivity,
-            PickImageActivity::class.java,
-        ).apply {
-            putExtras(bundle)
-        }
+    private fun startPickImage(maximumSelect: Int = 1) {
+        val bundle =
+            Bundle().apply {
+                putInt(PickImageActivity.MAXIMUM_SELECT_KEY, maximumSelect)
+            }
+        val intent =
+            Intent(
+                activityProvider.currentActivity,
+                PickImageActivity::class.java,
+            ).apply {
+                putExtras(bundle)
+            }
         activityProvider.currentActivity?.startActivity(intent)
     }
 }

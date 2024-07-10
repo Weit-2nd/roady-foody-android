@@ -19,23 +19,22 @@ import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toTermIdsDTO
-import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
 import com.weit2nd.presentation.navigation.type.TermIdsType
+import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
+import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
 import com.weit2nd.presentation.ui.select.place.map.SelectLocationMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
-import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.signup.terms.TermsScreen
 import com.weit2nd.presentation.ui.signup.terms.detail.TermDetailScreen
 import com.weit2nd.presentation.ui.splash.SplashScreen
-
 
 @Composable
 fun AppNavHost(
@@ -62,9 +61,7 @@ fun AppNavHost(
     }
 }
 
-private fun NavGraphBuilder.splashComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.splashComposable(navController: NavHostController) {
     composable(SplashRoutes.GRAPH) {
         SplashScreen(
             navToLogin = {
@@ -85,9 +82,7 @@ private fun NavGraphBuilder.splashComposable(
     }
 }
 
-private fun NavGraphBuilder.loginComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.loginComposable(navController: NavHostController) {
     composable(LoginNavRoutes.GRAPH) {
         LoginScreen(
             navToHome = { user ->
@@ -103,14 +98,12 @@ private fun NavGraphBuilder.loginComposable(
                         inclusive = true
                     }
                 }
-            }
+            },
         )
     }
 }
 
-private fun NavGraphBuilder.termsComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.termsComposable(navController: NavHostController) {
     composable(route = TermsRoutes.GRAPH) {
         TermsScreen(
             navToSignUp = { agreedTermIds ->
@@ -122,32 +115,28 @@ private fun NavGraphBuilder.termsComposable(
             },
             navToTermDetail = { id ->
                 navController.navigateToTermDetail(id)
-            }
+            },
         )
     }
 }
 
-private fun NavGraphBuilder.termDetailComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.termDetailComposable(navController: NavHostController) {
     composable(
         "${TermDetailRoutes.GRAPH}/{${TermDetailRoutes.TERM_ID}}",
-        arguments = listOf(navArgument(TermDetailRoutes.TERM_ID) { type = NavType.LongType })
+        arguments = listOf(navArgument(TermDetailRoutes.TERM_ID) { type = NavType.LongType }),
     ) {
         TermDetailScreen(
             navToBack = {
                 navController.popBackStack()
-            }
+            },
         )
     }
 }
 
-private fun NavGraphBuilder.signUpComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.signUpComposable(navController: NavHostController) {
     composable(
         route = "${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.TERM_IDS}}",
-        arguments = listOf(navArgument(SignUpNavRoutes.TERM_IDS) { type = TermIdsType() })
+        arguments = listOf(navArgument(SignUpNavRoutes.TERM_IDS) { type = TermIdsType() }),
     ) {
         SignUpScreen(
             navToHome = { user ->
@@ -156,14 +145,12 @@ private fun NavGraphBuilder.signUpComposable(
                         inclusive = true
                     }
                 }
-            }
+            },
         )
     }
 }
 
-private fun NavGraphBuilder.homeComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
     composable(
         route = "${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.USER_STATE_KEY}}",
         arguments = listOf(navArgument(HomeNavRoutes.USER_STATE_KEY) { type = UserType() }),
@@ -172,54 +159,52 @@ private fun NavGraphBuilder.homeComposable(
     }
 }
 
-private fun NavGraphBuilder.selectPictureComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.selectPictureComposable(navController: NavHostController) {
     composable(SelectPictureRoutes.GRAPH) {
         SelectPictureScreen()
     }
 }
 
-private fun NavGraphBuilder.selectLocationComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.selectLocationComposable(navController: NavHostController) {
     composable(SelectLocationRoutes.GRAPH) {
         SelectPlaceScreen(
             navToMap = {
-                navController.navigateToSelectLocationMap() {
+                navController.navigateToSelectLocationMap {
                     popUpTo(SelectLocationMapRoutes.GRAPH) {
                         inclusive = true
                     }
                 }
-            }
+            },
         )
     }
 }
 
-private fun NavGraphBuilder.selectLocationMapComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.selectLocationMapComposable(navController: NavHostController) {
     composable(
         route = "${SelectLocationMapRoutes.GRAPH}/{${SelectLocationMapRoutes.INITIAL_POSITION_KEY}}",
-        arguments = listOf(navArgument(SelectLocationMapRoutes.INITIAL_POSITION_KEY) {
-            type = CoordinateType()
-        }),
+        arguments =
+            listOf(
+                navArgument(SelectLocationMapRoutes.INITIAL_POSITION_KEY) {
+                    type = CoordinateType()
+                },
+            ),
     ) {
         SelectLocationMapScreen()
     }
 }
 
-private fun NavGraphBuilder.imageViewerComposable(
-    navController: NavHostController,
-) {
+private fun NavGraphBuilder.imageViewerComposable(navController: NavHostController) {
     composable(
         route = "${ImageViewerRoutes.GRAPH}/{${ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY}}",
-        arguments = listOf(navArgument(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY) {
-            type = ImageViewerDataType()
-        }),
+        arguments =
+            listOf(
+                navArgument(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY) {
+                    type = ImageViewerDataType()
+                },
+            ),
     ) {
         ImageViewerScreen(
-            onExitBtnClick = { navController.popBackStack() }
+            onExitBtnClick = { navController.popBackStack() },
         )
     }
 }
@@ -240,9 +225,7 @@ private fun NavHostController.navigateToSelectLocationMap(
     navigate("${SelectLocationMapRoutes.GRAPH}/$coordinateJson", builder)
 }
 
-private fun NavHostController.navigateToTermDetail(
-    termId: Long,
-) {
+private fun NavHostController.navigateToTermDetail(termId: Long) {
     navigate("${TermDetailRoutes.GRAPH}/$termId")
 }
 
