@@ -13,7 +13,7 @@ class SignUpUseCase @Inject constructor(
      * @param agreedTermIds 동의한 약관 리스트
      */
     suspend operator fun invoke(
-        image: String,
+        image: String?,
         nickname: String,
         agreedTermIds: List<Long>,
     ) {

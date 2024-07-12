@@ -12,7 +12,7 @@ class SignUpDataSource @Inject constructor(
     private val checkNicknameService: CheckNicknameService,
 ) {
     suspend fun signUp(
-        image: MultipartBody.Part,
+        image: MultipartBody.Part?,
         signUpRequest: MultipartBody.Part,
     ): LoginToken {
         return loginService.signUp(

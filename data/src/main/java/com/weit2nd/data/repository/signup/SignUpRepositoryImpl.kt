@@ -25,18 +25,20 @@ class SignUpRepositoryImpl @Inject constructor(
     private val nicknameCondition = '가'..'힣'
 
     override suspend fun registerUser(
-        image: String,
+        image: String?,
         nickname: String,
         agreedTermIds: List<Long>,
     ) {
-        if (localImageDatasource.checkImageUriValid(image).not()) throw NotImageException()
-
-        val imagePart =
+        val imagePart = image?.let { imageUri ->
+            if (localImageDatasource.checkImageUriValid(imageUri).not()) {
+                throw NotImageException()
+            }
             localImageDatasource.getImageMultipartBodyPart(
-                uri = image,
+                uri = imageUri,
                 formDataName = "profileImage",
                 imageName = System.currentTimeMillis().toString(),
             )
+        }
         val request =
             SignUpRequest(
                 nickname = nickname,
@@ -84,6 +86,7 @@ class SignUpRepositoryImpl @Inject constructor(
             nickname.any {
                 it.isLetterOrDigit().not() && it !in nicknameCondition
             } -> NicknameState.INVALID_CHARACTERS
+
             (nickname.length in 6..16).not() -> NicknameState.INVALID_LENGTH
             else -> NicknameState.VALID
         }
