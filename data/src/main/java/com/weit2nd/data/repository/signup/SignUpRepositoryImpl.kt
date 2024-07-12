@@ -2,7 +2,7 @@ package com.weit2nd.data.repository.signup
 
 import com.squareup.moshi.Moshi
 import com.weit2nd.data.model.user.SignUpRequest
-import com.weit2nd.data.source.auth.AuthDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
 import com.weit2nd.data.util.getMultiPart
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class SignUpRepositoryImpl @Inject constructor(
     private val signUpDataSource: SignUpDataSource,
-    private val authDataSource: AuthDataSource,
+    private val tokenDataSource: TokenDataSource,
     private val localImageDatasource: LocalImageDatasource,
     private val moshi: Moshi,
 ) : SignUpRepository {
@@ -54,8 +54,8 @@ class SignUpRepositoryImpl @Inject constructor(
                 signUpRequest = signUpPart,
             )
         }.onSuccess { token ->
-            authDataSource.setAccessToken(token.accessToken)
-            authDataSource.setRefreshToken(token.refreshToken)
+            tokenDataSource.setAccessToken(token.accessToken)
+            tokenDataSource.setRefreshToken(token.refreshToken)
         }.onFailure {
             throwSignUpException(it)
         }

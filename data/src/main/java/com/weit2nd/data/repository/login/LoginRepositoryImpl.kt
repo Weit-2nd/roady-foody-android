@@ -1,7 +1,7 @@
 package com.weit2nd.data.repository.login
 
 import com.kakao.sdk.user.UserApiClient
-import com.weit2nd.data.source.auth.AuthDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.login.LoginDataSource
 import com.weit2nd.data.util.ActivityProvider
 import com.weit2nd.domain.exception.UnknownException
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
     private val loginDataSource: LoginDataSource,
-    private val authDataSource: AuthDataSource,
+    private val tokenDataSource: TokenDataSource,
     private val activityProvider: ActivityProvider,
 ) : LoginRepository {
     override suspend fun loginWithKakao(): Result<Unit> =
@@ -46,8 +46,8 @@ class LoginRepositoryImpl @Inject constructor(
             }
         return if (serverLoginResult.isSuccess) {
             val token = serverLoginResult.getOrThrow()
-            authDataSource.setAccessToken(token.accessToken)
-            authDataSource.setRefreshToken(token.refreshToken)
+            tokenDataSource.setAccessToken(token.accessToken)
+            tokenDataSource.setRefreshToken(token.refreshToken)
             Result.success(Unit)
         } else {
             val throwable = serverLoginResult.exceptionOrNull() ?: UnknownException()

@@ -1,6 +1,6 @@
 package com.weit2nd.data.interceptor
 
-import com.weit2nd.data.source.auth.AuthDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Response
@@ -9,7 +9,7 @@ import okhttp3.internal.http.HTTP_UNAUTHORIZED
 import javax.inject.Inject
 
 class LoginInterceptor @Inject constructor(
-    private val dataSource: AuthDataSource,
+    private val dataSource: TokenDataSource,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         return runCatching {
