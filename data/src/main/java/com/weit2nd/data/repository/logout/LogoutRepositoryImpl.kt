@@ -9,11 +9,13 @@ class LogoutRepositoryImpl @Inject constructor(
 ) : LogoutRepository {
     override suspend fun logout() {
         logoutDataSource.logout()
+        logoutDataSource.logoutToKakao()
         // TODO 인증 토큰 제거
     }
 
     override suspend fun withdraw() {
         logoutDataSource.withdraw()
+        logoutDataSource.logoutToKakao()
         // TODO 인증 토큰 제거
     }
 }
