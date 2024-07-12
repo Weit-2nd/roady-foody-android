@@ -1,12 +1,12 @@
 package com.weit2nd.data.interceptor
 
-import com.weit2nd.data.source.auth.AuthDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
-    private val dataSource: AuthDataSource,
+    private val dataSource: TokenDataSource,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         // TODO 만료된 액세스 토큰 갱신 로직 추가

@@ -1,9 +1,9 @@
-package com.weit2nd.data.source.auth
+package com.weit2nd.data.source.token
 
 import com.kakao.sdk.auth.AuthApiClient
 import com.weit2nd.domain.exception.auth.AuthException
 
-class AuthDataSource {
+class TokenDataSource {
     // TODO 토큰 보관 로적 추가 예정. 이렇게 저장해서 쓰면 안됨
     private var accessToken = ""
     private var refreshToken = ""

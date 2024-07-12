@@ -4,9 +4,9 @@ import com.squareup.moshi.Moshi
 import com.weit2nd.data.repository.signup.SignUpRepositoryImpl
 import com.weit2nd.data.service.CheckNicknameService
 import com.weit2nd.data.service.LoginService
-import com.weit2nd.data.source.auth.AuthDataSource
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.domain.repository.signup.SignUpRepository
 import dagger.Module
 import dagger.Provides
@@ -22,13 +22,13 @@ object SignUpModule {
     @Provides
     fun providesSignUpRepository(
         signUpDataSource: SignUpDataSource,
-        authDataSource: AuthDataSource,
+        tokenDataSource: TokenDataSource,
         localImageDatasource: LocalImageDatasource,
         moshi: Moshi,
     ): SignUpRepository {
         return SignUpRepositoryImpl(
             signUpDataSource = signUpDataSource,
-            authDataSource = authDataSource,
+            tokenDataSource = tokenDataSource,
             localImageDatasource = localImageDatasource,
             moshi = moshi,
         )
