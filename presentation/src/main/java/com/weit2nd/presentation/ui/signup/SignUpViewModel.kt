@@ -71,7 +71,7 @@ class SignUpViewModel @Inject constructor(
                     runCatching {
                         state.apply {
                             signUpUseCase.invoke(
-                                image = (profileImageUri ?: "").toString(),
+                                image = profileImageUri?.toString(),
                                 nickname = nickname,
                                 agreedTermIds = agreedTermIds,
                             )

@@ -4,7 +4,7 @@ import com.weit2nd.domain.model.NicknameState
 
 interface SignUpRepository {
     suspend fun registerUser(
-        image: String,
+        image: String?,
         nickname: String,
         agreedTermIds: List<Long>,
     )
