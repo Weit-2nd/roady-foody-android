@@ -36,6 +36,9 @@ playServicesLocation = "21.3.0"
 ratingbar = "1.3.12"
 protobuf = "0.9.4"
 protobufJavalite = "4.27.2"
+googleServices = "4.4.2"
+firebaseBOM = "33.1.2"
+appDistribution = "5.0.0"
 coil = "2.7.0"
 
 [libraries]
@@ -87,6 +90,8 @@ androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterfa
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 ratingbar = { module = "com.github.a914-gowtham:compose-ratingbar", version.ref = "ratingbar" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBOM" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -95,4 +100,6 @@ hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "appDistribution" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
