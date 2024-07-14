@@ -7,6 +7,6 @@ import retrofit2.http.Query
 interface RefreshTokenService {
     @GET("/api/v1/auth/refresh")
     suspend fun refreshAccessToken(
-        @Query("token") token: String,
+        @Query("token") refreshToken: String,
     ): LoginToken
 }
