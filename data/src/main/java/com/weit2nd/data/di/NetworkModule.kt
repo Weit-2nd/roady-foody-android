@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.weit2nd.data.BuildConfig
 import com.weit2nd.data.R
+import com.weit2nd.data.interceptor.AuthAuthenticator
 import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.ErrorResponseInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
@@ -72,12 +73,14 @@ object NetworkModule {
         authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
         errorResponseInterceptor: ErrorResponseInterceptor,
+        authAuthenticator: AuthAuthenticator,
     ): OkHttpClient =
         OkHttpClient
             .Builder()
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .addInterceptor(errorResponseInterceptor)
+            .authenticator(authAuthenticator)
             .build()
 
     @DefaultNetwork

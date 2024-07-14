@@ -1,5 +1,6 @@
 package com.weit2nd.data.di
 
+import com.weit2nd.data.interceptor.AuthAuthenticator
 import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
 import com.weit2nd.data.service.RefreshTokenService
@@ -24,6 +25,12 @@ object AuthModule {
     @Provides
     fun providesAuthInterceptor(dataSource: TokenDataSource): AuthInterceptor {
         return AuthInterceptor(dataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAuthAuthenticator(dataSource: TokenDataSource): AuthAuthenticator {
+        return AuthAuthenticator(dataSource)
     }
 
     @Singleton
