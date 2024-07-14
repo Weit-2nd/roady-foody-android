@@ -15,9 +15,9 @@ import javax.inject.Inject
 class AuthAuthenticator @Inject constructor(
     private val dataSource: TokenDataSource,
 ) : Authenticator {
+    private val mutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        val mutex = Mutex()
         var request: Request? = null
         runBlocking {
             mutex.withLock {
