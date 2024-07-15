@@ -9,7 +9,6 @@ class AuthInterceptor @Inject constructor(
     private val dataSource: TokenDataSource,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        // TODO 만료된 액세스 토큰 갱신 로직 추가
         val authorization = BEARER_PREFIX + dataSource.getAccessToken()
         val newRequest =
             chain.request().newBuilder().apply {
@@ -19,7 +18,7 @@ class AuthInterceptor @Inject constructor(
     }
 
     companion object {
-        private const val AUTHORIZATION_HEADER = "Authorization"
-        private const val BEARER_PREFIX = "Bearer "
+        const val AUTHORIZATION_HEADER = "Authorization"
+        const val BEARER_PREFIX = "Bearer "
     }
 }
