@@ -24,14 +24,15 @@ class LoginInterceptor @Inject constructor(
                 chain.proceed(newRequest.build())
             },
             onFailure = {
-                Response.Builder()
+                Response
+                    .Builder()
                     .request(chain.request())
                     .protocol(Protocol.HTTP_1_1)
                     .code(HTTP_UNAUTHORIZED)
                     .message("${it.message}")
                     .body(it.stackTraceToString().toResponseBody())
                     .build()
-            }
+            },
         )
     }
 

@@ -17,7 +17,10 @@ class AuthAuthenticator @Inject constructor(
 ) : Authenticator {
     private val mutex = Mutex()
 
-    override fun authenticate(route: Route?, response: Response): Request? {
+    override fun authenticate(
+        route: Route?,
+        response: Response,
+    ): Request? {
         var request: Request? = null
         runBlocking {
             mutex.withLock {
@@ -27,12 +30,13 @@ class AuthAuthenticator @Inject constructor(
                     runCatching {
                         dataSource.refreshAccessToken()
                     }.onSuccess {
-                        request = response.request.newBuilder()
-                            .header(
-                                AUTHORIZATION_HEADER,
-                                BEARER_PREFIX + dataSource.getAccessToken()
-                            )
-                            .build()
+                        request =
+                            response.request
+                                .newBuilder()
+                                .header(
+                                    AUTHORIZATION_HEADER,
+                                    BEARER_PREFIX + dataSource.getAccessToken(),
+                                ).build()
                     }
                 }
             }
