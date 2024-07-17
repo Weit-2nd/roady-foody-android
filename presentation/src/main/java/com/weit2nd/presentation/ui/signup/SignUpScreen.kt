@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -49,6 +50,10 @@ fun SignUpScreen(
             navToHome = navToHome,
             context = context,
         )
+    }
+
+    if (state.value.isSignUpLoading) {
+        LoadingDialogScreen()
     }
 
     Column(

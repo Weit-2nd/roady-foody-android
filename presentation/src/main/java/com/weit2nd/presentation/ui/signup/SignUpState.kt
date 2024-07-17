@@ -8,4 +8,5 @@ data class SignUpState(
     val nickname: String = "",
     val isNicknameCheckingLoading: Boolean = false,
     val nicknameState: NicknameState = NicknameState.EMPTY,
+    val isSignUpLoading: Boolean = false,
 )

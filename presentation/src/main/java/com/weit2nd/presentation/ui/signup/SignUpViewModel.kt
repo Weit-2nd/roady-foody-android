@@ -68,6 +68,11 @@ class SignUpViewModel @Inject constructor(
         intent {
             when (this@post) {
                 SignUpIntent.RequestSignUp -> {
+                    reduce {
+                        state.copy(
+                            isSignUpLoading = true,
+                        )
+                    }
                     runCatching {
                         state.apply {
                             signUpUseCase.invoke(
@@ -83,6 +88,11 @@ class SignUpViewModel @Inject constructor(
                             postSideEffect(SignUpSideEffect.ShowToast("업로드된 파일이 이미지 형식이 아닙니다."))
                         } else {
                             throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
+                            reduce {
+                                state.copy(
+                                    isSignUpLoading = false,
+                                )
+                            }
                         }
                     }
                 }
