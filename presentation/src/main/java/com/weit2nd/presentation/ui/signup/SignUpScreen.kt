@@ -75,7 +75,7 @@ fun SignUpScreen(
                         .padding(24.dp),
                 nickname = state.value.nickname,
                 nicknameState = state.value.nicknameState,
-                isLoading = state.value.isLoading,
+                isLoading = state.value.isNicknameCheckingLoading,
                 onInputValueChange = vm::onNicknameInputValueChange,
                 onDuplicationBtnClick = vm::onDuplicationBtnClick,
             )

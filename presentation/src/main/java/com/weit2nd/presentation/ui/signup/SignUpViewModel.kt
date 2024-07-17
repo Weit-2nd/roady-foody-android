@@ -56,10 +56,10 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.CheckNicknameDuplication(container.stateFlow.value.nickname).post()
     }
 
-    private fun setLoadingState() {
+    private fun setNicknameCheckingLoadingState() {
         SignUpIntent
-            .SetLoadingState(
-                container.stateFlow.value.isLoading
+            .SetNicknameCheckingLoadingState(
+                container.stateFlow.value.isNicknameCheckingLoading
                     .not(),
             ).post()
     }
@@ -109,7 +109,7 @@ class SignUpViewModel @Inject constructor(
                 }
 
                 is SignUpIntent.CheckNicknameDuplication -> {
-                    setLoadingState()
+                    setNicknameCheckingLoadingState()
                     nicknameDuplicateCheckJob =
                         viewModelScope
                             .launch {
@@ -123,15 +123,15 @@ class SignUpViewModel @Inject constructor(
                                 }
                             }.apply {
                                 invokeOnCompletion {
-                                    setLoadingState()
+                                    setNicknameCheckingLoadingState()
                                 }
                             }
                 }
 
-                is SignUpIntent.SetLoadingState -> {
+                is SignUpIntent.SetNicknameCheckingLoadingState -> {
                     reduce {
                         state.copy(
-                            isLoading = isLoading,
+                            isNicknameCheckingLoading = isLoading,
                         )
                     }
                 }
