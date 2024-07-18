@@ -141,7 +141,7 @@ private fun NavGraphBuilder.signUpComposable(navController: NavHostController) {
         SignUpScreen(
             navToHome = { user ->
                 navController.navigateToHome(user) {
-                    popUpTo(SignUpNavRoutes.GRAPH) {
+                    popUpTo("${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.TERM_IDS}}") {
                         inclusive = true
                     }
                 }

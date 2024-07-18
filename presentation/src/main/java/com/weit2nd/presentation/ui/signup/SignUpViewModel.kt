@@ -56,10 +56,10 @@ class SignUpViewModel @Inject constructor(
         SignUpIntent.CheckNicknameDuplication(container.stateFlow.value.nickname).post()
     }
 
-    private fun setLoadingState() {
+    private fun setNicknameCheckingLoadingState() {
         SignUpIntent
-            .SetLoadingState(
-                container.stateFlow.value.isLoading
+            .SetNicknameCheckingLoadingState(
+                container.stateFlow.value.isNicknameCheckingLoading
                     .not(),
             ).post()
     }
@@ -68,6 +68,11 @@ class SignUpViewModel @Inject constructor(
         intent {
             when (this@post) {
                 SignUpIntent.RequestSignUp -> {
+                    reduce {
+                        state.copy(
+                            isSignUpLoading = true,
+                        )
+                    }
                     runCatching {
                         state.apply {
                             signUpUseCase.invoke(
@@ -83,6 +88,11 @@ class SignUpViewModel @Inject constructor(
                             postSideEffect(SignUpSideEffect.ShowToast("업로드된 파일이 이미지 형식이 아닙니다."))
                         } else {
                             throwable.message?.let { postSideEffect(SignUpSideEffect.ShowToast(it)) }
+                            reduce {
+                                state.copy(
+                                    isSignUpLoading = false,
+                                )
+                            }
                         }
                     }
                 }
@@ -109,7 +119,7 @@ class SignUpViewModel @Inject constructor(
                 }
 
                 is SignUpIntent.CheckNicknameDuplication -> {
-                    setLoadingState()
+                    setNicknameCheckingLoadingState()
                     nicknameDuplicateCheckJob =
                         viewModelScope
                             .launch {
@@ -123,15 +133,15 @@ class SignUpViewModel @Inject constructor(
                                 }
                             }.apply {
                                 invokeOnCompletion {
-                                    setLoadingState()
+                                    setNicknameCheckingLoadingState()
                                 }
                             }
                 }
 
-                is SignUpIntent.SetLoadingState -> {
+                is SignUpIntent.SetNicknameCheckingLoadingState -> {
                     reduce {
                         state.copy(
-                            isLoading = isLoading,
+                            isNicknameCheckingLoading = isLoading,
                         )
                     }
                 }

@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -49,6 +50,10 @@ fun SignUpScreen(
             navToHome = navToHome,
             context = context,
         )
+    }
+
+    if (state.value.isSignUpLoading) {
+        LoadingDialogScreen()
     }
 
     Column(
@@ -75,7 +80,7 @@ fun SignUpScreen(
                         .padding(24.dp),
                 nickname = state.value.nickname,
                 nicknameState = state.value.nicknameState,
-                isLoading = state.value.isLoading,
+                isLoading = state.value.isNicknameCheckingLoading,
                 onInputValueChange = vm::onNicknameInputValueChange,
                 onDuplicationBtnClick = vm::onDuplicationBtnClick,
             )
@@ -84,7 +89,7 @@ fun SignUpScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = vm::onSignUpButtonClick,
-            enabled = state.value.nicknameState == NicknameState.CAN_SIGN_UP,
+            enabled = (state.value.nicknameState == NicknameState.CAN_SIGN_UP) && state.value.isSignUpLoading.not(),
         ) {
             Text(text = stringResource(R.string.sign_up))
         }

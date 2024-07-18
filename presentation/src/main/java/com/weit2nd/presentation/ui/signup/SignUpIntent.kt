@@ -13,7 +13,7 @@ sealed class SignUpIntent {
         val nickname: String,
     ) : SignUpIntent()
 
-    data class SetLoadingState(
+    data class SetNicknameCheckingLoadingState(
         val isLoading: Boolean,
     ) : SignUpIntent()
 }
