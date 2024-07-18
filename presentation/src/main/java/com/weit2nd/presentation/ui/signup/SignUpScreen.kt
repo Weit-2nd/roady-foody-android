@@ -89,7 +89,7 @@ fun SignUpScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = vm::onSignUpButtonClick,
-            enabled = state.value.nicknameState == NicknameState.CAN_SIGN_UP,
+            enabled = (state.value.nicknameState == NicknameState.CAN_SIGN_UP) && state.value.isSignUpLoading.not(),
         ) {
             Text(text = stringResource(R.string.sign_up))
         }
