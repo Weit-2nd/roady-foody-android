@@ -6,6 +6,7 @@ import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.imageuri.NotImageException
+import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import javax.inject.Inject
@@ -22,6 +23,8 @@ class FoodSpotRepositoryImpl @Inject constructor(
         isFoodTruck: Boolean,
         open: Boolean,
         closed: Boolean,
+        foodCategories: List<Long>,
+        operationHours: List<OperationHour>,
         images: List<String>,
     ) {
         if (localImageDatasource.checkImagesUriValid(images).not()) throw NotImageException()
@@ -43,6 +46,8 @@ class FoodSpotRepositoryImpl @Inject constructor(
                 foodTruck = isFoodTruck,
                 open = open,
                 closed = closed,
+                foodCategories = foodCategories,
+                operationHours = operationHours,
             )
         val reportFoodSpotPart =
             moshi.adapter(ReportFoodSpotRequest::class.java).getMultiPart(

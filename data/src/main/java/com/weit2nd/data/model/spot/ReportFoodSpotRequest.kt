@@ -1,6 +1,7 @@
 package com.weit2nd.data.model.spot
 
-// TODO 100퍼 바뀜
+import com.weit2nd.domain.model.spot.OperationHour
+
 data class ReportFoodSpotRequest(
     val name: String,
     val longitude: Double,
@@ -8,4 +9,6 @@ data class ReportFoodSpotRequest(
     val foodTruck: Boolean,
     val open: Boolean,
     val closed: Boolean,
+    val foodCategories: List<Long>,
+    val operationHours: List<OperationHour>,
 )
