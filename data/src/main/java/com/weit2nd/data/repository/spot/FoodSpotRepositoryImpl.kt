@@ -2,6 +2,7 @@ package com.weit2nd.data.repository.spot
 
 import com.squareup.moshi.Moshi
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
+import com.weit2nd.data.model.spot.toRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
@@ -47,7 +48,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
                 open = open,
                 closed = closed,
                 foodCategories = foodCategories,
-                operationHours = operationHours,
+                operationHours = operationHours.map { it.toRequest() },
             )
         val reportFoodSpotPart =
             moshi.adapter(ReportFoodSpotRequest::class.java).getMultiPart(
