@@ -4,7 +4,7 @@ import com.weit2nd.domain.model.spot.FoodSpotHistories
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import javax.inject.Inject
 
-class GetFoodSpotHistories @Inject constructor(
+class GetFoodSpotHistoriesUseCase @Inject constructor(
     private val repository: FoodSpotRepository,
 ) {
     /**
