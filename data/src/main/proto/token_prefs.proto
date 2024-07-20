@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.weit2nd.data";
+option java_multiple_files = true;
+
+message TokenPreferences {
+  string token = 1;
+  int64 created_at = 2;
+}
