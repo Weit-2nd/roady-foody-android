@@ -1,5 +1,7 @@
 package com.weit2nd.domain.model.spot
 
+import java.time.LocalDateTime
+
 data class FoodSpotHistories(
     val contents: List<FoodSpotHistoryContent>,
     val hasNext: Boolean,
@@ -12,7 +14,7 @@ data class FoodSpotHistoryContent(
     val name: String,
     val longitude: Double,
     val latitude: Double,
-    val createdDateTime: String,
+    val createdDateTime: LocalDateTime,
     val reportPhotos: List<FoodSpotPhoto>,
     val categories: List<FoodSpotCategory>,
 )

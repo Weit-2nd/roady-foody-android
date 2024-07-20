@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 annotation class StringToLocalDateTime
 
 class LocalDateTimeConverter {
-    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
     @ToJson
     fun toJson(

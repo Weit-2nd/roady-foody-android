@@ -2,6 +2,8 @@ package com.weit2nd.data.model.spot
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import com.weit2nd.data.util.StringToLocalDateTime
+import java.time.LocalDateTime
 
 @JsonClass(generateAdapter = true)
 data class FoodSpotHistoriesDTO(
@@ -17,7 +19,7 @@ data class FoodSpotHistoryContentDTO(
     @field:Json(name = "name") val name: String,
     @field:Json(name = "longitude") val longitude: Double,
     @field:Json(name = "latitude") val latitude: Double,
-    @field:Json(name = "createdDateTime") val createdDateTime: String,
+    @field:Json(name = "createdDateTime") @StringToLocalDateTime val createdDateTime: LocalDateTime,
     @field:Json(name = "reportPhotos") val reportPhotos: List<FoodSpotReportPhotoDTO>,
     @field:Json(name = "categories") val categories: List<FoodSpotCategoryDTO>,
 )
