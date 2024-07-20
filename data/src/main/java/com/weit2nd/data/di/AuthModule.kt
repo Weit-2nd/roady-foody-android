@@ -1,5 +1,6 @@
 package com.weit2nd.data.di
 
+import android.content.Context
 import com.weit2nd.data.interceptor.AuthAuthenticator
 import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
@@ -9,6 +10,7 @@ import com.weit2nd.data.util.SecurityProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -36,8 +38,14 @@ object AuthModule {
 
     @Singleton
     @Provides
-    fun providesTokenDataSource(service: RefreshTokenService): TokenDataSource {
-        return TokenDataSource(service)
+    fun providesTokenDataSource(
+        @ApplicationContext context: Context,
+        service: RefreshTokenService,
+    ): TokenDataSource {
+        return TokenDataSource(
+            context = context,
+            refreshTokenService = service,
+        )
     }
 
     @Singleton
