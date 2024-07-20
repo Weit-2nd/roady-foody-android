@@ -1,5 +1,6 @@
 package com.weit2nd.domain.repository.spot
 
+import com.weit2nd.domain.model.spot.FoodSpotHistories
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 
@@ -22,4 +23,10 @@ interface FoodSpotRepository {
         latitude: Double,
         images: List<String>,
     ): ReportFoodSpotState
+
+    suspend fun getFoodSpotHistories(
+        userId: Long,
+        count: Int,
+        lastItemId: Long,
+    ): FoodSpotHistories
 }
