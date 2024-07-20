@@ -41,10 +41,12 @@ object AuthModule {
     fun providesTokenDataSource(
         @ApplicationContext context: Context,
         service: RefreshTokenService,
+        securityProvider: SecurityProvider,
     ): TokenDataSource {
         return TokenDataSource(
             context = context,
             refreshTokenService = service,
+            securityProvider = securityProvider,
         )
     }
 
