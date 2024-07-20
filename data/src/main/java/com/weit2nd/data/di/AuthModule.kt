@@ -5,6 +5,7 @@ import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
 import com.weit2nd.data.service.RefreshTokenService
 import com.weit2nd.data.source.token.TokenDataSource
+import com.weit2nd.data.util.SecurityProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,5 +46,11 @@ object AuthModule {
         @DefaultNetwork retrofit: Retrofit,
     ): RefreshTokenService {
         return retrofit.create(RefreshTokenService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSecurityProvider(): SecurityProvider {
+        return SecurityProvider()
     }
 }
