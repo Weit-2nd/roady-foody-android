@@ -1,8 +1,11 @@
+import com.google.protobuf.gradle.id
+
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.protobuf)
     kotlin("kapt")
 }
 
@@ -53,7 +56,25 @@ dependencies {
     implementation(libs.okhttp3.logging.interceptor)
     implementation(libs.kakao.login)
     implementation(libs.datastore.preferences)
+    implementation(libs.datastore)
+    implementation(libs.protobuf.javalite)
     implementation(libs.androidx.exifinterface)
     testImplementation(libs.junit)
     implementation(libs.tedpermission.coroutine)
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.27.2"
+    }
+
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                id("java") {
+                    option("lite")
+                }
+            }
+        }
+    }
 }
