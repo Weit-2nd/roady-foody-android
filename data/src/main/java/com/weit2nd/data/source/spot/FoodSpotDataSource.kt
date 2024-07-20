@@ -21,7 +21,7 @@ class FoodSpotDataSource @Inject constructor(
     suspend fun getFoodSpotHistories(
         userId: Long,
         count: Int,
-        lastItemId: Long,
+        lastItemId: Long?,
     ): FoodSpotHistoriesDTO {
         return service.getFoodSpotHistories(
             userId = userId,

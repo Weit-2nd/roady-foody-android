@@ -21,6 +21,6 @@ interface SpotService {
     suspend fun getFoodSpotHistories(
         @Path("userId") userId: Long,
         @Query("size") size: Int,
-        @Query("lastId") lastId: Long,
+        @Query("lastId") lastId: Long?,
     ): FoodSpotHistoriesDTO
 }

@@ -125,7 +125,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
     override suspend fun getFoodSpotHistories(
         userId: Long,
         count: Int,
-        lastItemId: Long,
+        lastItemId: Long?,
     ): FoodSpotHistories {
         return foodSpotDataSource
             .getFoodSpotHistories(

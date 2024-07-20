@@ -27,6 +27,6 @@ interface FoodSpotRepository {
     suspend fun getFoodSpotHistories(
         userId: Long,
         count: Int,
-        lastItemId: Long,
+        lastItemId: Long?,
     ): FoodSpotHistories
 }
