@@ -7,6 +7,7 @@ data class FoodSpotReportState(
     val isFoodTruck: Boolean = false,
     val isOpen: Boolean = true,
     val categories: List<CategoryStatus> = emptyList(),
+    val reportImages: List<String> = emptyList(),
 )
 
 data class CategoryStatus(

@@ -1,13 +1,16 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
 import com.weit2nd.domain.model.spot.FoodSpotCategory
+import com.weit2nd.domain.usecase.pickimage.PickMultipleImagesUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
-class FoodSpotReportViewModel @Inject constructor() : BaseViewModel<FoodSpotReportState, FoodSpotReportSideEffect>() {
+class FoodSpotReportViewModel @Inject constructor(
+    private val pickMultipleImagesUseCase: PickMultipleImagesUseCase,
+) : BaseViewModel<FoodSpotReportState, FoodSpotReportSideEffect>() {
     override val container =
         container<FoodSpotReportState, FoodSpotReportSideEffect>(FoodSpotReportState())
 
@@ -25,6 +28,14 @@ class FoodSpotReportViewModel @Inject constructor() : BaseViewModel<FoodSpotRepo
 
     fun onClickCategory(categoryStatus: CategoryStatus) {
         FoodSpotReportIntent.ChangeCategoryStatus(categoryStatus).post()
+    }
+
+    fun onClickSelectImagesBtn() {
+        FoodSpotReportIntent.SelectImage.post()
+    }
+
+    fun onDeleteImage(imgUri: String) {
+        FoodSpotReportIntent.DeleteImage(imgUri).post()
     }
 
     private fun FoodSpotReportIntent.post() =
@@ -76,6 +87,28 @@ class FoodSpotReportViewModel @Inject constructor() : BaseViewModel<FoodSpotRepo
                         )
                     }
                 }
+
+                FoodSpotReportIntent.SelectImage -> {
+                    val selectedImages =
+                        pickMultipleImagesUseCase.invoke(maximumSelect = IMAGE_MAX_SIZE - state.reportImages.size)
+                    reduce {
+                        state.copy(
+                            reportImages = (state.reportImages + selectedImages).toSet().toList(),
+                        )
+                    }
+                }
+
+                is FoodSpotReportIntent.DeleteImage -> {
+                    reduce {
+                        state.copy(
+                            reportImages = state.reportImages.filterNot { it == imgUri },
+                        )
+                    }
+                }
             }
         }
+
+    companion object {
+        const val IMAGE_MAX_SIZE = 3
+    }
 }

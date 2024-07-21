@@ -14,4 +14,10 @@ sealed class FoodSpotReportIntent {
     data class ChangeCategoryStatus(
         val categoryStatus: CategoryStatus,
     ) : FoodSpotReportIntent()
+
+    data object SelectImage : FoodSpotReportIntent()
+
+    data class DeleteImage(
+        val imgUri: String,
+    ) : FoodSpotReportIntent()
 }
