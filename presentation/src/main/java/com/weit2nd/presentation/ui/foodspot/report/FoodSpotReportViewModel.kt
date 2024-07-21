@@ -14,6 +14,10 @@ class FoodSpotReportViewModel @Inject constructor() : BaseViewModel<FoodSpotRepo
         FoodSpotReportIntent.ChangeFoodTruckState(isChecked).post()
     }
 
+    fun onClickIsOpenBtn(isOpen: Boolean) {
+        FoodSpotReportIntent.ChangeOpenState(isOpen).post()
+    }
+
     private fun FoodSpotReportIntent.post() =
         intent {
             when (this@post) {
@@ -21,6 +25,14 @@ class FoodSpotReportViewModel @Inject constructor() : BaseViewModel<FoodSpotRepo
                     reduce {
                         state.copy(
                             isFoodTruck = isFoodTruck,
+                        )
+                    }
+                }
+
+                is FoodSpotReportIntent.ChangeOpenState -> {
+                    reduce {
+                        state.copy(
+                            isOpen = isOpen,
                         )
                     }
                 }

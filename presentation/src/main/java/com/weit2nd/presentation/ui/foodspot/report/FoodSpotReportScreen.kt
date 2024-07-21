@@ -82,13 +82,19 @@ fun FoodSpotReportScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        RadioButton(selected = true, onClick = { })
+                        RadioButton(
+                            selected = state.value.isOpen,
+                            onClick = { vm.onClickIsOpenBtn(true) },
+                        )
                         Text(text = "영업중")
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        RadioButton(selected = false, onClick = { })
+                        RadioButton(
+                            selected = state.value.isOpen.not(),
+                            onClick = { vm.onClickIsOpenBtn(false) },
+                        )
                         Text(text = "폐업")
                     }
                 }

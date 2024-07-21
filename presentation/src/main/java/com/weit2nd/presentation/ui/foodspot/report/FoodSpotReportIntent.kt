@@ -4,4 +4,8 @@ sealed class FoodSpotReportIntent {
     data class ChangeFoodTruckState(
         val isFoodTruck: Boolean,
     ) : FoodSpotReportIntent()
+
+    data class ChangeOpenState(
+        val isOpen: Boolean,
+    ) : FoodSpotReportIntent()
 }
