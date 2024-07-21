@@ -28,7 +28,7 @@ import com.weit2nd.presentation.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FoodSpotReportScreen() {
+fun FoodSpotReportScreen(navToBack: () -> Unit) {
     Column(
         modifier =
             Modifier
@@ -116,5 +116,5 @@ fun FoodSpotReportScreen() {
 @Preview(showBackground = true)
 @Composable
 fun FoodSpotReportScreenPreview() {
-    FoodSpotReportScreen()
+    FoodSpotReportScreen {}
 }

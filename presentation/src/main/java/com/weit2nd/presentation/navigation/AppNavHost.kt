@@ -26,6 +26,7 @@ import com.weit2nd.presentation.navigation.type.TermIdsType
 import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
+import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
@@ -58,6 +59,7 @@ fun AppNavHost(
         selectLocationMapComposable(navController)
         termDetailComposable(navController)
         imageViewerComposable(navController)
+        foodSpotReportComposable(navController)
     }
 }
 
@@ -155,7 +157,11 @@ private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
         route = "${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.USER_STATE_KEY}}",
         arguments = listOf(navArgument(HomeNavRoutes.USER_STATE_KEY) { type = UserType() }),
     ) {
-        HomeScreen()
+        HomeScreen(
+            navToFoodSpotReport = {
+                navController.navigate(FoodSpotReportRoutes.GRAPH)
+            },
+        )
     }
 }
 
@@ -205,6 +211,16 @@ private fun NavGraphBuilder.imageViewerComposable(navController: NavHostControll
     ) {
         ImageViewerScreen(
             onExitBtnClick = { navController.popBackStack() },
+        )
+    }
+}
+
+private fun NavGraphBuilder.foodSpotReportComposable(navController: NavHostController) {
+    composable(FoodSpotReportRoutes.GRAPH) {
+        FoodSpotReportScreen(
+            navToBack = {
+                navController.popBackStack()
+            },
         )
     }
 }
@@ -290,4 +306,8 @@ object SelectLocationMapRoutes {
 object ImageViewerRoutes {
     const val GRAPH = "image_viewer"
     const val IMAGES_VIEWER_DATA_KEY = "image_viewer_data"
+}
+
+object FoodSpotReportRoutes {
+    const val GRAPH = "food_spot_report"
 }
