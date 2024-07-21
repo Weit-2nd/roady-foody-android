@@ -11,12 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,6 +36,10 @@ fun FoodSpotReportScreen(
     navToBack: () -> Unit,
 ) {
     val state = vm.collectAsState()
+
+    LaunchedEffect(Unit) {
+        vm.onCreate()
+    }
 
     Column(
         modifier =
@@ -101,15 +106,18 @@ fun FoodSpotReportScreen(
             }
 
             Column {
-                val categories = listOf("카테고리테스트입니다하나둘셋", "ㅁㅁㅁ", "ㅁㅁ", "ㅁ", "dfdfd")
                 Text(text = "음식 카테고리")
                 Text(text = "*최소 1개 이상 선택해야 합니다.", fontSize = 12.sp, fontStyle = FontStyle.Italic)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    categories.forEach {
-                        SuggestionChip(onClick = { }, label = { Text(it) })
+                    state.value.categories.forEach { categoryStatus ->
+                        FilterChip(
+                            onClick = { vm.onClickCategory(categoryStatus) },
+                            selected = categoryStatus.isChecked,
+                            label = { Text(categoryStatus.category.name) },
+                        )
                     }
                 }
             }
