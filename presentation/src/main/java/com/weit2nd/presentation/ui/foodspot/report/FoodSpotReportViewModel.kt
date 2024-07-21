@@ -9,4 +9,21 @@ import javax.inject.Inject
 class FoodSpotReportViewModel @Inject constructor() : BaseViewModel<FoodSpotReportState, FoodSpotReportSideEffect>() {
     override val container =
         container<FoodSpotReportState, FoodSpotReportSideEffect>(FoodSpotReportState())
+
+    fun onSwitchCheckedChange(isChecked: Boolean) {
+        FoodSpotReportIntent.ChangeFoodTruckState(isChecked).post()
+    }
+
+    private fun FoodSpotReportIntent.post() =
+        intent {
+            when (this@post) {
+                is FoodSpotReportIntent.ChangeFoodTruckState -> {
+                    reduce {
+                        state.copy(
+                            isFoodTruck = isFoodTruck,
+                        )
+                    }
+                }
+            }
+        }
 }

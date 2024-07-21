@@ -24,11 +24,18 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.presentation.R
+import org.orbitmvi.orbit.compose.collectAsState
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FoodSpotReportScreen(navToBack: () -> Unit) {
+fun FoodSpotReportScreen(
+    vm: FoodSpotReportViewModel = hiltViewModel(),
+    navToBack: () -> Unit,
+) {
+    val state = vm.collectAsState()
+
     Column(
         modifier =
             Modifier
@@ -61,7 +68,10 @@ fun FoodSpotReportScreen(navToBack: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Text(text = "푸드트럭 여부")
-                Switch(checked = true, onCheckedChange = {})
+                Switch(
+                    checked = state.value.isFoodTruck,
+                    onCheckedChange = { vm.onSwitchCheckedChange(it) },
+                )
             }
 
             Column {
