@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -15,6 +16,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -29,13 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.presentation.ui.common.CancelableImage
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Companion.IMAGE_MAX_SIZE
 import org.orbitmvi.orbit.compose.collectAsState
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun FoodSpotReportScreen(
@@ -56,7 +61,10 @@ fun FoodSpotReportScreen(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()).weight(1.0f),
+            modifier =
+                Modifier
+                    .verticalScroll(rememberScrollState())
+                    .weight(1.0f),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start,
         ) {
@@ -80,23 +88,14 @@ fun FoodSpotReportScreen(
             if (state.value.isOpen) {
                 Column {
                     Text(text = "영업 시간 입력")
-                    val a = listOf("일", "월", "화", "수", "목", "금", "토")
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                    ) {
-                        a.forEach {
-                            FilterChip(
-                                selected = true,
-                                onClick = { },
-                                label = { Text(text = it) },
-                            )
-                        }
-                    }
-                    Row {
-                        Text(text = "월요일")
-                        Text(text = "9:00")
-                    }
+                    OperationTimeSetting(
+                        operationHours = state.value.operationHours,
+                        dialogStatus = state.value.dialogStatus,
+                        onClickDayOfWeekBtn = vm::onClickDayOfWeekBtn,
+                        onSelectTime = vm::onSelectTime,
+                        onCloseDialog = vm::onCloseDialog,
+                        onClickEditTimeBtn = vm::onClickEditTimeBtn,
+                    )
                 }
             }
 
@@ -200,6 +199,98 @@ private fun OpenCloseSelector(
 }
 
 @Composable
+private fun OperationTimeSetting(
+    operationHours: List<OperationHourStatus>,
+    dialogStatus: TimePickerDialogStatus,
+    onClickDayOfWeekBtn: (OperationHourStatus) -> Unit,
+    onSelectTime: (operationHour: OperationHour, isOpeningTime: Boolean, selectedTime: LocalTime) -> Unit,
+    onCloseDialog: () -> Unit,
+    onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
+) {
+    val dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일")
+    dialogStatus.apply {
+        if (isDialogOpen) {
+            TimePickerDialog(
+                selectedTime = operationHour.openingHours,
+                operationHour = operationHour,
+                isOpeningTime = isOpeningTime,
+                onClickConfirm = onSelectTime,
+                onDismissRequest = onCloseDialog,
+            )
+        }
+    }
+    DayOfWeekSelector(operationHours, onClickDayOfWeekBtn, dayOfWeekTitle)
+    operationHours.forEach { operationHourStatus ->
+        if (operationHourStatus.isSelected) {
+            TimeSelector(dayOfWeekTitle, operationHourStatus, onClickEditTimeBtn)
+        }
+    }
+}
+
+@Composable
+private fun DayOfWeekSelector(
+    operationHours: List<OperationHourStatus>,
+    onClickDayOfWeekBtn: (OperationHourStatus) -> Unit,
+    dayOfWeekTitle: List<String>,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        operationHours.forEach { operationHourStatus ->
+            FilterChip(
+                selected = operationHourStatus.isSelected,
+                onClick = { onClickDayOfWeekBtn(operationHourStatus) },
+                label = { Text(text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1]) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun TimeSelector(
+    dayOfWeekTitle: List<String>,
+    operationHourStatus: OperationHourStatus,
+    onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
+) {
+    Row {
+        Text(
+            modifier = Modifier.padding(end = 8.dp),
+            text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1],
+        )
+        OperationTime(onClickEditTimeBtn, operationHourStatus, true)
+        Text(text = " ~ ", modifier = Modifier.padding(horizontal = 4.dp))
+        OperationTime(onClickEditTimeBtn, operationHourStatus, false)
+    }
+}
+
+@Composable
+private fun OperationTime(
+    onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
+    operationHourStatus: OperationHourStatus,
+    isOpeningTime: Boolean,
+) {
+    Row(
+        modifier =
+            Modifier.clickable {
+                onClickEditTimeBtn(operationHourStatus.operationHour, isOpeningTime)
+            },
+    ) {
+        val hours =
+            if (isOpeningTime) {
+                operationHourStatus.operationHour.openingHours
+            } else {
+                operationHourStatus.operationHour.closingHours
+            }
+        Text(
+            text = hours.format(DateTimeFormatter.ofPattern("HH:mm")),
+            textDecoration = TextDecoration.Underline,
+        )
+        Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+    }
+}
+
+@Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun FoodCategory(
     categories: List<CategoryStatus>,
@@ -250,10 +341,4 @@ private fun FoodSpotImage(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FoodSpotReportScreenPreview() {
-    FoodSpotReportScreen {}
 }

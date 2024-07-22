@@ -1,10 +1,12 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
 import com.weit2nd.domain.model.spot.FoodSpotCategory
+import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.usecase.pickimage.PickMultipleImagesUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,6 +30,29 @@ class FoodSpotReportViewModel @Inject constructor(
 
     fun onClickIsOpenBtn(isOpen: Boolean) {
         FoodSpotReportIntent.ChangeOpenState(isOpen).post()
+    }
+
+    fun onClickDayOfWeekBtn(operationHourStatus: OperationHourStatus) {
+        FoodSpotReportIntent.ChangeOperationHourStatus(operationHourStatus).post()
+    }
+
+    fun onClickEditTimeBtn(
+        operationHour: OperationHour,
+        isOpeningTime: Boolean,
+    ) {
+        FoodSpotReportIntent.OpenTimePickerDialog(operationHour, isOpeningTime).post()
+    }
+
+    fun onCloseDialog() {
+        FoodSpotReportIntent.CloseTimePickerDialog.post()
+    }
+
+    fun onSelectTime(
+        operationHour: OperationHour,
+        isOpeningTime: Boolean,
+        selectedTime: LocalTime,
+    ) {
+        FoodSpotReportIntent.ChangeOperationTime(operationHour, isOpeningTime, selectedTime).post()
     }
 
     fun onClickCategory(categoryStatus: CategoryStatus) {
@@ -81,6 +106,58 @@ class FoodSpotReportViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             isOpen = isOpen,
+                        )
+                    }
+                }
+
+                is FoodSpotReportIntent.ChangeOperationHourStatus -> {
+                    reduce {
+                        state.copy(
+                            operationHours =
+                                state.operationHours.map { status ->
+                                    if (status == operationHourStatus) {
+                                        status.copy(isSelected = status.isSelected.not())
+                                    } else {
+                                        status
+                                    }
+                                },
+                        )
+                    }
+                }
+
+                is FoodSpotReportIntent.OpenTimePickerDialog -> {
+                    reduce {
+                        state.copy(
+                            dialogStatus =
+                                state.dialogStatus.copy(
+                                    isDialogOpen = true,
+                                    operationHour = operationHour,
+                                    isOpeningTime = isOpeningTime,
+                                ),
+                        )
+                    }
+                }
+
+                FoodSpotReportIntent.CloseTimePickerDialog -> {
+                    reduce { state.copy(dialogStatus = state.dialogStatus.copy(isDialogOpen = false)) }
+                }
+
+                is FoodSpotReportIntent.ChangeOperationTime -> {
+                    reduce {
+                        state.copy(
+                            operationHours =
+                                state.operationHours.map { status ->
+                                    if (status.operationHour == operationHour) {
+                                        if (isOpeningTime) {
+                                            status.copy(operationHour = operationHour.copy(openingHours = selectedTime))
+                                        } else {
+                                            status.copy(operationHour = operationHour.copy(closingHours = selectedTime))
+                                        }
+                                    } else {
+                                        status
+                                    }
+                                },
+                            dialogStatus = state.dialogStatus.copy(isDialogOpen = false),
                         )
                     }
                 }

@@ -1,5 +1,8 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
+import com.weit2nd.domain.model.spot.OperationHour
+import java.time.LocalTime
+
 sealed class FoodSpotReportIntent {
     data object GetFoodSpotCategories : FoodSpotReportIntent()
 
@@ -13,6 +16,23 @@ sealed class FoodSpotReportIntent {
 
     data class ChangeOpenState(
         val isOpen: Boolean,
+    ) : FoodSpotReportIntent()
+
+    data class ChangeOperationHourStatus(
+        val operationHourStatus: OperationHourStatus,
+    ) : FoodSpotReportIntent()
+
+    data class OpenTimePickerDialog(
+        val operationHour: OperationHour,
+        val isOpeningTime: Boolean,
+    ) : FoodSpotReportIntent()
+
+    data object CloseTimePickerDialog : FoodSpotReportIntent()
+
+    data class ChangeOperationTime(
+        val operationHour: OperationHour,
+        val isOpeningTime: Boolean,
+        val selectedTime: LocalTime,
     ) : FoodSpotReportIntent()
 
     data class ChangeCategoryStatus(
