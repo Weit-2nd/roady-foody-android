@@ -42,15 +42,19 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.weit2nd.domain.model.Location
+import com.weit2nd.domain.model.search.Place
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SelectPlaceMapScreen(vm: SelectLocationMapViewModel = hiltViewModel()) {
+fun SelectPlaceMapScreen(
+    vm: SelectLocationMapViewModel = hiltViewModel(),
+    onSelectPlace: (Place) -> Unit,
+) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
-        handleSideEffects(sideEffect)
+        handleSideEffects(sideEffect, onSelectPlace)
     }
     val context = LocalContext.current
     val mapView =
@@ -63,7 +67,13 @@ fun SelectPlaceMapScreen(vm: SelectLocationMapViewModel = hiltViewModel()) {
                         onCameraMoveStart = vm::onCameraMoveStart,
                         onCameraMoveEnd = vm::onCameraMoveEnd,
                         selectMarkerOffset = state.value.selectMarkerOffset,
-                        position = state.value.initialPosition.run { LatLng.from(latitude, longitude) },
+                        position =
+                            state.value.initialPosition.run {
+                                LatLng.from(
+                                    latitude,
+                                    longitude,
+                                )
+                            },
                     ),
                 )
             }
@@ -115,16 +125,23 @@ fun SelectPlaceMapScreen(vm: SelectLocationMapViewModel = hiltViewModel()) {
                     .padding(16.dp),
             isLoading = state.value.isLoading,
             location = state.value.location,
-            onClick = {},
+            onClick = vm::onClickSelectPlaceBtn,
         )
     }
 }
 
-private fun handleSideEffects(sideEffect: SelectLocationMapSideEffect) {
+private fun handleSideEffects(
+    sideEffect: SelectLocationMapSideEffect,
+    onSelectPlace: (Place) -> Unit,
+) {
     when (sideEffect) {
         is SelectLocationMapSideEffect.MoveCamera -> {
             val cameraUpdate = CameraUpdateFactory.newCenterPosition(sideEffect.position)
             sideEffect.map.moveCamera(cameraUpdate)
+        }
+
+        is SelectLocationMapSideEffect.SelectPlace -> {
+            onSelectPlace(sideEffect.place)
         }
     }
 }

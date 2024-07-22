@@ -35,19 +35,35 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 import com.weit2nd.domain.model.spot.OperationHour
+import com.weit2nd.presentation.navigation.SelectPlaceRoutes
+import com.weit2nd.presentation.navigation.dto.PlaceDTO
+import com.weit2nd.presentation.navigation.dto.toPlace
 import com.weit2nd.presentation.ui.common.CancelableImage
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Companion.IMAGE_MAX_SIZE
+import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun FoodSpotReportScreen(
     vm: FoodSpotReportViewModel = hiltViewModel(),
+    navToSelectPlace: () -> Unit,
     navToBack: () -> Unit,
+    navController: NavController,
 ) {
     val state = vm.collectAsState()
+    vm.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            FoodSpotReportSideEffect.NavToSelectPlace -> {
+                navToSelectPlace()
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         vm.onCreate()
@@ -73,7 +89,11 @@ fun FoodSpotReportScreen(
                 onNameValueChange = vm::onNameValueChange,
             )
 
-            PlacementBtn()
+            PlacementBtn(
+                onClickSetPlaceBtn = vm::onClickSetPlaceBtn,
+                longitude = state.value.place?.longitude,
+                latitude = state.value.place?.latitude,
+            )
 
             FoodTruckSwitch(
                 isFoodTruck = state.value.isFoodTruck,
@@ -122,6 +142,14 @@ fun FoodSpotReportScreen(
             Text(text = "음식점 등록하기")
         }
     }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    navController.ObserveSavedState<PlaceDTO>(
+        lifecycleOwner = lifecycleOwner,
+        key = SelectPlaceRoutes.SELECT_PLACE_KEY,
+    ) {
+        vm.onSelectPlace(it.toPlace())
+    }
 }
 
 @Composable
@@ -137,15 +165,19 @@ private fun NameTextField(
 }
 
 @Composable
-private fun PlacementBtn() {
+private fun PlacementBtn(
+    onClickSetPlaceBtn: () -> Unit,
+    longitude: Double?,
+    latitude: Double?,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Button(onClick = { }) {
+        Button(onClick = { onClickSetPlaceBtn() }) {
             Text(text = "위치설정")
         }
-        Text(text = "longitude\nlatitude")
+        Text(text = "$longitude\n$latitude")
     }
 }
 
@@ -319,13 +351,6 @@ private fun FoodSpotImage(
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        reportImages.forEach { imgUri ->
-            CancelableImage(
-                modifier = Modifier.size(100.dp),
-                imgUri = imgUri,
-                onDeleteImage = onDeleteImage,
-            )
-        }
         if (reportImages.size < IMAGE_MAX_SIZE) {
             IconButton(
                 modifier =
@@ -339,6 +364,13 @@ private fun FoodSpotImage(
                     contentDescription = "select_image",
                 )
             }
+        }
+        reportImages.forEach { imgUri ->
+            CancelableImage(
+                modifier = Modifier.size(100.dp),
+                imgUri = imgUri,
+                onDeleteImage = onDeleteImage,
+            )
         }
     }
 }

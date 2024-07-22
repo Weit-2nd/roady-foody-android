@@ -1,11 +1,13 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
+import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.spot.FoodSpotCategory
 import com.weit2nd.domain.model.spot.OperationHour
 import java.time.DayOfWeek
 
 data class FoodSpotReportState(
     val name: String = "",
+    val place: Place? = null,
     val isFoodTruck: Boolean = false,
     val isOpen: Boolean = true,
     val operationHours: List<OperationHourStatus> =

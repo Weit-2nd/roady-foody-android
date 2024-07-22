@@ -18,6 +18,7 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
+import com.weit2nd.presentation.navigation.dto.toPlaceDTO
 import com.weit2nd.presentation.navigation.dto.toTermIdsDTO
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
@@ -181,6 +182,14 @@ private fun NavGraphBuilder.selectPlaceComposable(navController: NavHostControll
                     }
                 }
             },
+            onSelectPlace = { place ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    SelectPlaceRoutes.SELECT_PLACE_KEY,
+                    place.toPlaceDTO(),
+                )
+                navController.popBackStack()
+            },
+            navController = navController,
         )
     }
 }
@@ -195,7 +204,15 @@ private fun NavGraphBuilder.selectPlaceMapComposable(navController: NavHostContr
                 },
             ),
     ) {
-        SelectPlaceMapScreen()
+        SelectPlaceMapScreen(
+            onSelectPlace = { place ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    SelectPlaceMapRoutes.SELECT_PLACE_KEY,
+                    place.toPlaceDTO(),
+                )
+                navController.popBackStack()
+            },
+        )
     }
 }
 
@@ -218,9 +235,13 @@ private fun NavGraphBuilder.imageViewerComposable(navController: NavHostControll
 private fun NavGraphBuilder.foodSpotReportComposable(navController: NavHostController) {
     composable(FoodSpotReportRoutes.GRAPH) {
         FoodSpotReportScreen(
+            navToSelectPlace = {
+                navController.navigate(SelectPlaceRoutes.GRAPH)
+            },
             navToBack = {
                 navController.popBackStack()
             },
+            navController = navController,
         )
     }
 }
@@ -296,11 +317,13 @@ object SelectPictureRoutes {
 
 object SelectPlaceRoutes {
     const val GRAPH = "select_place"
+    const val SELECT_PLACE_KEY = "select_place_selected_key"
 }
 
 object SelectPlaceMapRoutes {
     const val GRAPH = "select_place_map"
     const val INITIAL_POSITION_KEY = "initial_position"
+    const val SELECT_PLACE_KEY = "select_place_map_selected_key"
 }
 
 object ImageViewerRoutes {

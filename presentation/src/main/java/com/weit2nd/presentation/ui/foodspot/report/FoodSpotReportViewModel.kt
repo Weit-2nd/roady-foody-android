@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
+import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.spot.FoodSpotCategory
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.usecase.pickimage.PickMultipleImagesUseCase
@@ -22,6 +23,14 @@ class FoodSpotReportViewModel @Inject constructor(
 
     fun onNameValueChange(name: String) {
         FoodSpotReportIntent.ChangeNameState(name).post()
+    }
+
+    fun onClickSetPlaceBtn() {
+        FoodSpotReportIntent.NavToSelectPlace.post()
+    }
+
+    fun onSelectPlace(place: Place) {
+        FoodSpotReportIntent.SetPlace(place).post()
     }
 
     fun onSwitchCheckedChange(isChecked: Boolean) {
@@ -90,6 +99,18 @@ class FoodSpotReportViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             name = name,
+                        )
+                    }
+                }
+
+                FoodSpotReportIntent.NavToSelectPlace -> {
+                    postSideEffect(FoodSpotReportSideEffect.NavToSelectPlace)
+                }
+
+                is FoodSpotReportIntent.SetPlace -> {
+                    reduce {
+                        state.copy(
+                            place = place,
                         )
                     }
                 }

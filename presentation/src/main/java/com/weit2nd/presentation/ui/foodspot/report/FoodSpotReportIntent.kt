@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
+import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.spot.OperationHour
 import java.time.LocalTime
 
@@ -8,6 +9,12 @@ sealed class FoodSpotReportIntent {
 
     data class ChangeNameState(
         val name: String,
+    ) : FoodSpotReportIntent()
+
+    data object NavToSelectPlace : FoodSpotReportIntent()
+
+    data class SetPlace(
+        val place: Place,
     ) : FoodSpotReportIntent()
 
     data class ChangeFoodTruckState(
