@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -35,7 +37,6 @@ import com.weit2nd.presentation.ui.common.CancelableImage
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Companion.IMAGE_MAX_SIZE
 import org.orbitmvi.orbit.compose.collectAsState
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FoodSpotReportScreen(
     vm: FoodSpotReportViewModel = hiltViewModel(),
@@ -55,58 +56,46 @@ fun FoodSpotReportScreen(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()).weight(1.0f),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start,
         ) {
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = state.value.name,
-                onValueChange = { vm.onNameValueChange(it) },
+            NameTextField(
+                name = state.value.name,
+                onNameValueChange = vm::onNameValueChange,
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Button(onClick = { }) {
-                    Text(text = "위치설정")
-                }
-                Text(text = "longitude\nlatitude")
-            }
+            PlacementBtn()
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text(text = "푸드트럭 여부")
-                Switch(
-                    checked = state.value.isFoodTruck,
-                    onCheckedChange = { vm.onSwitchCheckedChange(it) },
-                )
-            }
+            FoodTruckSwitch(
+                isFoodTruck = state.value.isFoodTruck,
+                onSwitchCheckedChange = vm::onSwitchCheckedChange,
+            )
 
-            Column {
-                Text(text = "현재 영업여부")
-                Row(
-                    modifier = Modifier.selectableGroup(),
-                ) {
+            OpenCloseSelector(
+                isOpen = state.value.isOpen,
+                onClickIsOpenBtn = vm::onClickIsOpenBtn,
+            )
+
+            if (state.value.isOpen) {
+                Column {
+                    Text(text = "영업 시간 입력")
+                    val a = listOf("일", "월", "화", "수", "목", "금", "토")
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
                     ) {
-                        RadioButton(
-                            selected = state.value.isOpen,
-                            onClick = { vm.onClickIsOpenBtn(true) },
-                        )
-                        Text(text = "영업중")
+                        a.forEach {
+                            FilterChip(
+                                selected = true,
+                                onClick = { },
+                                label = { Text(text = it) },
+                            )
+                        }
                     }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = state.value.isOpen.not(),
-                            onClick = { vm.onClickIsOpenBtn(false) },
-                        )
-                        Text(text = "폐업")
+                    Row {
+                        Text(text = "월요일")
+                        Text(text = "9:00")
                     }
                 }
             }
@@ -114,49 +103,151 @@ fun FoodSpotReportScreen(
             Column {
                 Text(text = "음식 카테고리")
                 Text(text = "*최소 1개 이상 선택해야 합니다.", fontSize = 12.sp, fontStyle = FontStyle.Italic)
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    state.value.categories.forEach { categoryStatus ->
-                        FilterChip(
-                            onClick = { vm.onClickCategory(categoryStatus) },
-                            selected = categoryStatus.isChecked,
-                            label = { Text(categoryStatus.category.name) },
-                        )
-                    }
-                }
+                FoodCategory(
+                    categories = state.value.categories,
+                    onClickCategory = vm::onClickCategory,
+                )
             }
 
             Column {
                 Text(text = "음식점 사진")
                 Text(text = "*최대 3개까지 등록 가능합니다.", fontSize = 12.sp, fontStyle = FontStyle.Italic)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    state.value.reportImages.forEach { imgUri ->
-                        CancelableImage(
-                            modifier = Modifier.size(100.dp),
-                            imgUri = imgUri,
-                            onDeleteImage = vm::onDeleteImage,
-                        )
-                    }
-                    if (state.value.reportImages.size < IMAGE_MAX_SIZE) {
-                        IconButton(
-                            modifier = Modifier.size(100.dp).background(Color.LightGray),
-                            onClick = vm::onClickSelectImagesBtn,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "select_image",
-                            )
-                        }
-                    }
-                }
+                FoodSpotImage(
+                    reportImages = state.value.reportImages,
+                    onDeleteImage = vm::onDeleteImage,
+                    onClickSelectImagesBtn = vm::onClickSelectImagesBtn,
+                )
             }
         }
         Button(modifier = Modifier.fillMaxWidth(), onClick = { }) {
             Text(text = "음식점 등록하기")
+        }
+    }
+}
+
+@Composable
+private fun NameTextField(
+    name: String,
+    onNameValueChange: (String) -> Unit,
+) {
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = name,
+        onValueChange = { onNameValueChange(it) },
+    )
+}
+
+@Composable
+private fun PlacementBtn() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Button(onClick = { }) {
+            Text(text = "위치설정")
+        }
+        Text(text = "longitude\nlatitude")
+    }
+}
+
+@Composable
+private fun FoodTruckSwitch(
+    isFoodTruck: Boolean,
+    onSwitchCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(text = "푸드트럭 여부")
+        Switch(
+            checked = isFoodTruck,
+            onCheckedChange = { onSwitchCheckedChange(it) },
+        )
+    }
+}
+
+@Composable
+private fun OpenCloseSelector(
+    isOpen: Boolean,
+    onClickIsOpenBtn: (Boolean) -> Unit,
+) {
+    Column {
+        Text(text = "현재 영업여부")
+        Row(
+            modifier = Modifier.selectableGroup(),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    selected = isOpen,
+                    onClick = { onClickIsOpenBtn(true) },
+                )
+                Text(text = "영업중")
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    selected = isOpen.not(),
+                    onClick = { onClickIsOpenBtn(false) },
+                )
+                Text(text = "폐업")
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun FoodCategory(
+    categories: List<CategoryStatus>,
+    onClickCategory: (CategoryStatus) -> Unit,
+) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        categories.forEach { categoryStatus ->
+            FilterChip(
+                onClick = { onClickCategory(categoryStatus) },
+                selected = categoryStatus.isChecked,
+                label = { Text(categoryStatus.category.name) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FoodSpotImage(
+    reportImages: List<String>,
+    onDeleteImage: (String) -> Unit,
+    onClickSelectImagesBtn: () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        reportImages.forEach { imgUri ->
+            CancelableImage(
+                modifier = Modifier.size(100.dp),
+                imgUri = imgUri,
+                onDeleteImage = onDeleteImage,
+            )
+        }
+        if (reportImages.size < IMAGE_MAX_SIZE) {
+            IconButton(
+                modifier =
+                    Modifier
+                        .size(100.dp)
+                        .background(Color.LightGray),
+                onClick = onClickSelectImagesBtn,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "select_image",
+                )
+            }
         }
     }
 }
