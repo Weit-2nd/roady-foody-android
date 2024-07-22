@@ -60,8 +60,8 @@ fun FoodSpotReportScreen(
         ) {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = "음식점이름",
-                onValueChange = {},
+                value = state.value.name,
+                onValueChange = { vm.onNameValueChange(it) },
             )
 
             Row(

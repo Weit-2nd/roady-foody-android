@@ -3,6 +3,10 @@ package com.weit2nd.presentation.ui.foodspot.report
 sealed class FoodSpotReportIntent {
     data object GetFoodSpotCategories : FoodSpotReportIntent()
 
+    data class ChangeNameState(
+        val name: String,
+    ) : FoodSpotReportIntent()
+
     data class ChangeFoodTruckState(
         val isFoodTruck: Boolean,
     ) : FoodSpotReportIntent()

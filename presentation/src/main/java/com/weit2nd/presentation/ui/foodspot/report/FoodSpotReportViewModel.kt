@@ -18,6 +18,10 @@ class FoodSpotReportViewModel @Inject constructor(
         FoodSpotReportIntent.GetFoodSpotCategories.post()
     }
 
+    fun onNameValueChange(name: String) {
+        FoodSpotReportIntent.ChangeNameState(name).post()
+    }
+
     fun onSwitchCheckedChange(isChecked: Boolean) {
         FoodSpotReportIntent.ChangeFoodTruckState(isChecked).post()
     }
@@ -53,6 +57,14 @@ class FoodSpotReportViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             categories = categories.map { CategoryStatus(it) },
+                        )
+                    }
+                }
+
+                is FoodSpotReportIntent.ChangeNameState -> {
+                    reduce {
+                        state.copy(
+                            name = name,
                         )
                     }
                 }
