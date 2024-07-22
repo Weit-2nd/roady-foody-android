@@ -155,6 +155,13 @@ class LocalImageDatasource @Inject constructor(
         }
     }
 
+    fun findInvalidImage(images: List<String>): String? {
+        images.forEach {
+            if (checkImageUriValid(it).not()) return it
+        }
+        return null
+    }
+
     private fun checkReadableUri(uri: Uri): Boolean {
         contentResolver.openInputStream(uri).use { inputStream ->
             if (inputStream == null) {

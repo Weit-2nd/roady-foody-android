@@ -144,8 +144,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
     }
 
     private fun findInvalidImage(images: List<String>): String? {
-        // TODO 이미지 uri 검증
-        return null
+        return localImageDatasource.findInvalidImage(images)
     }
 
     override suspend fun getFoodSpotHistories(
