@@ -8,7 +8,7 @@ import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.usecase.search.SearchLocationWithCoordinateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
-import com.weit2nd.presentation.navigation.SelectLocationMapRoutes
+import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
 import com.weit2nd.presentation.navigation.dto.CoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +29,7 @@ class SelectLocationMapViewModel @Inject constructor(
                     checkNotNull(
                         savedStateHandle
                             .get<CoordinateDTO>(
-                                SelectLocationMapRoutes.INITIAL_POSITION_KEY,
+                                SelectPlaceMapRoutes.INITIAL_POSITION_KEY,
                             )?.toCoordinate(),
                     ),
             ),

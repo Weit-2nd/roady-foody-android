@@ -47,7 +47,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SelectLocationMapScreen(vm: SelectLocationMapViewModel = hiltViewModel()) {
+fun SelectPlaceMapScreen(vm: SelectLocationMapViewModel = hiltViewModel()) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         handleSideEffects(sideEffect)
