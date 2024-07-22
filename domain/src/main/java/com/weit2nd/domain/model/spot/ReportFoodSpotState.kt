@@ -5,6 +5,8 @@ sealed class ReportFoodSpotState {
 
     data object BadFoodSpotName : ReportFoodSpotState()
 
+    data object NoFoodCategory : ReportFoodSpotState()
+
     data object TooManyImages : ReportFoodSpotState()
 
     data class InvalidImage(

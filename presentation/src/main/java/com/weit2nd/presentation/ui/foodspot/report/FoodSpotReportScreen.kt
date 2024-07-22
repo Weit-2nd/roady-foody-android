@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -57,10 +59,19 @@ fun FoodSpotReportScreen(
     navController: NavController,
 ) {
     val state = vm.collectAsState()
+    val context = LocalContext.current
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
             FoodSpotReportSideEffect.NavToSelectPlace -> {
                 navToSelectPlace()
+            }
+
+            is FoodSpotReportSideEffect.ShowToast -> {
+                Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+
+            FoodSpotReportSideEffect.ReportSuccess -> {
+                navToBack()
             }
         }
     }
@@ -138,7 +149,11 @@ fun FoodSpotReportScreen(
                 )
             }
         }
-        Button(modifier = Modifier.fillMaxWidth(), onClick = { }) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { vm.onClickReportBtn() },
+            enabled = state.value.isLoading.not(),
+        ) {
             Text(text = "음식점 등록하기")
         }
     }

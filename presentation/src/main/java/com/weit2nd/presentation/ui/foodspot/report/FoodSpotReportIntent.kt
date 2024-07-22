@@ -51,4 +51,6 @@ sealed class FoodSpotReportIntent {
     data class DeleteImage(
         val imgUri: String,
     ) : FoodSpotReportIntent()
+
+    data object ReportFoodSpot : FoodSpotReportIntent()
 }

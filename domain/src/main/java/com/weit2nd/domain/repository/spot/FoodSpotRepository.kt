@@ -19,8 +19,9 @@ interface FoodSpotRepository {
 
     suspend fun verifyReport(
         name: String,
-        longitude: Double,
-        latitude: Double,
+        longitude: Double?,
+        latitude: Double?,
+        foodCategories: List<Long>,
         images: List<String>,
     ): ReportFoodSpotState
 

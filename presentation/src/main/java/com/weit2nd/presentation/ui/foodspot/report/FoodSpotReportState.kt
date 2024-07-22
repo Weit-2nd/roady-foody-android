@@ -19,6 +19,7 @@ data class FoodSpotReportState(
     val dialogStatus: TimePickerDialogStatus = TimePickerDialogStatus(),
     val categories: List<CategoryStatus> = emptyList(),
     val reportImages: List<String> = emptyList(),
+    val isLoading: Boolean = false,
 )
 
 data class CategoryStatus(

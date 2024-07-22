@@ -3,7 +3,10 @@ package com.weit2nd.presentation.ui.foodspot.report
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.spot.FoodSpotCategory
 import com.weit2nd.domain.model.spot.OperationHour
+import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.usecase.pickimage.PickMultipleImagesUseCase
+import com.weit2nd.domain.usecase.spot.ReportFoodSpotUseCase
+import com.weit2nd.domain.usecase.spot.VerifyReportUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
@@ -13,6 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FoodSpotReportViewModel @Inject constructor(
     private val pickMultipleImagesUseCase: PickMultipleImagesUseCase,
+    private val verifyReportUseCase: VerifyReportUseCase,
+    private val reportFoodSpotUseCase: ReportFoodSpotUseCase,
 ) : BaseViewModel<FoodSpotReportState, FoodSpotReportSideEffect>() {
     override val container =
         container<FoodSpotReportState, FoodSpotReportSideEffect>(FoodSpotReportState())
@@ -74,6 +79,10 @@ class FoodSpotReportViewModel @Inject constructor(
 
     fun onDeleteImage(imgUri: String) {
         FoodSpotReportIntent.DeleteImage(imgUri).post()
+    }
+
+    fun onClickReportBtn() {
+        FoodSpotReportIntent.ReportFoodSpot.post()
     }
 
     private fun FoodSpotReportIntent.post() =
@@ -212,6 +221,90 @@ class FoodSpotReportViewModel @Inject constructor(
                     reduce {
                         state.copy(
                             reportImages = state.reportImages.filterNot { it == imgUri },
+                        )
+                    }
+                }
+
+                FoodSpotReportIntent.ReportFoodSpot -> {
+                    reduce {
+                        state.copy(
+                            isLoading = true,
+                        )
+                    }
+
+                    val selectedFoodCategories =
+                        state.categories
+                            .filter { it.isChecked }
+                            .map { it.category.id }
+
+                    val reportFoodSpotState =
+                        state.run {
+                            verifyReportUseCase.invoke(
+                                name = name,
+                                longitude = place?.longitude,
+                                latitude = place?.latitude,
+                                foodCategories = selectedFoodCategories,
+                                images = reportImages,
+                            )
+                        }
+                    when (reportFoodSpotState) {
+                        ReportFoodSpotState.BadCoordinate -> {
+                            postSideEffect(FoodSpotReportSideEffect.ShowToast("올바른 위치를 설정해주세요."))
+                        }
+
+                        ReportFoodSpotState.BadFoodSpotName -> {
+                            postSideEffect(FoodSpotReportSideEffect.ShowToast("상호명은 1자 이상 20자 이하로 입력해주세요."))
+                        }
+
+                        ReportFoodSpotState.NoFoodCategory -> {
+                            postSideEffect(FoodSpotReportSideEffect.ShowToast("음식 카테고리는 최소 1개 이상 선택해야 합니다."))
+                        }
+
+                        ReportFoodSpotState.TooManyImages -> {
+                            postSideEffect(FoodSpotReportSideEffect.ShowToast("이미지는 최대 3개까지 업로드할 수 있습니다."))
+                        }
+
+                        is ReportFoodSpotState.InvalidImage -> {
+                            postSideEffect(FoodSpotReportSideEffect.ShowToast("잘못된 이미지 파일입니다."))
+                        }
+
+                        ReportFoodSpotState.Valid -> {
+                            state
+                                .run {
+                                    runCatching {
+                                        reportFoodSpotUseCase
+                                            .invoke(
+                                                name = name,
+                                                longitude = place?.longitude ?: 0.0,
+                                                latitude = place?.latitude ?: 0.0,
+                                                isFoodTruck = isFoodTruck,
+                                                open = isOpen,
+                                                closed = isOpen.not(),
+                                                foodCategories = selectedFoodCategories,
+                                                operationHours =
+                                                    operationHours
+                                                        .filter { it.isSelected }
+                                                        .map { it.operationHour },
+                                                images = reportImages,
+                                            )
+                                    }
+                                }.onSuccess {
+                                    postSideEffect(FoodSpotReportSideEffect.ShowToast("등록되었습니다."))
+                                    postSideEffect(FoodSpotReportSideEffect.ReportSuccess)
+                                }.onFailure { throwable ->
+                                    throwable.message?.let {
+                                        postSideEffect(
+                                            FoodSpotReportSideEffect.ShowToast(
+                                                it,
+                                            ),
+                                        )
+                                    }
+                                }
+                        }
+                    }
+                    reduce {
+                        state.copy(
+                            isLoading = false,
                         )
                     }
                 }
