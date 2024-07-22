@@ -258,7 +258,7 @@ private fun OperationTimeSetting(
     dialogStatus.apply {
         if (isDialogOpen) {
             TimePickerDialog(
-                selectedTime = operationHour.openingHours,
+                selectedTime = if (isOpeningTime) operationHour.openingHours else operationHour.closingHours,
                 operationHour = operationHour,
                 isOpeningTime = isOpeningTime,
                 onClickConfirm = onSelectTime,
@@ -324,11 +324,14 @@ private fun OperationTime(
             },
     ) {
         val hours =
-            if (isOpeningTime) {
-                operationHourStatus.operationHour.openingHours
-            } else {
-                operationHourStatus.operationHour.closingHours
+            operationHourStatus.operationHour.run {
+                if (isOpeningTime) {
+                    openingHours
+                } else {
+                    closingHours
+                }
             }
+
         Text(
             text = hours.format(DateTimeFormatter.ofPattern("HH:mm")),
             textDecoration = TextDecoration.Underline,
