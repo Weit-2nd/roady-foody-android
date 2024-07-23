@@ -274,9 +274,9 @@ private fun OperationTimeSetting(
         if (isDialogOpen) {
             TimePickerDialog(
                 selectedTime = if (isOpeningTime) operationHour.openingHours else operationHour.closingHours,
-                operationHour = operationHour,
-                isOpeningTime = isOpeningTime,
-                onClickConfirm = onSelectTime,
+                onClickConfirm = { selectedTime ->
+                    onSelectTime(operationHour, isOpeningTime, selectedTime)
+                },
                 onDismissRequest = onCloseDialog,
             )
         }
@@ -302,7 +302,12 @@ private fun DayOfWeekSelector(
         operationHours.forEach { operationHourStatus ->
             FilterChip(
                 selected = operationHourStatus.isSelected,
-                onClick = { onClickDayOfWeekBtn(operationHourStatus, operationHourStatus.isSelected.not()) },
+                onClick = {
+                    onClickDayOfWeekBtn(
+                        operationHourStatus,
+                        operationHourStatus.isSelected.not(),
+                    )
+                },
                 label = { Text(text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1]) },
             )
         }

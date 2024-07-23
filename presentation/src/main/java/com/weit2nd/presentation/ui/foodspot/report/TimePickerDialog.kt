@@ -19,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.weit2nd.domain.model.spot.OperationHour
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,14 +26,8 @@ import java.time.LocalTime
 fun TimePickerDialog(
     modifier: Modifier = Modifier,
     selectedTime: LocalTime,
-    operationHour: OperationHour,
-    isOpeningTime: Boolean,
     onDismissRequest: () -> Unit,
-    onClickConfirm: (
-        operationHour: OperationHour,
-        isOpeningTime: Boolean,
-        selectedTime: LocalTime,
-    ) -> Unit,
+    onClickConfirm: (selectedTime: LocalTime) -> Unit,
 ) {
     val timePickerState =
         rememberTimePickerState(
@@ -72,8 +65,6 @@ fun TimePickerDialog(
                 Button(
                     onClick = {
                         onClickConfirm(
-                            operationHour,
-                            isOpeningTime,
                             LocalTime.of(
                                 timePickerState.hour,
                                 timePickerState.minute,
