@@ -12,7 +12,7 @@ class SearchFoodSpotsDataSource @Inject constructor(
         centerCoordinate: Coordinate,
         radius: Int,
         name: String?,
-        categoryIds: List<Long>?,
+        categoryIds: List<Long>,
     ): FoodSpotsDTO {
         return searchService
             .getFoodSpots(

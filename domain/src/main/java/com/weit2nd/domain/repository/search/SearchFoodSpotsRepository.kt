@@ -8,6 +8,6 @@ interface SearchFoodSpotsRepository {
         centerCoordinate: Coordinate,
         radius: Int,
         name: String?,
-        categoryIds: List<Long>?,
+        categoryIds: List<Long>,
     ): List<FoodSpot>
 }

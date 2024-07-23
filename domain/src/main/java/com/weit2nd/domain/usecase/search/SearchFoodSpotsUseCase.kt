@@ -19,7 +19,7 @@ class SearchFoodSpotsUseCase @Inject constructor(
         centerCoordinate: Coordinate,
         radius: Int,
         name: String?,
-        categoryIds: List<Long>?,
+        categoryIds: List<Long>,
     ): List<FoodSpot> {
         return repository.getFoodSpots(
             centerCoordinate,

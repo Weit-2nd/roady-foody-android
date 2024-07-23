@@ -25,6 +25,6 @@ interface SearchService {
         @Query("centerLatitude") centerLatitude: Double,
         @Query("radius") radius: Int,
         @Query("name") name: String?,
-        @Query("categoryIds") categoryIds: List<Long>?,
+        @Query("categoryIds") categoryIds: List<Long>,
     ): FoodSpotsDTO
 }

@@ -1,6 +1,5 @@
 package com.weit2nd.presentation.ui.map
 
-import android.util.Log
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
@@ -50,11 +49,10 @@ class MapViewModel @Inject constructor(
                                         ),
                                     radius = 500,
                                     name = null,
-                                    categoryIds = null,
+                                    categoryIds = emptyList(),
                                 ).map {
                                     it.toFoodSpotState()
                                 }
-                        Log.d("MainTest", "$foodSpots")
                         reduce {
                             state.copy(
                                 foodSpots = foodSpots,
