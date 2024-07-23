@@ -36,8 +36,8 @@ class SearchPlaceDataSource @Inject constructor(
         return LocationDTO(
             name = "위치이름",
             address = "서울 중구 세종대로${coordinate.latitude}",
-            latitude = 0.0,
-            longitude = 0.0,
+            latitude = coordinate.latitude,
+            longitude = coordinate.longitude,
         )
     }
 }

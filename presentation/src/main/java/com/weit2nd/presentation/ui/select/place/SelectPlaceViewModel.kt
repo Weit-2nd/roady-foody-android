@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.select.place
 
+import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.usecase.search.SearchPlacesWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,10 @@ class SelectPlaceViewModel @Inject constructor(
 
     fun onLocationSearch() {
         SelectPlaceIntent.SearchPlace.post()
+    }
+
+    fun onClickPlace(place: Place)  {
+        SelectPlaceIntent.SelectPlace(place).post()
     }
 
     private fun SelectPlaceIntent.post() =
@@ -42,6 +47,10 @@ class SelectPlaceViewModel @Inject constructor(
                             )
                         }
                     }
+                }
+
+                is SelectPlaceIntent.SelectPlace -> {
+                    postSideEffect(SelectPlaceSideEffect.SelectPlace(place))
                 }
             }
         }

@@ -22,4 +22,17 @@ class HomeViewModel @Inject constructor(
                     ),
             ),
         )
+
+    fun onClickReportBtn() {
+        HomeIntent.NavToFoodSpotReport.post()
+    }
+
+    private fun HomeIntent.post() =
+        intent {
+            when (this@post) {
+                HomeIntent.NavToFoodSpotReport -> {
+                    postSideEffect(HomeSideEffect.NavToFoodSpotReport)
+                }
+            }
+        }
 }

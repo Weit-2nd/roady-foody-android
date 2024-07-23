@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.select.place
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,15 +26,31 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
+import com.weit2nd.presentation.navigation.dto.PlaceDTO
+import com.weit2nd.presentation.navigation.dto.toPlace
+import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SelectPlaceScreen(
     vm: SelectPlaceViewModel = hiltViewModel(),
     navToMap: () -> Unit,
+    onSelectPlace: (Place) -> Unit,
+    navController: NavController,
 ) {
     val state = vm.collectAsState()
+    vm.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is SelectPlaceSideEffect.SelectPlace -> {
+                onSelectPlace(sideEffect.place)
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -69,9 +86,17 @@ fun SelectPlaceScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             items(state.value.searchResults) { item ->
-                SearchPlaceItem(item)
+                SearchPlaceItem(item, vm::onClickPlace)
             }
         }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    navController.ObserveSavedState<PlaceDTO>(
+        lifecycleOwner = lifecycleOwner,
+        key = SelectPlaceMapRoutes.SELECT_PLACE_KEY,
+    ) {
+        vm.onClickPlace(it.toPlace())
     }
 }
 
@@ -102,8 +127,16 @@ private fun LocationTextField(
 }
 
 @Composable
-private fun SearchPlaceItem(place: Place) {
-    Column {
+private fun SearchPlaceItem(
+    place: Place,
+    onClickPlace: (Place) -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier.fillMaxWidth().clickable {
+                onClickPlace(place)
+            },
+    ) {
         Text(
             text = place.placeName,
             fontSize = 20.sp,

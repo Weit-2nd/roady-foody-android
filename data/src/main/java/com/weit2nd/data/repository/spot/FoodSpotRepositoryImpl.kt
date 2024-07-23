@@ -18,6 +18,9 @@ import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
+import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_NOT_FOUND
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class FoodSpotRepositoryImpl @Inject constructor(
@@ -64,16 +67,34 @@ class FoodSpotRepositoryImpl @Inject constructor(
                 fileName = "reportRequest",
                 request = request,
             )
-        foodSpotDataSource.reportFoodSpot(
-            reportRequest = reportFoodSpotPart,
-            reportPhotos = imageParts,
-        )
+
+        runCatching {
+            foodSpotDataSource.reportFoodSpot(
+                reportRequest = reportFoodSpotPart,
+                reportPhotos = imageParts,
+            )
+        }.onFailure { throwable ->
+            throw handleException(throwable)
+        }
     }
+
+    private fun handleException(throwable: Throwable) =
+        if (throwable is HttpException) {
+            val errorMessage = throwable.message()
+            when (throwable.code()) {
+                HTTP_BAD_REQUEST -> IllegalStateException(errorMessage)
+                HTTP_NOT_FOUND -> IllegalStateException(errorMessage)
+                else -> throwable
+            }
+        } else {
+            throwable
+        }
 
     override suspend fun verifyReport(
         name: String,
-        longitude: Double,
-        latitude: Double,
+        longitude: Double?,
+        latitude: Double?,
+        foodCategories: List<Long>,
         images: List<String>,
     ): ReportFoodSpotState {
         val invalidImage =
@@ -89,6 +110,10 @@ class FoodSpotRepositoryImpl @Inject constructor(
 
             verifyCoordinate(longitude, latitude).not() -> {
                 ReportFoodSpotState.BadCoordinate
+            }
+
+            foodCategories.isEmpty() -> {
+                ReportFoodSpotState.NoFoodCategory
             }
 
             images.size > MAX_IMAGE_COUNT -> {
@@ -110,16 +135,16 @@ class FoodSpotRepositoryImpl @Inject constructor(
     }
 
     private fun verifyCoordinate(
-        longitude: Double,
-        latitude: Double,
+        longitude: Double?,
+        latitude: Double?,
     ): Boolean {
+        if (longitude == null || latitude == null) return false
         return (longitude in MIN_COORDINATE..MAX_COORDINATE) &&
             (latitude in MIN_COORDINATE..MAX_COORDINATE)
     }
 
     private fun findInvalidImage(images: List<String>): String? {
-        // TODO 이미지 uri 검증
-        return null
+        return localImageDatasource.findInvalidImage(images)
     }
 
     override suspend fun getFoodSpotHistories(
@@ -170,6 +195,6 @@ class FoodSpotRepositoryImpl @Inject constructor(
         private const val MAX_COORDINATE = 180f
         private const val MIN_COORDINATE = -180f
         private const val MAX_IMAGE_COUNT = 3
-        private val foodSpotNameRegex = Regex("^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9!@#\$%^&*()\\-\\+ ]{1,20}\$")
+        private val foodSpotNameRegex = Regex("^[가-힣a-zA-Z0-9.,'·&\\-\\s]{1,20}\$")
     }
 }

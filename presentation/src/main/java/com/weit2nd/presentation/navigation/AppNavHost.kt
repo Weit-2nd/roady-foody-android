@@ -18,6 +18,7 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
+import com.weit2nd.presentation.navigation.dto.toPlaceDTO
 import com.weit2nd.presentation.navigation.dto.toTermIdsDTO
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
@@ -26,11 +27,12 @@ import com.weit2nd.presentation.navigation.type.TermIdsType
 import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
+import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
-import com.weit2nd.presentation.ui.select.place.map.SelectLocationMapScreen
+import com.weit2nd.presentation.ui.select.place.map.SelectPlaceMapScreen
 import com.weit2nd.presentation.ui.signup.SignUpScreen
 import com.weit2nd.presentation.ui.signup.terms.TermsScreen
 import com.weit2nd.presentation.ui.signup.terms.detail.TermDetailScreen
@@ -54,10 +56,11 @@ fun AppNavHost(
         signUpComposable(navController)
         homeComposable(navController)
         selectPictureComposable(navController)
-        selectLocationComposable(navController)
-        selectLocationMapComposable(navController)
+        selectPlaceComposable(navController)
+        selectPlaceMapComposable(navController)
         termDetailComposable(navController)
         imageViewerComposable(navController)
+        foodSpotReportComposable(navController)
     }
 }
 
@@ -155,7 +158,11 @@ private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
         route = "${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.USER_STATE_KEY}}",
         arguments = listOf(navArgument(HomeNavRoutes.USER_STATE_KEY) { type = UserType() }),
     ) {
-        HomeScreen()
+        HomeScreen(
+            navToFoodSpotReport = {
+                navController.navigate(FoodSpotReportRoutes.GRAPH)
+            },
+        )
     }
 }
 
@@ -165,31 +172,47 @@ private fun NavGraphBuilder.selectPictureComposable(navController: NavHostContro
     }
 }
 
-private fun NavGraphBuilder.selectLocationComposable(navController: NavHostController) {
-    composable(SelectLocationRoutes.GRAPH) {
+private fun NavGraphBuilder.selectPlaceComposable(navController: NavHostController) {
+    composable(SelectPlaceRoutes.GRAPH) {
         SelectPlaceScreen(
             navToMap = {
                 navController.navigateToSelectLocationMap {
-                    popUpTo(SelectLocationMapRoutes.GRAPH) {
+                    popUpTo(SelectPlaceMapRoutes.GRAPH) {
                         inclusive = true
                     }
                 }
             },
+            onSelectPlace = { place ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    SelectPlaceRoutes.SELECT_PLACE_KEY,
+                    place.toPlaceDTO(),
+                )
+                navController.popBackStack()
+            },
+            navController = navController,
         )
     }
 }
 
-private fun NavGraphBuilder.selectLocationMapComposable(navController: NavHostController) {
+private fun NavGraphBuilder.selectPlaceMapComposable(navController: NavHostController) {
     composable(
-        route = "${SelectLocationMapRoutes.GRAPH}/{${SelectLocationMapRoutes.INITIAL_POSITION_KEY}}",
+        route = "${SelectPlaceMapRoutes.GRAPH}/{${SelectPlaceMapRoutes.INITIAL_POSITION_KEY}}",
         arguments =
             listOf(
-                navArgument(SelectLocationMapRoutes.INITIAL_POSITION_KEY) {
+                navArgument(SelectPlaceMapRoutes.INITIAL_POSITION_KEY) {
                     type = CoordinateType()
                 },
             ),
     ) {
-        SelectLocationMapScreen()
+        SelectPlaceMapScreen(
+            onSelectPlace = { place ->
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    SelectPlaceMapRoutes.SELECT_PLACE_KEY,
+                    place.toPlaceDTO(),
+                )
+                navController.popBackStack()
+            },
+        )
     }
 }
 
@@ -209,6 +232,20 @@ private fun NavGraphBuilder.imageViewerComposable(navController: NavHostControll
     }
 }
 
+private fun NavGraphBuilder.foodSpotReportComposable(navController: NavHostController) {
+    composable(FoodSpotReportRoutes.GRAPH) {
+        FoodSpotReportScreen(
+            navToSelectPlace = {
+                navController.navigate(SelectPlaceRoutes.GRAPH)
+            },
+            navToBack = {
+                navController.popBackStack()
+            },
+            navController = navController,
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -222,7 +259,7 @@ private fun NavHostController.navigateToSelectLocationMap(
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
     val coordinateJson = Uri.encode(Gson().toJson(coordinate.toCoordinateDTO()))
-    navigate("${SelectLocationMapRoutes.GRAPH}/$coordinateJson", builder)
+    navigate("${SelectPlaceMapRoutes.GRAPH}/$coordinateJson", builder)
 }
 
 private fun NavHostController.navigateToTermDetail(termId: Long) {
@@ -278,16 +315,22 @@ object SelectPictureRoutes {
     const val GRAPH = "select_picture"
 }
 
-object SelectLocationRoutes {
-    const val GRAPH = "select_location"
+object SelectPlaceRoutes {
+    const val GRAPH = "select_place"
+    const val SELECT_PLACE_KEY = "select_place_selected_key"
 }
 
-object SelectLocationMapRoutes {
-    const val GRAPH = "select_location_map"
+object SelectPlaceMapRoutes {
+    const val GRAPH = "select_place_map"
     const val INITIAL_POSITION_KEY = "initial_position"
+    const val SELECT_PLACE_KEY = "select_place_map_selected_key"
 }
 
 object ImageViewerRoutes {
     const val GRAPH = "image_viewer"
     const val IMAGES_VIEWER_DATA_KEY = "image_viewer_data"
+}
+
+object FoodSpotReportRoutes {
+    const val GRAPH = "food_spot_report"
 }

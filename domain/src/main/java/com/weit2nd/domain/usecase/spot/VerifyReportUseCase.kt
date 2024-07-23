@@ -12,18 +12,21 @@ class VerifyReportUseCase @Inject constructor(
      * @param name 음식점 이름
      * @param longitude 음식점 좌표 (경도)
      * @param latitude 음식점 좌표 (위도)
+     * @param foodCategories 사용자가 선택한 음식 카테고리 id 리스트
      * @param images 음식점 이미지
      */
     suspend operator fun invoke(
         name: String,
-        longitude: Double,
-        latitude: Double,
+        longitude: Double?,
+        latitude: Double?,
+        foodCategories: List<Long>,
         images: List<String>,
     ): ReportFoodSpotState {
         return repository.verifyReport(
             name = name,
             longitude = longitude,
             latitude = latitude,
+            foodCategories = foodCategories,
             images = images,
         )
     }
