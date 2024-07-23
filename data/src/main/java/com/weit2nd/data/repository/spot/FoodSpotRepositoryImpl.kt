@@ -195,6 +195,6 @@ class FoodSpotRepositoryImpl @Inject constructor(
         private const val MAX_COORDINATE = 180f
         private const val MIN_COORDINATE = -180f
         private const val MAX_IMAGE_COUNT = 3
-        private val foodSpotNameRegex = Regex("^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9!@#\$%^&*()\\-\\+ ]{1,20}\$")
+        private val foodSpotNameRegex = Regex("^[가-힣a-zA-Z0-9.,'·&\\-\\s]{1,20}\$")
     }
 }
