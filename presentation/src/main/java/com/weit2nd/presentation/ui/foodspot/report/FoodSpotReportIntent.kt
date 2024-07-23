@@ -27,6 +27,7 @@ sealed class FoodSpotReportIntent {
 
     data class ChangeOperationHourStatus(
         val operationHourStatus: OperationHourStatus,
+        val isSelected: Boolean,
     ) : FoodSpotReportIntent()
 
     data class OpenTimePickerDialog(

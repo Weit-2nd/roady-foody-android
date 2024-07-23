@@ -46,8 +46,15 @@ class FoodSpotReportViewModel @Inject constructor(
         FoodSpotReportIntent.ChangeOpenState(isOpen).post()
     }
 
-    fun onClickDayOfWeekBtn(operationHourStatus: OperationHourStatus) {
-        FoodSpotReportIntent.ChangeOperationHourStatus(operationHourStatus).post()
+    fun onClickDayOfWeekBtn(
+        operationHourStatus: OperationHourStatus,
+        isSelected: Boolean,
+    ) {
+        FoodSpotReportIntent
+            .ChangeOperationHourStatus(
+                operationHourStatus,
+                isSelected,
+            ).post()
     }
 
     fun onClickEditTimeBtn(
@@ -146,7 +153,7 @@ class FoodSpotReportViewModel @Inject constructor(
                             operationHours =
                                 state.operationHours.map { status ->
                                     if (status == operationHourStatus) {
-                                        status.copy(isSelected = status.isSelected.not())
+                                        status.copy(isSelected = isSelected)
                                     } else {
                                         status
                                     }

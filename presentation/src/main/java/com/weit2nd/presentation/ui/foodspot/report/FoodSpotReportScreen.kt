@@ -264,7 +264,7 @@ private fun OpenCloseSelector(
 private fun OperationTimeSetting(
     operationHours: List<OperationHourStatus>,
     dialogStatus: TimePickerDialogStatus,
-    onClickDayOfWeekBtn: (OperationHourStatus) -> Unit,
+    onClickDayOfWeekBtn: (OperationHourStatus, isSelected: Boolean) -> Unit,
     onSelectTime: (operationHour: OperationHour, isOpeningTime: Boolean, selectedTime: LocalTime) -> Unit,
     onCloseDialog: () -> Unit,
     onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
@@ -292,7 +292,7 @@ private fun OperationTimeSetting(
 @Composable
 private fun DayOfWeekSelector(
     operationHours: List<OperationHourStatus>,
-    onClickDayOfWeekBtn: (OperationHourStatus) -> Unit,
+    onClickDayOfWeekBtn: (OperationHourStatus, isSelected: Boolean) -> Unit,
     dayOfWeekTitle: List<String>,
 ) {
     Row(
@@ -302,7 +302,7 @@ private fun DayOfWeekSelector(
         operationHours.forEach { operationHourStatus ->
             FilterChip(
                 selected = operationHourStatus.isSelected,
-                onClick = { onClickDayOfWeekBtn(operationHourStatus) },
+                onClick = { onClickDayOfWeekBtn(operationHourStatus, operationHourStatus.isSelected.not()) },
                 label = { Text(text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1]) },
             )
         }
