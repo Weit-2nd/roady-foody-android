@@ -53,7 +53,8 @@ class LocalImageDatasource @Inject constructor(
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                     cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)),
                                 ).toString()
-                        val lastModified = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED))
+                        val lastModified =
+                            cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED))
                         val directory =
                             cursor
                                 .getString(
@@ -91,8 +92,14 @@ class LocalImageDatasource @Inject constructor(
                 putInt(ContentResolver.QUERY_ARG_LIMIT, count)
             }
             putInt(ContentResolver.QUERY_ARG_OFFSET, offset)
-            putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, arrayOf(MediaStore.Images.ImageColumns.DATE_MODIFIED))
-            putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION, ContentResolver.QUERY_SORT_DIRECTION_DESCENDING)
+            putStringArray(
+                ContentResolver.QUERY_ARG_SORT_COLUMNS,
+                arrayOf(MediaStore.Images.ImageColumns.DATE_MODIFIED),
+            )
+            putInt(
+                ContentResolver.QUERY_ARG_SORT_DIRECTION,
+                ContentResolver.QUERY_SORT_DIRECTION_DESCENDING,
+            )
         }
 
     suspend fun getImageMultipartBodyPart(
@@ -155,12 +162,7 @@ class LocalImageDatasource @Inject constructor(
         }
     }
 
-    fun findInvalidImage(images: List<String>): String? {
-        images.forEach {
-            if (checkImageUriValid(it).not()) return it
-        }
-        return null
-    }
+    fun findInvalidImage(images: List<String>): String? = images.find { checkImageUriValid(it).not() }
 
     private fun checkReadableUri(uri: Uri): Boolean {
         contentResolver.openInputStream(uri).use { inputStream ->
