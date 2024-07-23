@@ -4,5 +4,5 @@ import com.kakao.vectormap.KakaoMap
 
 data class MapState(
     val map: KakaoMap? = null,
-    val restaurants: List<RestaurantState> = emptyList(),
+    val foodSpots: List<FoodSpotState> = emptyList(),
 )

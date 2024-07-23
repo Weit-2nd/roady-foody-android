@@ -1,6 +1,5 @@
 package com.weit2nd.presentation.ui.map
 
-import android.R
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -57,9 +56,9 @@ fun MapScreen(
             }
         }
 
-    LaunchedEffect(state.value.restaurants) {
+    LaunchedEffect(state.value.foodSpots) {
         state.value.map?.let {
-            drawMarkers(it, state.value.restaurants)
+            drawMarkers(it, state.value.foodSpots)
         }
     }
 
@@ -84,7 +83,7 @@ fun MapScreen(
 private fun handleSideEffects(sideEffect: MapSideEffect) {
     when (sideEffect) {
         is MapSideEffect.RefreshMarkers -> {
-            drawMarkers(sideEffect.map, sideEffect.restaurantMarkers)
+            drawMarkers(sideEffect.map, sideEffect.foodSpotMarkers)
         }
 
         is MapSideEffect.MoveCamera -> {
@@ -147,7 +146,7 @@ private fun onCameraMoveEnd(
 
 private fun drawMarkers(
     map: KakaoMap,
-    restaurants: List<RestaurantState>,
+    restaurants: List<FoodSpotState>,
     isRefresh: Boolean = true,
 ) {
     if (isRefresh) {
@@ -156,7 +155,7 @@ private fun drawMarkers(
     restaurants.forEach {
         val styles =
             map.labelManager
-                ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.star_on)))
+                ?.addLabelStyles(LabelStyles.from(LabelStyle.from(android.R.drawable.star_on)))
         val options = LabelOptions.from(it.position).setStyles(styles)
         map.labelManager?.layer?.addLabel(options)
     }

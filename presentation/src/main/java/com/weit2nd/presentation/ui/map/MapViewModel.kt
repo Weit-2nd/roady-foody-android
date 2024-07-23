@@ -2,7 +2,8 @@ package com.weit2nd.presentation.ui.map
 
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
-import com.weit2nd.domain.usecase.GetRestaurantUseCase
+import com.weit2nd.domain.model.Coordinate
+import com.weit2nd.domain.usecase.search.SearchFoodSpotsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
@@ -10,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val getRestaurantUseCase: GetRestaurantUseCase,
+    private val searchFoodSpotsUseCase: SearchFoodSpotsUseCase,
 ) : BaseViewModel<MapState, MapSideEffect>() {
     override val container = container<MapState, MapSideEffect>(MapState())
 
@@ -36,17 +37,25 @@ class MapViewModel @Inject constructor(
             when (this@post) {
                 is MapIntent.RequestRestaurants -> {
                     runCatching {
-                        val restaurants =
-                            getRestaurantUseCase
+                        // TODO 중앙 좌표, 이름, 카테고리 가져오기
+                        // TODO radius를 넣을 때 유저 레벨?을 계산해서 넣기
+                        val foodSpots =
+                            searchFoodSpotsUseCase
                                 .invoke(
-                                    startLat,
-                                    startLng,
-                                    endLat,
-                                    endLng,
-                                ).map { it.toRestaurantState() }
+                                    centerCoordinate =
+                                        Coordinate(
+                                            longitude = 127.074667,
+                                            latitude = 37.14703,
+                                        ),
+                                    radius = 500,
+                                    name = null,
+                                    categoryIds = emptyList(),
+                                ).map {
+                                    it.toFoodSpotState()
+                                }
                         reduce {
                             state.copy(
-                                restaurants = restaurants,
+                                foodSpots = foodSpots,
                             )
                         }
                     }
@@ -61,7 +70,7 @@ class MapViewModel @Inject constructor(
                     postSideEffect(
                         MapSideEffect.RefreshMarkers(
                             map,
-                            state.restaurants,
+                            state.foodSpots,
                         ),
                     )
                 }
