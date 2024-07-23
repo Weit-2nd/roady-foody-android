@@ -5,6 +5,6 @@ import java.time.LocalTime
 
 data class OperationHour(
     val dayOfWeek: DayOfWeek,
-    val openingHours: LocalTime = LocalTime.of(9, 0),
-    val closingHours: LocalTime = LocalTime.of(18, 0),
+    val openingHours: LocalTime,
+    val closingHours: LocalTime,
 )
