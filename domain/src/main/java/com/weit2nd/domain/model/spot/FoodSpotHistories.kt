@@ -16,5 +16,5 @@ data class FoodSpotHistoryContent(
     val latitude: Double,
     val createdDateTime: LocalDateTime,
     val reportPhotos: List<FoodSpotPhoto>,
-    val categories: List<FoodSpotCategory>,
+    val categories: List<FoodCategory>,
 )

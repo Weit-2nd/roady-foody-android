@@ -1,6 +1,6 @@
 package com.weit2nd.domain.model.spot
 
-data class FoodSpotCategory(
+data class FoodCategory(
     val id: Long,
     val name: String,
 )
