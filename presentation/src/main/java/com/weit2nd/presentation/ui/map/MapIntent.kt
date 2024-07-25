@@ -4,7 +4,7 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 
 sealed class MapIntent {
-    data class RequestRestaurants(
+    data class RequestFoodSpots(
         val startLat: Double,
         val startLng: Double,
         val endLat: Double,

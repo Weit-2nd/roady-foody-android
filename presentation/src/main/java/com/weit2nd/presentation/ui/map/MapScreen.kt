@@ -146,13 +146,13 @@ private fun onCameraMoveEnd(
 
 private fun drawMarkers(
     map: KakaoMap,
-    restaurants: List<FoodSpotState>,
+    foodSpots: List<FoodSpotState>,
     isRefresh: Boolean = true,
 ) {
     if (isRefresh) {
         map.labelManager?.layer?.removeAll()
     }
-    restaurants.forEach {
+    foodSpots.forEach {
         val styles =
             map.labelManager
                 ?.addLabelStyles(LabelStyles.from(LabelStyle.from(android.R.drawable.star_on)))

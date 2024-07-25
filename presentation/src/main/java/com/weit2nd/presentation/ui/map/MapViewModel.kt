@@ -21,7 +21,7 @@ class MapViewModel @Inject constructor(
         endLat: Double,
         endLng: Double,
     ) {
-        MapIntent.RequestRestaurants(startLat, startLng, endLat, endLng).post()
+        MapIntent.RequestFoodSpots(startLat, startLng, endLat, endLng).post()
     }
 
     fun onMapReady(kakaoMap: KakaoMap) {
@@ -35,7 +35,7 @@ class MapViewModel @Inject constructor(
     private fun MapIntent.post() =
         intent {
             when (this@post) {
-                is MapIntent.RequestRestaurants -> {
+                is MapIntent.RequestFoodSpots -> {
                     runCatching {
                         // TODO 중앙 좌표, 이름, 카테고리 가져오기
                         // TODO radius를 넣을 때 유저 레벨?을 계산해서 넣기
