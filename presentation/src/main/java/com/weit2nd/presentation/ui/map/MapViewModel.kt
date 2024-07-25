@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.map
 
+import android.util.Log
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
@@ -16,12 +17,10 @@ class MapViewModel @Inject constructor(
     override val container = container<MapState, MapSideEffect>(MapState())
 
     fun onCameraMoveEnd(
-        startLat: Double,
-        startLng: Double,
-        endLat: Double,
-        endLng: Double,
+        centerLat: Double,
+        centerLng: Double,
     ) {
-        MapIntent.RequestFoodSpots(startLat, startLng, endLat, endLng).post()
+        MapIntent.RequestFoodSpots(centerLat, centerLng).post()
     }
 
     fun onMapReady(kakaoMap: KakaoMap) {
@@ -37,15 +36,15 @@ class MapViewModel @Inject constructor(
             when (this@post) {
                 is MapIntent.RequestFoodSpots -> {
                     runCatching {
-                        // TODO 중앙 좌표, 이름, 카테고리 가져오기
+                        // TODO 이름, 카테고리 가져오기
                         // TODO radius를 넣을 때 유저 레벨?을 계산해서 넣기
                         val foodSpots =
                             searchFoodSpotsUseCase
                                 .invoke(
                                     centerCoordinate =
                                         Coordinate(
-                                            longitude = 127.074667,
-                                            latitude = 37.14703,
+                                            longitude = centerLng,
+                                            latitude = centerLat,
                                         ),
                                     radius = 500,
                                     name = null,
@@ -58,6 +57,8 @@ class MapViewModel @Inject constructor(
                                 foodSpots = foodSpots,
                             )
                         }
+                    }.onFailure {
+                        Log.e("RequestFoodSpotsFail", "${it.message}")
                     }
                 }
 
