@@ -5,7 +5,11 @@ import com.weit2nd.data.model.review.PostReviewRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.review.ReviewDataSource
 import com.weit2nd.data.util.getMultiPart
+import com.weit2nd.domain.exception.review.ReviewException
 import com.weit2nd.domain.repository.review.ReviewRepository
+import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_NOT_FOUND
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class ReviewRepositoryImpl @Inject constructor(
@@ -36,10 +40,31 @@ class ReviewRepositoryImpl @Inject constructor(
                 fileName = "reviewRequest",
                 request = request,
             )
-        reviewDataSource.postReview(
-            reviewRequest = postReviewPart,
-            reviewPhotos = imageParts,
-        )
+        runCatching {
+            reviewDataSource.postReview(
+                reviewRequest = postReviewPart,
+                reviewPhotos = imageParts,
+            )
+        }.onFailure {
+            throw handleReviewException(it)
+        }
+    }
+
+    private fun handleReviewException(throwable: Throwable): Throwable {
+        return when (throwable) {
+            is HttpException -> {
+                handleHttpException(throwable)
+            }
+            else -> throwable
+        }
+    }
+
+    private fun handleHttpException(throwable: HttpException): Throwable {
+        return when (throwable.code()) {
+            HTTP_BAD_REQUEST -> ReviewException.BadRequestException(throwable.message())
+            HTTP_NOT_FOUND -> ReviewException.FoodSpotNotFoundException(throwable.message())
+            else -> throwable
+        }
     }
 
     override suspend fun verifyReview(
