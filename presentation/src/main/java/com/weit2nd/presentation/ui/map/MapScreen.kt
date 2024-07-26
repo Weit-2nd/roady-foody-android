@@ -3,6 +3,8 @@ package com.weit2nd.presentation.ui.map
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +79,22 @@ fun MapScreen(
                     .padding(end = 16.dp, bottom = 24.dp),
             onClick = vm::onClickCurrentPositionBtn,
         )
+
+        if (state.value.isMoved) {
+            Button(
+                modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
+                onClick = {
+                    state.value.map?.let {
+                        onClickRefreshFoodSpotBtn(
+                            it,
+                            vm::onClickRefreshFoodSpotBtn,
+                        )
+                    }
+                },
+            ) {
+                Text(text = "이 위치에서 검색")
+            }
+        }
     }
 }
 
@@ -100,6 +118,19 @@ private fun moveCamera(
     map.moveCamera(cameraUpdate)
 }
 
+private fun onClickRefreshFoodSpotBtn(
+    map: KakaoMap,
+    onCameraMoveEnd: (centerLat: Double, centerLng: Double) -> Unit,
+) {
+    val viewport = map.viewport
+    val x = viewport.width() / 2
+    val y = viewport.height() / 2
+    val centerPosition = map.fromScreenPoint(x, y)
+    if (centerPosition != null) {
+        onCameraMoveEnd(centerPosition.latitude, centerPosition.longitude)
+    }
+}
+
 private fun mapLifeCycleCallback() =
     object : MapLifeCycleCallback() {
         override fun onMapDestroy() {
@@ -113,31 +144,17 @@ private fun mapLifeCycleCallback() =
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
-    onCameraMoveEnd: (centerLat: Double, centerLng: Double) -> Unit,
+    onCameraMoveEnd: () -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
-        onCameraMoveEnd(map, onCameraMoveEnd)
-        map.setOnCameraMoveEndListener { kakaoMap, _, _ ->
-            onCameraMoveEnd(kakaoMap, onCameraMoveEnd)
+        map.setOnCameraMoveEndListener { _, _, _ ->
+            onCameraMoveEnd()
         }
     }
 
     override fun getPosition(): LatLng = position
-}
-
-private fun onCameraMoveEnd(
-    map: KakaoMap,
-    onCameraMoveEnd: (centerLat: Double, centerLng: Double) -> Unit,
-) {
-    val viewport = map.viewport
-    val x = viewport.width() / 2
-    val y = viewport.height() / 2
-    val centerPosition = map.fromScreenPoint(x, y)
-    if (centerPosition != null) {
-        onCameraMoveEnd(centerPosition.latitude, centerPosition.longitude)
-    }
 }
 
 private fun drawMarkers(

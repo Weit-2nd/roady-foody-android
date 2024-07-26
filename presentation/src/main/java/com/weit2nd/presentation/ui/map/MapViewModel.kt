@@ -16,7 +16,11 @@ class MapViewModel @Inject constructor(
 ) : BaseViewModel<MapState, MapSideEffect>() {
     override val container = container<MapState, MapSideEffect>(MapState())
 
-    fun onCameraMoveEnd(
+    fun onCameraMoveEnd() {
+        MapIntent.ChangeMovedState(true).post()
+    }
+
+    fun onClickRefreshFoodSpotBtn(
         centerLat: Double,
         centerLng: Double,
     ) {
@@ -34,6 +38,14 @@ class MapViewModel @Inject constructor(
     private fun MapIntent.post() =
         intent {
             when (this@post) {
+                is MapIntent.ChangeMovedState -> {
+                    reduce {
+                        state.copy(
+                            isMoved = isMoved,
+                        )
+                    }
+                }
+
                 is MapIntent.RequestFoodSpots -> {
                     runCatching {
                         // TODO 이름, 카테고리 가져오기
@@ -55,6 +67,7 @@ class MapViewModel @Inject constructor(
                         reduce {
                             state.copy(
                                 foodSpots = foodSpots,
+                                isMoved = false,
                             )
                         }
                     }.onFailure {
