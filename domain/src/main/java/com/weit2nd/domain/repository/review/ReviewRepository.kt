@@ -1,5 +1,7 @@
 package com.weit2nd.domain.repository.review
 
+import com.weit2nd.domain.model.review.PostReviewState
+
 interface ReviewRepository {
     suspend fun postReview(
         foodSpotId: Long,
@@ -12,5 +14,5 @@ interface ReviewRepository {
         contents: String,
         rating: Int,
         images: List<String>,
-    )
+    ): PostReviewState
 }
