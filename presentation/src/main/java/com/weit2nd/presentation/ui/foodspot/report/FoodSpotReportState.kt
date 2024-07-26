@@ -1,7 +1,7 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
 import com.weit2nd.domain.model.search.Place
-import com.weit2nd.domain.model.spot.FoodSpotCategory
+import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.OperationHour
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -28,7 +28,7 @@ data class FoodSpotReportState(
 )
 
 data class CategoryStatus(
-    val category: FoodSpotCategory,
+    val category: FoodCategory,
     val isChecked: Boolean = false,
 )
 

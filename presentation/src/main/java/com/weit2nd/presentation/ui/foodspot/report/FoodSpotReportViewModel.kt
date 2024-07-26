@@ -1,9 +1,9 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
 import com.weit2nd.domain.model.search.Place
-import com.weit2nd.domain.model.spot.FoodSpotCategory
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
+import com.weit2nd.domain.usecase.category.GetCategoryUseCase
 import com.weit2nd.domain.usecase.pickimage.PickMultipleImagesUseCase
 import com.weit2nd.domain.usecase.spot.ReportFoodSpotUseCase
 import com.weit2nd.domain.usecase.spot.VerifyReportUseCase
@@ -16,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FoodSpotReportViewModel @Inject constructor(
     private val pickMultipleImagesUseCase: PickMultipleImagesUseCase,
+    private val getCategoryUseCase: GetCategoryUseCase,
     private val verifyReportUseCase: VerifyReportUseCase,
     private val reportFoodSpotUseCase: ReportFoodSpotUseCase,
 ) : BaseViewModel<FoodSpotReportState, FoodSpotReportSideEffect>() {
@@ -96,14 +97,7 @@ class FoodSpotReportViewModel @Inject constructor(
         intent {
             when (this@post) {
                 FoodSpotReportIntent.GetFoodSpotCategories -> {
-                    // todo 카테고리 조회 api 연결
-                    val categories =
-                        listOf(
-                            FoodSpotCategory(1, "붕어빵"),
-                            FoodSpotCategory(1, "붕어빵1"),
-                            FoodSpotCategory(1, "붕어빵22"),
-                            FoodSpotCategory(1, "붕어빵333"),
-                        )
+                    val categories = getCategoryUseCase.invoke()
                     reduce {
                         state.copy(
                             categories = categories.map { CategoryStatus(it) },

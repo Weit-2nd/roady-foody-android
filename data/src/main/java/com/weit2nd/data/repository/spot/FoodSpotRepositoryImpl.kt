@@ -11,7 +11,7 @@ import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.imageuri.NotImageException
-import com.weit2nd.domain.model.spot.FoodSpotCategory
+import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotHistories
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.domain.model.spot.FoodSpotPhoto
@@ -186,7 +186,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
         )
 
     private fun FoodSpotCategoryDTO.toFoodSpotCategory() =
-        FoodSpotCategory(
+        FoodCategory(
             id = id,
             name = name,
         )
