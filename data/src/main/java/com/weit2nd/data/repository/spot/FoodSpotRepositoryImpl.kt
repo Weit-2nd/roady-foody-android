@@ -40,16 +40,11 @@ class FoodSpotRepositoryImpl @Inject constructor(
         images: List<String>,
     ) {
         if (localImageDatasource.checkImagesUriValid(images).not()) throw NotImageException()
-
         val imageParts =
-            images
-                .map { image ->
-                    localImageDatasource.getImageMultipartBodyPart(
-                        uri = image,
-                        formDataName = "reportPhotos",
-                        imageName = System.nanoTime().toString(),
-                    )
-                }.takeIf { it.isNotEmpty() }
+            localImageDatasource.getImageMultipartBodyParts(
+                uris = images,
+                formDataName = "reportPhotos",
+            )
         val request =
             ReportFoodSpotRequest(
                 name = name,

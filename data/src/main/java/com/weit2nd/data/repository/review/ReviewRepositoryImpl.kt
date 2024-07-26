@@ -20,14 +20,10 @@ class ReviewRepositoryImpl @Inject constructor(
         images: List<String>,
     ) {
         val imageParts =
-            images
-                .map { image ->
-                    localImageDatasource.getImageMultipartBodyPart(
-                        uri = image,
-                        formDataName = "reviewPhotos",
-                        imageName = System.nanoTime().toString(),
-                    )
-                }.takeIf { it.isNotEmpty() }
+            localImageDatasource.getImageMultipartBodyParts(
+                uris = images,
+                formDataName = "reviewPhotos",
+            )
         val request =
             PostReviewRequest(
                 foodSpotId = foodSpotId,
