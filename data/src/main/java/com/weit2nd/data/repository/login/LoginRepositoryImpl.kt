@@ -1,8 +1,8 @@
 package com.weit2nd.data.repository.login
 
 import com.kakao.sdk.user.UserApiClient
-import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.login.LoginDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.util.ActivityProvider
 import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.user.LoginException
@@ -25,7 +25,8 @@ class LoginRepositoryImpl @Inject constructor(
                 activityProvider.currentActivity
                     ?: return@withContext Result.failure(NullPointerException("현재 올라온 activity가 없음"))
             // 카카오 로그인 시도
-            val isKakaoTalkLoginAvailable = UserApiClient.instance.isKakaoTalkLoginAvailable(currentActivity)
+            val isKakaoTalkLoginAvailable =
+                UserApiClient.instance.isKakaoTalkLoginAvailable(currentActivity)
             val kakaoLoginResult =
                 if (isKakaoTalkLoginAvailable) {
                     loginDataSource.loginWithKakaoTalk(currentActivity)
