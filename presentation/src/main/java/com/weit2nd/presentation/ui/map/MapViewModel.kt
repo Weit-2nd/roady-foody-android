@@ -17,7 +17,7 @@ class MapViewModel @Inject constructor(
     override val container = container<MapState, MapSideEffect>(MapState())
 
     fun onCameraMoveEnd() {
-        MapIntent.ChangeMovedState(true).post()
+        MapIntent.SetMovedStateTrue.post()
     }
 
     fun onClickRefreshFoodSpotBtn(map: KakaoMap) {
@@ -41,10 +41,10 @@ class MapViewModel @Inject constructor(
     private fun MapIntent.post() =
         intent {
             when (this@post) {
-                is MapIntent.ChangeMovedState -> {
+                is MapIntent.SetMovedStateTrue -> {
                     reduce {
                         state.copy(
-                            isMoved = isMoved,
+                            isMoved = true,
                         )
                     }
                 }
