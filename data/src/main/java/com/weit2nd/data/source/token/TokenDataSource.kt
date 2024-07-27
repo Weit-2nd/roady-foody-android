@@ -9,6 +9,9 @@ import com.weit2nd.data.service.RefreshTokenService
 import com.weit2nd.data.util.SecurityProvider
 import com.weit2nd.domain.exception.auth.AuthException
 import kotlinx.coroutines.flow.firstOrNull
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 class TokenDataSource @Inject constructor(
@@ -36,17 +39,17 @@ class TokenDataSource @Inject constructor(
         context.accessTokenDataStore.setToken(token)
     }
 
-    suspend fun getAccessToken(): String? = context.accessTokenDataStore.getToken()
+    suspend fun getAccessToken(): TokenInfo? = context.accessTokenDataStore.getToken()
 
     suspend fun setRefreshToken(token: String) {
         context.refreshTokenDataStore.setToken(token)
     }
 
-    suspend fun getRefreshToken(): String? = context.refreshTokenDataStore.getToken()
+    suspend fun getRefreshToken(): TokenInfo? = context.refreshTokenDataStore.getToken()
 
     suspend fun refreshAccessToken() {
         // TODO 리프레쉬 토큰이 없을 경우 처리 추가
-        val token = refreshTokenService.refreshAccessToken(getRefreshToken() ?: "")
+        val token = refreshTokenService.refreshAccessToken(getRefreshToken()?.token ?: "")
         setAccessToken(token.accessToken)
         setRefreshToken(token.refreshToken)
     }
@@ -62,14 +65,17 @@ class TokenDataSource @Inject constructor(
         }
     }
 
-    private suspend fun DataStore<TokenPreferences>.getToken(): String? {
-        val token =
-            data
-                .firstOrNull()
-                ?.token
+    private suspend fun DataStore<TokenPreferences>.getToken(): TokenInfo? {
+        val token = data.firstOrNull()?.token
+        val createdTime = millisecondsToLocalDateTime(data.firstOrNull()?.createdAt)
         return token?.let {
-            securityProvider.decrypt(it)
+            TokenInfo(securityProvider.decrypt(it), createdTime)
         }
+    }
+
+    private fun millisecondsToLocalDateTime(milliseconds: Long?): LocalDateTime {
+        val instant = milliseconds?.let { Instant.ofEpochMilli(it) }
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     }
 
     companion object {
