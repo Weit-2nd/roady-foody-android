@@ -122,6 +122,22 @@ class LocalImageDatasource @Inject constructor(
         )
     }
 
+    suspend fun getImageMultipartBodyParts(
+        uris: List<String>,
+        formDataName: String,
+        mediaType: MediaType = defaultMediaType,
+    ): List<MultipartBody.Part>? {
+        return uris
+            .map { image ->
+                getImageMultipartBodyPart(
+                    uri = image,
+                    formDataName = formDataName,
+                    imageName = System.nanoTime().toString(),
+                    mediaType = mediaType,
+                )
+            }.takeIf { it.isNotEmpty() }
+    }
+
     private suspend fun getFormattedImageBytes(uri: String): ByteArray {
         val bitmap = getBitmapByUri(uri)
         val rotatedBitmap = bitmap.getRotatedBitmap(getRotate(uri))
