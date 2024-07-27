@@ -20,11 +20,14 @@ class MapViewModel @Inject constructor(
         MapIntent.ChangeMovedState(true).post()
     }
 
-    fun onClickRefreshFoodSpotBtn(
-        centerLat: Double,
-        centerLng: Double,
-    ) {
-        MapIntent.RequestFoodSpots(centerLat, centerLng).post()
+    fun onClickRefreshFoodSpotBtn(map: KakaoMap) {
+        val viewport = map.viewport
+        val x = viewport.width() / 2
+        val y = viewport.height() / 2
+        val centerPosition = map.fromScreenPoint(x, y)
+        if (centerPosition != null) {
+            MapIntent.RequestFoodSpots(centerPosition.latitude, centerPosition.longitude).post()
+        }
     }
 
     fun onMapReady(kakaoMap: KakaoMap) {

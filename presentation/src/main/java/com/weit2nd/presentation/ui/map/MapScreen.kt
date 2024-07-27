@@ -84,12 +84,7 @@ fun MapScreen(
             Button(
                 modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
                 onClick = {
-                    state.value.map?.let {
-                        onClickRefreshFoodSpotBtn(
-                            it,
-                            vm::onClickRefreshFoodSpotBtn,
-                        )
-                    }
+                    state.value.map?.let { vm.onClickRefreshFoodSpotBtn(it) }
                 },
             ) {
                 Text(text = "이 위치에서 검색")
@@ -116,19 +111,6 @@ private fun moveCamera(
 ) {
     val cameraUpdate = CameraUpdateFactory.newCenterPosition(position)
     map.moveCamera(cameraUpdate)
-}
-
-private fun onClickRefreshFoodSpotBtn(
-    map: KakaoMap,
-    onCameraMoveEnd: (centerLat: Double, centerLng: Double) -> Unit,
-) {
-    val viewport = map.viewport
-    val x = viewport.width() / 2
-    val y = viewport.height() / 2
-    val centerPosition = map.fromScreenPoint(x, y)
-    if (centerPosition != null) {
-        onCameraMoveEnd(centerPosition.latitude, centerPosition.longitude)
-    }
 }
 
 private fun mapLifeCycleCallback() =
