@@ -22,6 +22,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun HomeScreen(
     vm: HomeViewModel = hiltViewModel(),
     navToFoodSpotReport: () -> Unit,
+    navToMyPage: () -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
