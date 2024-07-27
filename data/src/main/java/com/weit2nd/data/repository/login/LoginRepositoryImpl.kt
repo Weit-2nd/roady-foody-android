@@ -3,6 +3,7 @@ package com.weit2nd.data.repository.login
 import com.kakao.sdk.user.UserApiClient
 import com.weit2nd.data.source.login.LoginDataSource
 import com.weit2nd.data.source.token.TokenDataSource
+import com.weit2nd.data.source.token.TokenInfo
 import com.weit2nd.data.util.ActivityProvider
 import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.user.LoginException
@@ -12,6 +13,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.internal.http.HTTP_NOT_FOUND
 import okhttp3.internal.http.HTTP_UNAUTHORIZED
 import retrofit2.HttpException
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
@@ -56,6 +58,21 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun checkTokenValidation(
+        tokenInfo: TokenInfo,
+        isAccessToken: Boolean,
+    ): Boolean {
+        return if (isAccessToken) {
+            tokenInfo.createdTime
+                .plusMinutes(ACCESS_TOKEN_EXPIRATION_MINUTE.toLong())
+                .isAfter(LocalDateTime.now())
+        } else {
+            tokenInfo.createdTime
+                .plusDays(REFRESH_TOKEN_EXPIRATION_DAY.toLong())
+                .isAfter(LocalDateTime.now())
+        }
+    }
+
     private fun handleLoginException(throwable: Throwable): Throwable {
         return when (throwable) {
             is HttpException -> handleLoginHttpException(throwable)
@@ -69,5 +86,10 @@ class LoginRepositoryImpl @Inject constructor(
             HTTP_UNAUTHORIZED -> LoginException.InvalidTokenException()
             else -> throwable
         }
+    }
+
+    companion object {
+        private const val ACCESS_TOKEN_EXPIRATION_MINUTE = 25
+        private const val REFRESH_TOKEN_EXPIRATION_DAY = 13
     }
 }
