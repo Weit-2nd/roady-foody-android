@@ -30,7 +30,6 @@ class MapViewModel @Inject constructor(
         val y = viewport.height() / 2
         val centerPosition = map.fromScreenPoint(x, y)
         if (centerPosition != null) {
-            searchFoodSpotsJob.cancel()
             MapIntent.RequestFoodSpots(centerPosition.latitude, centerPosition.longitude).post()
         }
     }
@@ -60,6 +59,7 @@ class MapViewModel @Inject constructor(
                             isMoved = false,
                         )
                     }
+                    searchFoodSpotsJob.cancel()
                     searchFoodSpotsJob =
                         viewModelScope
                             .launch {
