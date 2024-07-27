@@ -3,6 +3,8 @@ package com.weit2nd.presentation.ui.map
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -77,6 +79,17 @@ fun MapScreen(
                     .padding(end = 16.dp, bottom = 24.dp),
             onClick = vm::onClickCurrentPositionBtn,
         )
+
+        if (state.value.isMoved) {
+            Button(
+                modifier = Modifier.align(Alignment.TopCenter).padding(8.dp),
+                onClick = {
+                    state.value.map?.let { vm.onClickRefreshFoodSpotBtn(it) }
+                },
+            ) {
+                Text(text = "이 위치에서 검색")
+            }
+        }
     }
 }
 
@@ -113,46 +126,28 @@ private fun mapLifeCycleCallback() =
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
-    onCameraMoveEnd: (startLat: Double, startLng: Double, endLat: Double, endLng: Double) -> Unit,
+    onCameraMoveEnd: () -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
-        onCameraMoveEnd(map, onCameraMoveEnd)
-        map.setOnCameraMoveEndListener { kakaoMap, _, _ ->
-            onCameraMoveEnd(kakaoMap, onCameraMoveEnd)
+        map.setOnCameraMoveEndListener { _, _, _ ->
+            onCameraMoveEnd()
         }
     }
 
     override fun getPosition(): LatLng = position
 }
 
-private fun onCameraMoveEnd(
-    map: KakaoMap,
-    onCameraMoveEnd: (startLat: Double, startLng: Double, endLat: Double, endLng: Double) -> Unit,
-) {
-    val viewport = map.viewport
-    val startCoordinate = map.fromScreenPoint(0, 0)
-    val endCoordinate = map.fromScreenPoint(viewport.width(), viewport.height())
-    if (startCoordinate != null && endCoordinate != null) {
-        onCameraMoveEnd(
-            startCoordinate.getLatitude(),
-            startCoordinate.getLongitude(),
-            endCoordinate.latitude,
-            endCoordinate.longitude,
-        )
-    }
-}
-
 private fun drawMarkers(
     map: KakaoMap,
-    restaurants: List<FoodSpotState>,
+    foodSpots: List<FoodSpotState>,
     isRefresh: Boolean = true,
 ) {
     if (isRefresh) {
         map.labelManager?.layer?.removeAll()
     }
-    restaurants.forEach {
+    foodSpots.forEach {
         val styles =
             map.labelManager
                 ?.addLabelStyles(LabelStyles.from(LabelStyle.from(android.R.drawable.star_on)))
