@@ -10,7 +10,7 @@ interface ReviewRepository {
         images: List<String>,
     )
 
-    suspend fun verifyReview(
+    fun verifyReview(
         contents: String,
         rating: Int,
         images: List<String>,

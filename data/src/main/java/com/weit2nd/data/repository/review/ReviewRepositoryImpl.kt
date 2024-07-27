@@ -68,7 +68,7 @@ class ReviewRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun verifyReview(
+    override fun verifyReview(
         contents: String,
         rating: Int,
         images: List<String>,

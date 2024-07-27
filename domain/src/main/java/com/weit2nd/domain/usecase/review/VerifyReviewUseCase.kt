@@ -7,7 +7,7 @@ import javax.inject.Inject
 class VerifyReviewUseCase @Inject constructor(
     private val repository: ReviewRepository,
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         contents: String,
         rating: Int,
         images: List<String>,
