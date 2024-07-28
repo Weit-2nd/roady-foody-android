@@ -80,11 +80,14 @@ class ReviewRepositoryImpl @Inject constructor(
                 localImageDatasource.findInvalidImage(images)
             }
         return when {
-            invalidImage != null -> PostReviewVerificationState.INVALID_IMAGE
-            contents.isBlank() -> PostReviewVerificationState.EMPTY_CONTENTS
-            contents.length > MAX_CONTENTS_LENGTH -> PostReviewVerificationState.TOO_MANY_CONTENTS
-            rating !in MIN_RATING..MAX_RATING -> PostReviewVerificationState.INVALID_RATING
-            else -> PostReviewVerificationState.VALID
+            invalidImage != null -> PostReviewVerificationState.InvalidImage
+            contents.isBlank() -> PostReviewVerificationState.EmptyContents
+            contents.length > MAX_CONTENTS_LENGTH ->
+                PostReviewVerificationState.TooManyContents(
+                    MAX_CONTENTS_LENGTH,
+                )
+            rating !in MIN_RATING..MAX_RATING -> PostReviewVerificationState.InvalidRating
+            else -> PostReviewVerificationState.Valid
         }
     }
 

@@ -1,9 +1,15 @@
 package com.weit2nd.domain.model.review
 
-enum class PostReviewVerificationState {
-    INVALID_IMAGE,
-    EMPTY_CONTENTS,
-    TOO_MANY_CONTENTS,
-    INVALID_RATING,
-    VALID,
+sealed class PostReviewVerificationState {
+    data object InvalidImage : PostReviewVerificationState()
+
+    data object EmptyContents : PostReviewVerificationState()
+
+    data class TooManyContents(
+        val maxLength: Int,
+    ) : PostReviewVerificationState()
+
+    data object InvalidRating : PostReviewVerificationState()
+
+    data object Valid : PostReviewVerificationState()
 }
