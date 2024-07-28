@@ -68,6 +68,7 @@ class TokenDataSource @Inject constructor(
     private suspend fun DataStore<TokenPreferences>.getToken(): TokenInfo? {
         val token = data.firstOrNull()?.token
         val createdTime = millisecondsToLocalDateTime(data.firstOrNull()?.createdAt)
+        // TODO token이 null일 경우(없을 경우) 처리 추가
         return token?.let {
             TokenInfo(securityProvider.decrypt(it), createdTime)
         }

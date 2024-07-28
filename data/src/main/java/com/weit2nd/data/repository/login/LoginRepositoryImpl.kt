@@ -6,6 +6,7 @@ import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.token.TokenInfo
 import com.weit2nd.data.util.ActivityProvider
 import com.weit2nd.domain.exception.UnknownException
+import com.weit2nd.domain.exception.token.TokenState
 import com.weit2nd.domain.exception.user.LoginException
 import com.weit2nd.domain.repository.login.LoginRepository
 import kotlinx.coroutines.Dispatchers
@@ -38,11 +39,56 @@ class LoginRepositoryImpl @Inject constructor(
             if (kakaoLoginResult.isFailure) {
                 return@withContext Result.failure(kakaoLoginResult.exceptionOrNull() ?: Exception())
             }
-            // 서버 로그인
-            loginToServer()
+            login()
         }
 
     override suspend fun loginToServer(): Result<Unit> {
+        val tokenState = determineTokenState()
+        return when (tokenState) {
+            TokenState.AccessTokenValid -> login()
+            TokenState.RefreshTokenInvalid -> Result.failure(LoginException.InvalidTokenException())
+            TokenState.FailGettingToken -> Result.failure(UnknownException())
+        }
+    }
+
+    private suspend fun determineTokenState(): TokenState {
+        val isRefreshTokenValid = checkTokenValidation(tokenDataSource.getRefreshToken(), false)
+        if (isRefreshTokenValid.not()) {
+            return TokenState.RefreshTokenInvalid
+        }
+
+        val isAccessTokenValid = checkTokenValidation(tokenDataSource.getAccessToken(), true)
+        if (isAccessTokenValid.not()) {
+            val result = runCatching { tokenDataSource.refreshAccessToken() }
+            return if (result.isSuccess) {
+                TokenState.AccessTokenValid
+            } else {
+                TokenState.FailGettingToken
+            }
+        }
+        return TokenState.AccessTokenValid
+    }
+
+    private fun checkTokenValidation(
+        tokenInfo: TokenInfo?,
+        isAccessToken: Boolean,
+    ): Boolean {
+        // TODO token이 null일 경우(없을 경우)를 TokenDataSource.getToken()에 추가
+        if (tokenInfo == null) {
+            throw UnknownException()
+        }
+        return if (isAccessToken) {
+            tokenInfo.createdTime
+                .plusMinutes(ACCESS_TOKEN_EXPIRATION_MINUTE)
+                .isAfter(LocalDateTime.now())
+        } else {
+            tokenInfo.createdTime
+                .plusDays(REFRESH_TOKEN_EXPIRATION_DAY)
+                .isAfter(LocalDateTime.now())
+        }
+    }
+
+    private suspend fun login(): Result<Unit> {
         val serverLoginResult =
             runCatching {
                 loginDataSource.loginToServer()
@@ -55,21 +101,6 @@ class LoginRepositoryImpl @Inject constructor(
         } else {
             val throwable = serverLoginResult.exceptionOrNull() ?: UnknownException()
             Result.failure(handleLoginException(throwable))
-        }
-    }
-
-    private fun checkTokenValidation(
-        tokenInfo: TokenInfo,
-        isAccessToken: Boolean,
-    ): Boolean {
-        return if (isAccessToken) {
-            tokenInfo.createdTime
-                .plusMinutes(ACCESS_TOKEN_EXPIRATION_MINUTE.toLong())
-                .isAfter(LocalDateTime.now())
-        } else {
-            tokenInfo.createdTime
-                .plusDays(REFRESH_TOKEN_EXPIRATION_DAY.toLong())
-                .isAfter(LocalDateTime.now())
         }
     }
 
@@ -89,7 +120,7 @@ class LoginRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        private const val ACCESS_TOKEN_EXPIRATION_MINUTE = 25
-        private const val REFRESH_TOKEN_EXPIRATION_DAY = 13
+        private const val ACCESS_TOKEN_EXPIRATION_MINUTE = 25.toLong()
+        private const val REFRESH_TOKEN_EXPIRATION_DAY = 13.toLong()
     }
 }
