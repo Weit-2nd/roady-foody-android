@@ -6,7 +6,7 @@ import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.review.ReviewDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.review.ReviewException
-import com.weit2nd.domain.model.review.PostReviewState
+import com.weit2nd.domain.model.review.PostReviewVerificationState
 import com.weit2nd.domain.repository.review.ReviewRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
 import okhttp3.internal.http.HTTP_NOT_FOUND
@@ -72,7 +72,7 @@ class ReviewRepositoryImpl @Inject constructor(
         contents: String,
         rating: Int,
         images: List<String>,
-    ): PostReviewState {
+    ): PostReviewVerificationState {
         val invalidImage =
             if (images.size > MAX_IMAGE_COUNT) {
                 null
@@ -80,11 +80,11 @@ class ReviewRepositoryImpl @Inject constructor(
                 localImageDatasource.findInvalidImage(images)
             }
         return when {
-            invalidImage != null -> PostReviewState.INVALID_IMAGE
-            contents.isBlank() -> PostReviewState.EMPTY_CONTENTS
-            contents.length > MAX_CONTENTS_LENGTH -> PostReviewState.TOO_MANY_CONTENTS
-            rating !in MIN_RATING..MAX_RATING -> PostReviewState.INVALID_RATING
-            else -> PostReviewState.VALID
+            invalidImage != null -> PostReviewVerificationState.INVALID_IMAGE
+            contents.isBlank() -> PostReviewVerificationState.EMPTY_CONTENTS
+            contents.length > MAX_CONTENTS_LENGTH -> PostReviewVerificationState.TOO_MANY_CONTENTS
+            rating !in MIN_RATING..MAX_RATING -> PostReviewVerificationState.INVALID_RATING
+            else -> PostReviewVerificationState.VALID
         }
     }
 
