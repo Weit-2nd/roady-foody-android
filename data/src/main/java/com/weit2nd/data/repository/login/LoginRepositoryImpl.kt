@@ -42,7 +42,7 @@ class LoginRepositoryImpl @Inject constructor(
             login()
         }
 
-    override suspend fun loginToServer(): Result<Unit> {
+    override suspend fun loginWithTokenState(): Result<Unit> {
         val tokenState = determineTokenState()
         return when (tokenState) {
             TokenState.AccessTokenValid -> login()
