@@ -7,6 +7,7 @@ import com.kakao.sdk.auth.AuthApiClient
 import com.weit2nd.data.TokenPreferences
 import com.weit2nd.data.service.RefreshTokenService
 import com.weit2nd.data.util.SecurityProvider
+import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.auth.AuthException
 import kotlinx.coroutines.flow.firstOrNull
 import java.time.Instant
@@ -79,8 +80,26 @@ class TokenDataSource @Inject constructor(
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     }
 
+    suspend fun checkAccessTokenValidation(): Boolean {
+        // TODO token이 null일 경우(없을 경우)에 대한 처리를 TokenDataSource.getToken()에 추가
+        val accessToken = getAccessToken() ?: throw UnknownException()
+        return accessToken.createdTime
+            .plusMinutes(ACCESS_TOKEN_EXPIRATION_MINUTE)
+            .isAfter(LocalDateTime.now())
+    }
+
+    suspend fun checkRefreshTokenValidation(): Boolean {
+        // TODO token이 null일 경우(없을 경우)에 대한 처리를 TokenDataSource.getToken()에 추가
+        val refreshToken = getRefreshToken() ?: throw UnknownException()
+        return refreshToken.createdTime
+            .plusDays(REFRESH_TOKEN_EXPIRATION_DAY)
+            .isAfter(LocalDateTime.now())
+    }
+
     companion object {
         private const val ACCESS_TOKEN_FILE_NAME = "access_token.pb"
         private const val REFRESH_TOKEN_FILE_NAME = "refresh_token.pb"
+        private const val ACCESS_TOKEN_EXPIRATION_MINUTE = 25.toLong()
+        private const val REFRESH_TOKEN_EXPIRATION_DAY = 13.toLong()
     }
 }
