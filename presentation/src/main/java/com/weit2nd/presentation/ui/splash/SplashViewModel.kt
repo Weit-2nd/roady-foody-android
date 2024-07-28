@@ -24,7 +24,12 @@ class SplashViewModel @Inject constructor(
                     loginUseCase
                         .invoke()
                         .onSuccess { postSideEffect(SplashSideEffect.NavToHome) }
-                        .onFailure { postSideEffect(SplashSideEffect.NavToLogin) }
+                        .onFailure { throwable ->
+                            if (throwable is UnknownException) {
+                                postSideEffect(SplashSideEffect.ShowToast("알 수 없는 오류가 발생했습니다."))
+                            }
+                            postSideEffect(SplashSideEffect.NavToLogin)
+                        }
                 }
             }
         }

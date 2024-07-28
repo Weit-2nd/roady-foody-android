@@ -4,4 +4,8 @@ sealed class SplashSideEffect {
     data object NavToLogin : SplashSideEffect()
 
     data object NavToHome : SplashSideEffect()
+
+    data class ShowToast(
+        val message: String,
+    ) : SplashSideEffect()
 }
