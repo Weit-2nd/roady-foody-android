@@ -30,6 +30,7 @@ import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
+import com.weit2nd.presentation.ui.mypage.MyPageScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
 import com.weit2nd.presentation.ui.select.place.map.SelectPlaceMapScreen
@@ -61,6 +62,7 @@ fun AppNavHost(
         termDetailComposable(navController)
         imageViewerComposable(navController)
         foodSpotReportComposable(navController)
+        myPageComposable(navController)
     }
 }
 
@@ -68,7 +70,7 @@ private fun NavGraphBuilder.splashComposable(navController: NavHostController) {
     composable(SplashRoutes.GRAPH) {
         SplashScreen(
             navToLogin = {
-                navController.navigate(LoginNavRoutes.GRAPH) {
+                navController.navigateToLogin {
                     popUpTo(SplashRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -162,6 +164,9 @@ private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
             navToFoodSpotReport = {
                 navController.navigate(FoodSpotReportRoutes.GRAPH)
             },
+            navToMyPage = {
+                navController.navigateToMyPage()
+            },
         )
     }
 }
@@ -246,6 +251,20 @@ private fun NavGraphBuilder.foodSpotReportComposable(navController: NavHostContr
     }
 }
 
+private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
+    composable(MyPageRoutes.GRAPH) {
+        MyPageScreen(
+            navToLogin = {
+                navController.navigateToLogin {
+                    popUpTo(MyPageRoutes.GRAPH) {
+                        inclusive = true
+                    }
+                }
+            },
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -282,6 +301,14 @@ private fun NavHostController.navigateToImageViewer(
     val data = ImageViewerData(images, position)
     val imageDataJson = Uri.encode(Gson().toJson(data.toImageViewerDTO()))
     navigate("${ImageViewerRoutes.GRAPH}/$imageDataJson", builder)
+}
+
+private fun NavHostController.navigateToMyPage(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(MyPageRoutes.GRAPH, builder)
+}
+
+private fun NavHostController.navigateToLogin(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(LoginNavRoutes.GRAPH, builder)
 }
 
 object SplashRoutes {
@@ -333,4 +360,8 @@ object ImageViewerRoutes {
 
 object FoodSpotReportRoutes {
     const val GRAPH = "food_spot_report"
+}
+
+object MyPageRoutes {
+    const val GRAPH = "my_page"
 }
