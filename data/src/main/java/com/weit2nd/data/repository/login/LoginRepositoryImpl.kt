@@ -73,7 +73,7 @@ class LoginRepositoryImpl @Inject constructor(
         tokenInfo: TokenInfo?,
         isAccessToken: Boolean,
     ): Boolean {
-        // TODO token이 null일 경우(없을 경우)를 TokenDataSource.getToken()에 추가
+        // TODO token이 null일 경우(없을 경우)에 대한 처리를 TokenDataSource.getToken()에 추가
         if (tokenInfo == null) {
             throw UnknownException()
         }
