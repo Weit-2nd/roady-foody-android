@@ -10,9 +10,6 @@ import com.weit2nd.data.util.SecurityProvider
 import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.auth.AuthException
 import kotlinx.coroutines.flow.firstOrNull
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 class TokenDataSource @Inject constructor(
@@ -46,7 +43,7 @@ class TokenDataSource @Inject constructor(
         context.refreshTokenDataStore.setToken(token)
     }
 
-    suspend fun getRefreshToken(): TokenInfo? = context.refreshTokenDataStore.getToken()
+    private suspend fun getRefreshToken(): TokenInfo? = context.refreshTokenDataStore.getToken()
 
     suspend fun refreshAccessToken() {
         // TODO 리프레쉬 토큰이 없을 경우 처리 추가
@@ -68,38 +65,27 @@ class TokenDataSource @Inject constructor(
 
     private suspend fun DataStore<TokenPreferences>.getToken(): TokenInfo? {
         val token = data.firstOrNull()?.token
-        val createdTime = millisecondsToLocalDateTime(data.firstOrNull()?.createdAt)
+        val createdTime = data.firstOrNull()?.createdAt ?: 0
         // TODO token이 null일 경우(없을 경우) 처리 추가
         return token?.let {
             TokenInfo(securityProvider.decrypt(it), createdTime)
         }
     }
 
-    private fun millisecondsToLocalDateTime(milliseconds: Long?): LocalDateTime {
-        val instant = milliseconds?.let { Instant.ofEpochMilli(it) }
-        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
-    }
-
     suspend fun checkAccessTokenValidation(): Boolean {
-        // TODO token이 null일 경우(없을 경우)에 대한 처리를 TokenDataSource.getToken()에 추가
         val accessToken = getAccessToken() ?: throw UnknownException()
-        return accessToken.createdTime
-            .plusMinutes(ACCESS_TOKEN_EXPIRATION_MINUTE)
-            .isAfter(LocalDateTime.now())
+        return accessToken.createdTime + ACCESS_TOKEN_EXPIRATION_TIME > System.currentTimeMillis()
     }
 
     suspend fun checkRefreshTokenValidation(): Boolean {
-        // TODO token이 null일 경우(없을 경우)에 대한 처리를 TokenDataSource.getToken()에 추가
         val refreshToken = getRefreshToken() ?: throw UnknownException()
-        return refreshToken.createdTime
-            .plusDays(REFRESH_TOKEN_EXPIRATION_DAY)
-            .isAfter(LocalDateTime.now())
+        return refreshToken.createdTime + REFRESH_TOKEN_EXPIRATION_TIME > System.currentTimeMillis()
     }
 
     companion object {
         private const val ACCESS_TOKEN_FILE_NAME = "access_token.pb"
         private const val REFRESH_TOKEN_FILE_NAME = "refresh_token.pb"
-        private const val ACCESS_TOKEN_EXPIRATION_MINUTE = 25.toLong()
-        private const val REFRESH_TOKEN_EXPIRATION_DAY = 13.toLong()
+        private const val ACCESS_TOKEN_EXPIRATION_TIME = 1740000 // 29분
+        private const val REFRESH_TOKEN_EXPIRATION_TIME = 1206000000 // 13일 23시간
     }
 }
