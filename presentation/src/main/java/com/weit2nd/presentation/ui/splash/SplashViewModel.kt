@@ -1,6 +1,6 @@
 package com.weit2nd.presentation.ui.splash
 
-import com.weit2nd.domain.exception.token.TokenState
+import com.weit2nd.domain.model.token.TokenState
 import com.weit2nd.domain.usecase.login.GetTokenStateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

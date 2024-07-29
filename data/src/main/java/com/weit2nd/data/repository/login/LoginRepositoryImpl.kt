@@ -5,8 +5,8 @@ import com.weit2nd.data.source.login.LoginDataSource
 import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.util.ActivityProvider
 import com.weit2nd.domain.exception.UnknownException
-import com.weit2nd.domain.exception.token.TokenState
 import com.weit2nd.domain.exception.user.LoginException
+import com.weit2nd.domain.model.token.TokenState
 import com.weit2nd.domain.repository.login.LoginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
