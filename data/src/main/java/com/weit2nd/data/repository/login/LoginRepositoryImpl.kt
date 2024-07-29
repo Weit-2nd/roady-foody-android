@@ -40,33 +40,6 @@ class LoginRepositoryImpl @Inject constructor(
             login()
         }
 
-    override suspend fun loginWithTokenState(): Result<Unit> {
-        val tokenState = determineTokenState()
-        return when (tokenState) {
-            TokenState.AccessTokenValid -> login()
-            TokenState.RefreshTokenInvalid -> Result.failure(LoginException.InvalidTokenException())
-            TokenState.FailGettingToken -> Result.failure(UnknownException())
-        }
-    }
-
-    private suspend fun determineTokenState(): TokenState {
-        val isRefreshTokenValid = tokenDataSource.checkRefreshTokenValidation()
-        if (isRefreshTokenValid.not()) {
-            return TokenState.RefreshTokenInvalid
-        }
-
-        val isAccessTokenValid = tokenDataSource.checkAccessTokenValidation()
-        if (isAccessTokenValid.not()) {
-            val result = runCatching { tokenDataSource.refreshAccessToken() }
-            return if (result.isSuccess) {
-                TokenState.AccessTokenValid
-            } else {
-                TokenState.FailGettingToken
-            }
-        }
-        return TokenState.AccessTokenValid
-    }
-
     private suspend fun login(): Result<Unit> {
         val serverLoginResult =
             runCatching {
@@ -95,6 +68,25 @@ class LoginRepositoryImpl @Inject constructor(
             HTTP_NOT_FOUND -> LoginException.UserNotFoundException()
             HTTP_UNAUTHORIZED -> LoginException.InvalidTokenException()
             else -> throwable
+        }
+    }
+
+    override suspend fun getTokenState(): TokenState {
+        val isRefreshTokenValid = tokenDataSource.checkRefreshTokenValidation()
+        if (isRefreshTokenValid.not()) {
+            return TokenState.RefreshTokenInvalid
+        }
+
+        val isAccessTokenValid = tokenDataSource.checkAccessTokenValidation()
+        return if (isAccessTokenValid.not()) {
+            val result = runCatching { tokenDataSource.refreshAccessToken() }
+            if (result.isSuccess) {
+                TokenState.AccessTokenValid
+            } else {
+                TokenState.FailGettingToken
+            }
+        } else {
+            TokenState.AccessTokenValid
         }
     }
 }
