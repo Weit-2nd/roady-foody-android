@@ -1,22 +1,36 @@
 package com.weit2nd.presentation.ui.review
 
+import androidx.lifecycle.SavedStateHandle
 import com.weit2nd.domain.model.review.PostReviewVerificationState
 import com.weit2nd.domain.usecase.pickimage.PickMultipleImagesUseCase
 import com.weit2nd.domain.usecase.review.PostReviewUseCase
 import com.weit2nd.domain.usecase.review.VerifyReviewUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.PostReviewRoutes
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
+import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
+@HiltViewModel
 class PostReviewViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val verifyReviewUseCase: VerifyReviewUseCase,
     private val postReviewUseCase: PostReviewUseCase,
     private val pickMultipleImagesUseCase: PickMultipleImagesUseCase,
 ) : BaseViewModel<PostReviewState, PostReviewSideEffect>() {
+    private val foodSpot by lazy {
+        checkNotNull(
+            savedStateHandle
+                .get<FoodSpotForReviewDTO>(PostReviewRoutes.FOOD_SPOT_FOR_REVIEW_KEY),
+        )
+    }
+
     override val container: Container<PostReviewState, PostReviewSideEffect> =
         container(
             PostReviewState(
+                foodSpotName = foodSpot.name,
                 maxLength = MAX_CONTENT_LENGTH,
             ),
         )
@@ -51,7 +65,7 @@ class PostReviewViewModel @Inject constructor(
                     if (verificationState == PostReviewVerificationState.Valid) {
                         runCatching {
                             postReviewUseCase.invoke(
-                                foodSpotId = 1L,
+                                foodSpotId = foodSpot.id,
                                 contents = state.content,
                                 rating = ratingForRequest,
                                 images = state.selectedImages,
