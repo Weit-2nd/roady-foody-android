@@ -43,6 +43,10 @@ class PostReviewViewModel @Inject constructor(
         PostReviewIntent.PickImage.post()
     }
 
+    fun onDeleteImageButtonClick(image: String) {
+        PostReviewIntent.DeleteImage(image).post()
+    }
+
     fun onRatingChanged(rating: Float) {
         PostReviewIntent.ChangeRating(rating).post()
     }
@@ -109,6 +113,14 @@ class PostReviewViewModel @Inject constructor(
                                 content = content,
                             )
                         }
+                    }
+                }
+
+                is PostReviewIntent.DeleteImage -> {
+                    reduce {
+                        state.copy(
+                            selectedImages = state.selectedImages.minus(image),
+                        )
                     }
                 }
             }

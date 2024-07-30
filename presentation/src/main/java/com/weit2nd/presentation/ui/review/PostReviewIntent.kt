@@ -5,6 +5,10 @@ sealed interface PostReviewIntent {
 
     data object PickImage : PostReviewIntent
 
+    data class DeleteImage(
+        val image: String,
+    ) : PostReviewIntent
+
     data class ChangeRating(
         val rating: Float,
     ) : PostReviewIntent
