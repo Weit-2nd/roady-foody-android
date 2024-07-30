@@ -7,6 +7,7 @@ import com.kakao.sdk.auth.AuthApiClient
 import com.weit2nd.data.TokenPreferences
 import com.weit2nd.data.service.RefreshTokenService
 import com.weit2nd.data.util.SecurityProvider
+import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.auth.AuthException
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -36,17 +37,17 @@ class TokenDataSource @Inject constructor(
         context.accessTokenDataStore.setToken(token)
     }
 
-    suspend fun getAccessToken(): String? = context.accessTokenDataStore.getToken()
+    suspend fun getAccessToken(): TokenInfo? = context.accessTokenDataStore.getToken()
 
     suspend fun setRefreshToken(token: String) {
         context.refreshTokenDataStore.setToken(token)
     }
 
-    suspend fun getRefreshToken(): String? = context.refreshTokenDataStore.getToken()
+    private suspend fun getRefreshToken(): TokenInfo? = context.refreshTokenDataStore.getToken()
 
     suspend fun refreshAccessToken() {
         // TODO 리프레쉬 토큰이 없을 경우 처리 추가
-        val token = refreshTokenService.refreshAccessToken(getRefreshToken() ?: "")
+        val token = refreshTokenService.refreshAccessToken(getRefreshToken()?.token ?: "")
         setAccessToken(token.accessToken)
         setRefreshToken(token.refreshToken)
     }
@@ -62,18 +63,29 @@ class TokenDataSource @Inject constructor(
         }
     }
 
-    private suspend fun DataStore<TokenPreferences>.getToken(): String? {
-        val token =
-            data
-                .firstOrNull()
-                ?.token
+    private suspend fun DataStore<TokenPreferences>.getToken(): TokenInfo? {
+        val token = data.firstOrNull()?.token
+        val createdTime = data.firstOrNull()?.createdAt ?: 0
+        // TODO token이 null일 경우(없을 경우) 처리 추가
         return token?.let {
-            securityProvider.decrypt(it)
+            TokenInfo(securityProvider.decrypt(it), createdTime)
         }
+    }
+
+    suspend fun checkAccessTokenValidation(): Boolean {
+        val accessToken = getAccessToken() ?: throw UnknownException()
+        return accessToken.createdTime + ACCESS_TOKEN_EXPIRATION_TIME > System.currentTimeMillis()
+    }
+
+    suspend fun checkRefreshTokenValidation(): Boolean {
+        val refreshToken = getRefreshToken() ?: throw UnknownException()
+        return refreshToken.createdTime + REFRESH_TOKEN_EXPIRATION_TIME > System.currentTimeMillis()
     }
 
     companion object {
         private const val ACCESS_TOKEN_FILE_NAME = "access_token.pb"
         private const val REFRESH_TOKEN_FILE_NAME = "refresh_token.pb"
+        private const val ACCESS_TOKEN_EXPIRATION_TIME = 1740000 // 29분
+        private const val REFRESH_TOKEN_EXPIRATION_TIME = 1206000000 // 13일 23시간
     }
 }

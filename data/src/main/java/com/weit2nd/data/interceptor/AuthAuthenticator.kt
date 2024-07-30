@@ -25,7 +25,7 @@ class AuthAuthenticator @Inject constructor(
         runBlocking {
             mutex.withLock {
                 val usedToken = response.request.header(AUTHORIZATION_HEADER)
-                val lastUpdatedToken = BEARER_PREFIX + dataSource.getAccessToken()
+                val lastUpdatedToken = BEARER_PREFIX + dataSource.getAccessToken()?.token
                 if (usedToken == lastUpdatedToken) {
                     runCatching {
                         dataSource.refreshAccessToken()
@@ -35,7 +35,7 @@ class AuthAuthenticator @Inject constructor(
                                 .newBuilder()
                                 .header(
                                     AUTHORIZATION_HEADER,
-                                    BEARER_PREFIX + dataSource.getAccessToken(),
+                                    BEARER_PREFIX + dataSource.getAccessToken()?.token,
                                 ).build()
                     }
                 }

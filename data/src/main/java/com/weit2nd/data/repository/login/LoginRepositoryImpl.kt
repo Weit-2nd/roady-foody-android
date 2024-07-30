@@ -1,11 +1,12 @@
 package com.weit2nd.data.repository.login
 
 import com.kakao.sdk.user.UserApiClient
-import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.login.LoginDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.util.ActivityProvider
 import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.user.LoginException
+import com.weit2nd.domain.model.token.TokenState
 import com.weit2nd.domain.repository.login.LoginRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,7 +26,8 @@ class LoginRepositoryImpl @Inject constructor(
                 activityProvider.currentActivity
                     ?: return@withContext Result.failure(NullPointerException("현재 올라온 activity가 없음"))
             // 카카오 로그인 시도
-            val isKakaoTalkLoginAvailable = UserApiClient.instance.isKakaoTalkLoginAvailable(currentActivity)
+            val isKakaoTalkLoginAvailable =
+                UserApiClient.instance.isKakaoTalkLoginAvailable(currentActivity)
             val kakaoLoginResult =
                 if (isKakaoTalkLoginAvailable) {
                     loginDataSource.loginWithKakaoTalk(currentActivity)
@@ -35,11 +37,10 @@ class LoginRepositoryImpl @Inject constructor(
             if (kakaoLoginResult.isFailure) {
                 return@withContext Result.failure(kakaoLoginResult.exceptionOrNull() ?: Exception())
             }
-            // 서버 로그인
-            loginToServer()
+            login()
         }
 
-    override suspend fun loginToServer(): Result<Unit> {
+    private suspend fun login(): Result<Unit> {
         val serverLoginResult =
             runCatching {
                 loginDataSource.loginToServer()
@@ -67,6 +68,25 @@ class LoginRepositoryImpl @Inject constructor(
             HTTP_NOT_FOUND -> LoginException.UserNotFoundException()
             HTTP_UNAUTHORIZED -> LoginException.InvalidTokenException()
             else -> throwable
+        }
+    }
+
+    override suspend fun getTokenState(): TokenState {
+        val isRefreshTokenValid = tokenDataSource.checkRefreshTokenValidation()
+        if (isRefreshTokenValid.not()) {
+            return TokenState.RefreshTokenInvalid
+        }
+
+        val isAccessTokenValid = tokenDataSource.checkAccessTokenValidation()
+        return if (isAccessTokenValid.not()) {
+            val result = runCatching { tokenDataSource.refreshAccessToken() }
+            if (result.isSuccess) {
+                TokenState.AccessTokenValid
+            } else {
+                TokenState.FailGettingToken
+            }
+        } else {
+            TokenState.AccessTokenValid
         }
     }
 }

@@ -12,7 +12,7 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val authorization =
             runBlocking {
-                BEARER_PREFIX + dataSource.getAccessToken()
+                BEARER_PREFIX + dataSource.getAccessToken()?.token
             }
         val newRequest =
             chain.request().newBuilder().apply {
