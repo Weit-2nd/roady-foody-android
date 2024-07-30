@@ -16,12 +16,14 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.User
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toPlaceDTO
 import com.weit2nd.presentation.navigation.dto.toTermIdsDTO
 import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
+import com.weit2nd.presentation.navigation.type.FoodSpotForReviewType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
 import com.weit2nd.presentation.navigation.type.TermIdsType
 import com.weit2nd.presentation.navigation.type.UserType
@@ -31,6 +33,7 @@ import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.mypage.MyPageScreen
+import com.weit2nd.presentation.ui.review.PostReviewScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
 import com.weit2nd.presentation.ui.select.place.map.SelectPlaceMapScreen
@@ -63,6 +66,7 @@ fun AppNavHost(
         imageViewerComposable(navController)
         foodSpotReportComposable(navController)
         myPageComposable(navController)
+        postReviewComposable(navController)
     }
 }
 
@@ -265,6 +269,24 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
     }
 }
 
+private fun NavGraphBuilder.postReviewComposable(navController: NavHostController) {
+    composable(
+        route = "${PostReviewRoutes.GRAPH}/{${PostReviewRoutes.FOOD_SPOT_FOR_REVIEW_KEY}}",
+        arguments =
+            listOf(
+                navArgument(PostReviewRoutes.FOOD_SPOT_FOR_REVIEW_KEY) {
+                    type = FoodSpotForReviewType()
+                },
+            ),
+    ) {
+        PostReviewScreen(
+            navToBack = {
+                navController.popBackStack()
+            },
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -309,6 +331,14 @@ private fun NavHostController.navigateToMyPage(builder: NavOptionsBuilder.() -> 
 
 private fun NavHostController.navigateToLogin(builder: NavOptionsBuilder.() -> Unit = {}) {
     navigate(LoginNavRoutes.GRAPH, builder)
+}
+
+private fun NavHostController.navigateToPostReview(
+    foodSpotForReviewDTO: FoodSpotForReviewDTO,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val json = Uri.encode(Gson().toJson(foodSpotForReviewDTO))
+    navigate("${PostReviewRoutes.GRAPH}/$json", builder)
 }
 
 object SplashRoutes {
@@ -364,4 +394,9 @@ object FoodSpotReportRoutes {
 
 object MyPageRoutes {
     const val GRAPH = "my_page"
+}
+
+object PostReviewRoutes {
+    const val GRAPH = "post_review"
+    const val FOOD_SPOT_FOR_REVIEW_KEY = "food_spot_for_review_key"
 }

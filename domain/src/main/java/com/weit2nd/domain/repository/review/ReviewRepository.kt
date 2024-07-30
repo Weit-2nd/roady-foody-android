@@ -1,6 +1,6 @@
 package com.weit2nd.domain.repository.review
 
-import com.weit2nd.domain.model.review.PostReviewState
+import com.weit2nd.domain.model.review.PostReviewVerificationState
 
 interface ReviewRepository {
     suspend fun postReview(
@@ -14,5 +14,5 @@ interface ReviewRepository {
         contents: String,
         rating: Int,
         images: List<String>,
-    ): PostReviewState
+    ): PostReviewVerificationState
 }
