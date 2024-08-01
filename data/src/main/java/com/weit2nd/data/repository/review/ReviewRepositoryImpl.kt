@@ -5,7 +5,7 @@ import com.weit2nd.data.model.review.PostReviewRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.review.ReviewDataSource
 import com.weit2nd.data.util.getMultiPart
-import com.weit2nd.domain.exception.review.ReviewException
+import com.weit2nd.domain.exception.review.PostReviewException
 import com.weit2nd.domain.model.review.PostReviewVerificationState
 import com.weit2nd.domain.repository.review.ReviewRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
@@ -62,8 +62,8 @@ class ReviewRepositoryImpl @Inject constructor(
 
     private fun handleHttpException(throwable: HttpException): Throwable {
         return when (throwable.code()) {
-            HTTP_BAD_REQUEST -> ReviewException.BadRequestException(throwable.message())
-            HTTP_NOT_FOUND -> ReviewException.FoodSpotNotFoundException(throwable.message())
+            HTTP_BAD_REQUEST -> PostReviewException.BadRequestException(throwable.message())
+            HTTP_NOT_FOUND -> PostReviewException.FoodSpotNotFoundException(throwable.message())
             else -> throwable
         }
     }

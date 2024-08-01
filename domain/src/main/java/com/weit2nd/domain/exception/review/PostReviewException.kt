@@ -1,13 +1,13 @@
 package com.weit2nd.domain.exception.review
 
-sealed class ReviewException(
+sealed class PostReviewException(
     message: String,
 ) : Throwable(message) {
     class BadRequestException(
         message: String,
-    ) : ReviewException(message)
+    ) : PostReviewException(message)
 
     class FoodSpotNotFoundException(
         message: String,
-    ) : ReviewException(message)
+    ) : PostReviewException(message)
 }
