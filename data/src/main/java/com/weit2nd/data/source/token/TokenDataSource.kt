@@ -7,7 +7,6 @@ import com.kakao.sdk.auth.AuthApiClient
 import com.weit2nd.data.TokenPreferences
 import com.weit2nd.data.service.RefreshTokenService
 import com.weit2nd.data.util.SecurityProvider
-import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.auth.AuthException
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
@@ -66,19 +65,17 @@ class TokenDataSource @Inject constructor(
     private suspend fun DataStore<TokenPreferences>.getToken(): TokenInfo? {
         val token = data.firstOrNull()?.token
         val createdTime = data.firstOrNull()?.createdAt ?: 0
-        // TODO token이 null일 경우(없을 경우) 처리 추가
-        return token?.let {
-            TokenInfo(securityProvider.decrypt(it), createdTime)
-        }
+        if (token.isNullOrEmpty()) return null
+        return TokenInfo(securityProvider.decrypt(token), createdTime)
     }
 
     suspend fun checkAccessTokenValidation(): Boolean {
-        val accessToken = getAccessToken() ?: throw UnknownException()
+        val accessToken = getAccessToken() ?: return false
         return accessToken.createdTime + ACCESS_TOKEN_EXPIRATION_TIME > System.currentTimeMillis()
     }
 
     suspend fun checkRefreshTokenValidation(): Boolean {
-        val refreshToken = getRefreshToken() ?: throw UnknownException()
+        val refreshToken = getRefreshToken() ?: return false
         return refreshToken.createdTime + REFRESH_TOKEN_EXPIRATION_TIME > System.currentTimeMillis()
     }
 
