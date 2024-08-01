@@ -10,6 +10,8 @@ interface ReviewRepository {
         images: List<String>,
     )
 
+    suspend fun deleteReview(reviewId: Long)
+
     fun verifyReview(
         contents: String,
         rating: Int,
