@@ -29,4 +29,8 @@ class FoodSpotDataSource @Inject constructor(
             lastId = lastItemId,
         )
     }
+
+    suspend fun deleteFoodSpotHistory(historyId: Long) {
+        service.deleteFoodSpotHistory(historyId)
+    }
 }

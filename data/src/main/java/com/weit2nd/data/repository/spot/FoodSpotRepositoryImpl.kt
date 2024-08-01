@@ -10,6 +10,7 @@ import com.weit2nd.data.model.spot.toRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
+import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotHistories
@@ -19,6 +20,7 @@ import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_FORBIDDEN
 import okhttp3.internal.http.HTTP_NOT_FOUND
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -69,11 +71,11 @@ class FoodSpotRepositoryImpl @Inject constructor(
                 reportPhotos = imageParts,
             )
         }.onFailure { throwable ->
-            throw handleException(throwable)
+            throw handleReportFoodSpotException(throwable)
         }
     }
 
-    private fun handleException(throwable: Throwable) =
+    private fun handleReportFoodSpotException(throwable: Throwable) =
         if (throwable is HttpException) {
             val errorMessage = throwable.message()
             when (throwable.code()) {
@@ -154,6 +156,28 @@ class FoodSpotRepositoryImpl @Inject constructor(
                 lastItemId = lastItemId,
             ).toFoodSpotHistories()
     }
+
+    override suspend fun deleteFoodSpotHistory(historyId: Long) {
+        runCatching {
+            foodSpotDataSource.deleteFoodSpotHistory(historyId)
+        }.onFailure {
+            throw handleDeleteFoodSpotException(it)
+        }
+    }
+
+    private fun handleDeleteFoodSpotException(throwable: Throwable) =
+        if (throwable is HttpException) {
+            val errorMessage = throwable.message()
+            when (throwable.code()) {
+                HTTP_FORBIDDEN -> DeleteFoodSpotHistoryException.NotHistoryOwnerException(errorMessage)
+                HTTP_BAD_REQUEST,
+                HTTP_NOT_FOUND,
+                -> DeleteFoodSpotHistoryException.HistoryNotFoundException(errorMessage)
+                else -> throwable
+            }
+        } else {
+            throwable
+        }
 
     private fun FoodSpotHistoriesDTO.toFoodSpotHistories() =
         FoodSpotHistories(

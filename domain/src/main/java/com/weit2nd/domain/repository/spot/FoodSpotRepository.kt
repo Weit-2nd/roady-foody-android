@@ -30,4 +30,6 @@ interface FoodSpotRepository {
         count: Int,
         lastItemId: Long?,
     ): FoodSpotHistories
+
+    suspend fun deleteFoodSpotHistory(historyId: Long)
 }
