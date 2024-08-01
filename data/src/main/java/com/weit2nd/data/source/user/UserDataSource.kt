@@ -7,7 +7,7 @@ import javax.inject.Inject
 class UserDataSource @Inject constructor(
     private val service: UserService,
 ) {
-    suspend fun getUserInfo(): UserDTO {
-        return service.getUserInfo()
+    suspend fun getMyUserInfo(): UserDTO {
+        return service.getMyUserInfo()
     }
 }

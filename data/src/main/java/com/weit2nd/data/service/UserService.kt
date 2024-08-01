@@ -5,5 +5,5 @@ import retrofit2.http.GET
 
 interface UserService {
     @GET("/api/v1/users/me")
-    suspend fun getUserInfo(): UserDTO
+    suspend fun getMyUserInfo(): UserDTO
 }

@@ -4,7 +4,7 @@ import com.weit2nd.domain.model.UserInfo
 import com.weit2nd.domain.repository.user.UserRepository
 import javax.inject.Inject
 
-class GetUserInfoUseCase @Inject constructor(
+class GetMyUserInfoUseCase @Inject constructor(
     private val repository: UserRepository,
 ) {
     /**
@@ -12,6 +12,6 @@ class GetUserInfoUseCase @Inject constructor(
      * (닉네임, 프로필 사진, 코인 개수)
      */
     suspend operator fun invoke(): UserInfo {
-        return repository.getUserInfo()
+        return repository.getMyUserInfo()
     }
 }
