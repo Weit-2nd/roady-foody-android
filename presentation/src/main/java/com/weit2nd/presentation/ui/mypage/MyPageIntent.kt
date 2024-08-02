@@ -1,6 +1,8 @@
 package com.weit2nd.presentation.ui.mypage
 
 sealed class MyPageIntent {
+    data object GetMyUserInfo : MyPageIntent()
+
     data class SetLogoutDialogShownState(
         val isShown: Boolean,
     ) : MyPageIntent()

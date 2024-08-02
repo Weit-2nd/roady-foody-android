@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.mypage
 
 import com.weit2nd.domain.usecase.logout.LogoutUseCase
 import com.weit2nd.domain.usecase.logout.WithdrawUseCase
+import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
@@ -12,8 +13,13 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val withdrawUseCase: WithdrawUseCase,
+    private val getMyUserInfoUseCase: GetMyUserInfoUseCase,
 ) : BaseViewModel<MyPageState, MyPageSideEffect>() {
     override val container: Container<MyPageState, MyPageSideEffect> = container(MyPageState())
+
+    fun onCreate() {
+        MyPageIntent.GetMyUserInfo.post()
+    }
 
     fun onLogoutButtonClick() {
         MyPageIntent.SetLogoutDialogShownState(true).post()
@@ -42,6 +48,17 @@ class MyPageViewModel @Inject constructor(
     private fun MyPageIntent.post() =
         intent {
             when (this@post) {
+                MyPageIntent.GetMyUserInfo -> {
+                    val userInfo = getMyUserInfoUseCase.invoke()
+                    reduce {
+                        state.copy(
+                            nickname = userInfo.nickname,
+                            profileImage = userInfo.profileImage,
+                            coin = userInfo.coin,
+                        )
+                    }
+                }
+
                 is MyPageIntent.SetLogoutDialogShownState -> {
                     reduce {
                         state.copy(
@@ -49,6 +66,7 @@ class MyPageViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is MyPageIntent.SetWithdrawDialogShownState -> {
                     reduce {
                         state.copy(
@@ -56,6 +74,7 @@ class MyPageViewModel @Inject constructor(
                         )
                     }
                 }
+
                 MyPageIntent.Logout -> {
                     val result =
                         runCatching {
@@ -67,6 +86,7 @@ class MyPageViewModel @Inject constructor(
                         postSideEffect(MyPageSideEffect.ShowToastMessage("실패!"))
                     }
                 }
+
                 MyPageIntent.Withdraw -> {
                     val result =
                         runCatching {
