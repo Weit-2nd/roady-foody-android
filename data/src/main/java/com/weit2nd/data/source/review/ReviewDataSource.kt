@@ -16,4 +16,8 @@ class ReviewDataSource @Inject constructor(
             reviewPhotos = reviewPhotos,
         )
     }
+
+    suspend fun deleteReview(reviewId: Long) {
+        service.deleteReview(reviewId)
+    }
 }

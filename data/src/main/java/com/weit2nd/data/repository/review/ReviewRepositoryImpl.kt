@@ -5,10 +5,12 @@ import com.weit2nd.data.model.review.PostReviewRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.review.ReviewDataSource
 import com.weit2nd.data.util.getMultiPart
-import com.weit2nd.domain.exception.review.ReviewException
+import com.weit2nd.domain.exception.review.DeleteReviewException
+import com.weit2nd.domain.exception.review.PostReviewException
 import com.weit2nd.domain.model.review.PostReviewVerificationState
 import com.weit2nd.domain.repository.review.ReviewRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_FORBIDDEN
 import okhttp3.internal.http.HTTP_NOT_FOUND
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -47,11 +49,28 @@ class ReviewRepositoryImpl @Inject constructor(
                 reviewPhotos = imageParts,
             )
         }.onFailure {
-            throw handleReviewException(it)
+            throw handleReviewException(it) { httpException ->
+                handlePostReviewHttpException(httpException)
+            }
         }
     }
 
-    private fun handleReviewException(throwable: Throwable): Throwable {
+    override suspend fun deleteReview(reviewId: Long) {
+        runCatching {
+            reviewDataSource.deleteReview(
+                reviewId = reviewId,
+            )
+        }.onFailure {
+            throw handleReviewException(it) { httpException ->
+                handleDeleteReviewHttpException(httpException)
+            }
+        }
+    }
+
+    private fun handleReviewException(
+        throwable: Throwable,
+        handleHttpException: (HttpException) -> Throwable,
+    ): Throwable {
         return when (throwable) {
             is HttpException -> {
                 handleHttpException(throwable)
@@ -60,11 +79,18 @@ class ReviewRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun handleHttpException(throwable: HttpException): Throwable {
+    private fun handlePostReviewHttpException(throwable: HttpException): Throwable {
         return when (throwable.code()) {
-            HTTP_BAD_REQUEST -> ReviewException.BadRequestException(throwable.message())
-            HTTP_NOT_FOUND -> ReviewException.FoodSpotNotFoundException(throwable.message())
+            HTTP_BAD_REQUEST -> PostReviewException.BadRequestException(throwable.message())
+            HTTP_NOT_FOUND -> PostReviewException.FoodSpotNotFoundException(throwable.message())
             else -> throwable
+        }
+    }
+
+    private fun handleDeleteReviewHttpException(throwable: HttpException): Throwable {
+        return when (throwable.code()) {
+            HTTP_FORBIDDEN -> DeleteReviewException.NotReviewOwnerException(throwable.message())
+            else -> DeleteReviewException.ReviewNotFoundException(throwable.message())
         }
     }
 
