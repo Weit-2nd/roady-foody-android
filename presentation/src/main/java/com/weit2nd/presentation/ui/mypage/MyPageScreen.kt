@@ -73,7 +73,7 @@ private fun MyPageContent(
     modifier: Modifier = Modifier,
     profileImage: String?,
     nickname: String,
-    coin: Long,
+    coin: Int,
     onLogoutButtonClick: () -> Unit,
     onWithdrawButtonClick: () -> Unit,
     onLogoutConfirm: () -> Unit,

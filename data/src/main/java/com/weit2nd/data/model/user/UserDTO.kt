@@ -7,5 +7,5 @@ import com.squareup.moshi.JsonClass
 data class UserDTO(
     @field:Json(name = "nickname") val nickname: String,
     @field:Json(name = "profileImageUrl") val profileImageUrl: String?,
-    @field:Json(name = "coin") val coin: Long,
+    @field:Json(name = "coin") val coin: Int,
 )
