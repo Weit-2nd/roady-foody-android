@@ -1,10 +1,6 @@
 package com.weit2nd.data.repository.spot
 
 import com.squareup.moshi.Moshi
-import com.weit2nd.data.model.spot.FoodSpotCategoryDTO
-import com.weit2nd.data.model.spot.FoodSpotHistoriesDTO
-import com.weit2nd.data.model.spot.FoodSpotHistoryContentDTO
-import com.weit2nd.data.model.spot.FoodSpotReportPhotoDTO
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
 import com.weit2nd.data.model.spot.toRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
@@ -12,10 +8,6 @@ import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
 import com.weit2nd.domain.exception.imageuri.NotImageException
-import com.weit2nd.domain.model.spot.FoodCategory
-import com.weit2nd.domain.model.spot.FoodSpotHistories
-import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
-import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
@@ -144,19 +136,6 @@ class FoodSpotRepositoryImpl @Inject constructor(
         return localImageDatasource.findInvalidImage(images)
     }
 
-    override suspend fun getFoodSpotHistories(
-        userId: Long,
-        count: Int,
-        lastItemId: Long?,
-    ): FoodSpotHistories {
-        return foodSpotDataSource
-            .getFoodSpotHistories(
-                userId = userId,
-                count = count,
-                lastItemId = lastItemId,
-            ).toFoodSpotHistories()
-    }
-
     override suspend fun deleteFoodSpotHistory(historyId: Long) {
         runCatching {
             foodSpotDataSource.deleteFoodSpotHistory(historyId)
@@ -178,37 +157,6 @@ class FoodSpotRepositoryImpl @Inject constructor(
         } else {
             throwable
         }
-
-    private fun FoodSpotHistoriesDTO.toFoodSpotHistories() =
-        FoodSpotHistories(
-            contents = contents.map { it.toFoodSpotHistoryContent() },
-            hasNext = hasNext,
-        )
-
-    private fun FoodSpotHistoryContentDTO.toFoodSpotHistoryContent() =
-        FoodSpotHistoryContent(
-            id = id,
-            userId = userId,
-            foodSpotsId = foodSpotsId,
-            name = name,
-            longitude = longitude,
-            latitude = latitude,
-            createdDateTime = createdDateTime,
-            reportPhotos = reportPhotos.map { it.toFoodSpotPhoto() },
-            categories = categories.map { it.toFoodSpotCategory() },
-        )
-
-    private fun FoodSpotReportPhotoDTO.toFoodSpotPhoto() =
-        FoodSpotPhoto(
-            id = id,
-            url = url,
-        )
-
-    private fun FoodSpotCategoryDTO.toFoodSpotCategory() =
-        FoodCategory(
-            id = id,
-            name = name,
-        )
 
     companion object {
         private const val MAX_COORDINATE = 180f
