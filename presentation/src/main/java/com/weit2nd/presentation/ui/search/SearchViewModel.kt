@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.search
 
+import androidx.lifecycle.SavedStateHandle
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.usecase.search.AddSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.ClearSearchHistoriesUseCase
@@ -7,6 +8,7 @@ import com.weit2nd.domain.usecase.search.GetSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.RemoveSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.SearchPlacesWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.SearchRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
@@ -15,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getSearchHistoriesUseCase: GetSearchHistoriesUseCase,
     private val removeSearchHistoriesUseCase: RemoveSearchHistoriesUseCase,
     private val addSearchHistoriesUseCase: AddSearchHistoriesUseCase,
@@ -22,7 +25,11 @@ class SearchViewModel @Inject constructor(
     private val searchPlacesWithWordUseCase: SearchPlacesWithWordUseCase,
 ) : BaseViewModel<SearchState, SearchSideEffect>() {
     override val container: Container<SearchState, SearchSideEffect> =
-        container(SearchState())
+        container(
+            SearchState(
+                searchWords = savedStateHandle[SearchRoutes.INITIAL_SEARCH_WORDS_KEY] ?: "",
+            ),
+        )
 
     private var searchPlaceJob: Job =
         Job().apply {

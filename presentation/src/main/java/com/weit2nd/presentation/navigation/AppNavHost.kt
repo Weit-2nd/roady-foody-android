@@ -34,6 +34,7 @@ import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.mypage.MyPageScreen
 import com.weit2nd.presentation.ui.review.PostReviewScreen
+import com.weit2nd.presentation.ui.search.SearchScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
 import com.weit2nd.presentation.ui.select.place.SelectPlaceScreen
 import com.weit2nd.presentation.ui.select.place.map.SelectPlaceMapScreen
@@ -67,6 +68,7 @@ fun AppNavHost(
         foodSpotReportComposable(navController)
         myPageComposable(navController)
         postReviewComposable(navController)
+        searchComposable(navController)
     }
 }
 
@@ -287,6 +289,25 @@ private fun NavGraphBuilder.postReviewComposable(navController: NavHostControlle
     }
 }
 
+private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
+    composable(
+        route = "${SearchRoutes.GRAPH}/{${SearchRoutes.INITIAL_SEARCH_WORDS_KEY}}",
+        arguments =
+            listOf(
+                navArgument(SearchRoutes.INITIAL_SEARCH_WORDS_KEY) {
+                    type = NavType.StringType
+                },
+            ),
+    ) {
+        SearchScreen(
+            navToMap = { },
+            navToBack = {
+                navController.popBackStack()
+            },
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     user: User,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -339,6 +360,13 @@ private fun NavHostController.navigateToPostReview(
 ) {
     val json = Uri.encode(Gson().toJson(foodSpotForReviewDTO))
     navigate("${PostReviewRoutes.GRAPH}/$json", builder)
+}
+
+private fun NavHostController.navigateToSearch(
+    initialSearchWords: String,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    navigate("${SearchRoutes.GRAPH}/$initialSearchWords", builder)
 }
 
 object SplashRoutes {
@@ -399,4 +427,9 @@ object MyPageRoutes {
 object PostReviewRoutes {
     const val GRAPH = "post_review"
     const val FOOD_SPOT_FOR_REVIEW_KEY = "food_spot_for_review_key"
+}
+
+object SearchRoutes {
+    const val GRAPH = "search"
+    const val INITIAL_SEARCH_WORDS_KEY = "initial_search_words_key"
 }
