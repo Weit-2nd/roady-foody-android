@@ -1,11 +1,11 @@
 package com.weit2nd.domain.usecase.spot
 
 import com.weit2nd.domain.model.spot.FoodSpotHistories
-import com.weit2nd.domain.repository.spot.FoodSpotRepository
+import com.weit2nd.domain.repository.user.UserRepository
 import javax.inject.Inject
 
 class GetFoodSpotHistoriesUseCase @Inject constructor(
-    private val repository: FoodSpotRepository,
+    private val repository: UserRepository,
 ) {
     /**
      * 사용자 아이디를 통해 해당 사용자가 작성한 음식점 리포트들을 조회합니다.
