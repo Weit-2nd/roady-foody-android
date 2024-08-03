@@ -49,14 +49,16 @@ class MyPageViewModel @Inject constructor(
         intent {
             when (this@post) {
                 MyPageIntent.GetMyUserInfo -> {
-                    val userInfo = getMyUserInfoUseCase.invoke()
-                    reduce {
-                        state.copy(
-                            nickname = userInfo.nickname,
-                            profileImage = userInfo.profileImage,
-                            coin = userInfo.coin,
-                        )
-                    }
+                    runCatching {
+                        val userInfo = getMyUserInfoUseCase.invoke()
+                        reduce {
+                            state.copy(
+                                nickname = userInfo.nickname,
+                                profileImage = userInfo.profileImage,
+                                coin = userInfo.coin,
+                            )
+                        }
+                    }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
                 }
 
                 is MyPageIntent.SetLogoutDialogShownState -> {
