@@ -7,5 +7,5 @@ data class User(
 data class UserInfo(
     val nickname: String,
     val profileImage: String?,
-    val coin: Long,
+    val coin: Int,
 )
