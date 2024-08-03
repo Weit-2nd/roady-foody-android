@@ -2,7 +2,6 @@ package com.weit2nd.presentation.ui.login
 
 import android.util.Log
 import com.weit2nd.domain.exception.user.LoginException
-import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.login.LoginWithKakaoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +30,7 @@ class LoginViewModel @Inject constructor(
 
                     loginWithKakaoUseCase
                         .invoke()
-                        .onSuccess { postSideEffect(LoginSideEffect.NavToHome(User("test"))) }
+                        .onSuccess { postSideEffect(LoginSideEffect.NavToHome) }
                         .onFailure { throwable ->
                             if (throwable is LoginException.UserNotFoundException) {
                                 postSideEffect(LoginSideEffect.NavToTermAgreement)

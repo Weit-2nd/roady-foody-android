@@ -15,18 +15,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.weit2nd.domain.model.Coordinate
-import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
+import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toPlaceDTO
 import com.weit2nd.presentation.navigation.dto.toTermIdsDTO
-import com.weit2nd.presentation.navigation.dto.toUserDTO
 import com.weit2nd.presentation.navigation.type.CoordinateType
 import com.weit2nd.presentation.navigation.type.FoodSpotForReviewType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
+import com.weit2nd.presentation.navigation.type.PlaceSearchType
 import com.weit2nd.presentation.navigation.type.TermIdsType
-import com.weit2nd.presentation.navigation.type.UserType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
@@ -83,7 +82,7 @@ private fun NavGraphBuilder.splashComposable(navController: NavHostController) {
                 }
             },
             navToHome = {
-                navController.navigateToHome(User("임시")) {
+                navController.navigateToHome {
                     popUpTo(SplashRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -96,8 +95,8 @@ private fun NavGraphBuilder.splashComposable(navController: NavHostController) {
 private fun NavGraphBuilder.loginComposable(navController: NavHostController) {
     composable(LoginNavRoutes.GRAPH) {
         LoginScreen(
-            navToHome = { user ->
-                navController.navigateToHome(user) {
+            navToHome = {
+                navController.navigateToHome {
                     popUpTo(LoginNavRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -150,8 +149,8 @@ private fun NavGraphBuilder.signUpComposable(navController: NavHostController) {
         arguments = listOf(navArgument(SignUpNavRoutes.TERM_IDS) { type = TermIdsType() }),
     ) {
         SignUpScreen(
-            navToHome = { user ->
-                navController.navigateToHome(user) {
+            navToHome = {
+                navController.navigateToHome {
                     popUpTo("${SignUpNavRoutes.GRAPH}/{${SignUpNavRoutes.TERM_IDS}}") {
                         inclusive = true
                     }
@@ -163,8 +162,14 @@ private fun NavGraphBuilder.signUpComposable(navController: NavHostController) {
 
 private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
     composable(
-        route = "${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.USER_STATE_KEY}}",
-        arguments = listOf(navArgument(HomeNavRoutes.USER_STATE_KEY) { type = UserType() }),
+        route = "${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.PLACE_SEARCH_KEY}}",
+        arguments =
+            listOf(
+                navArgument(HomeNavRoutes.PLACE_SEARCH_KEY) {
+                    type = PlaceSearchType()
+                    nullable = true
+                },
+            ),
     ) {
         HomeScreen(
             navToFoodSpotReport = {
@@ -296,6 +301,7 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
             listOf(
                 navArgument(SearchRoutes.INITIAL_SEARCH_WORDS_KEY) {
                     type = NavType.StringType
+                    nullable = true
                 },
             ),
     ) {
@@ -309,11 +315,14 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
 }
 
 private fun NavHostController.navigateToHome(
-    user: User,
+    placeSearch: PlaceSearchDTO? = null,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val userJson = Uri.encode(Gson().toJson(user.toUserDTO()))
-    navigate("${HomeNavRoutes.GRAPH}/$userJson", builder)
+    val placeJson =
+        placeSearch?.let {
+            Uri.encode(Gson().toJson(it))
+        }
+    navigate("${HomeNavRoutes.GRAPH}/$placeJson", builder)
 }
 
 private fun NavHostController.navigateToSelectLocationMap(
@@ -366,7 +375,8 @@ private fun NavHostController.navigateToSearch(
     initialSearchWords: String,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    navigate("${SearchRoutes.GRAPH}/$initialSearchWords", builder)
+    val searchWords = initialSearchWords.takeIf { it.isNotBlank() }
+    navigate("${SearchRoutes.GRAPH}/$searchWords", builder)
 }
 
 object SplashRoutes {
@@ -393,7 +403,7 @@ object SignUpNavRoutes {
 
 object HomeNavRoutes {
     const val GRAPH = "home"
-    const val USER_STATE_KEY = "user"
+    const val PLACE_SEARCH_KEY = "place_search_key"
 }
 
 object SelectPictureRoutes {

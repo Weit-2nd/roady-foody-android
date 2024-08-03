@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.R
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -19,14 +18,14 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun LoginScreen(
     vm: LoginViewModel = hiltViewModel(),
-    navToHome: (User) -> Unit,
+    navToHome: () -> Unit,
     navToTermAgreement: () -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is LoginSideEffect.NavToHome -> {
-                navToHome(sideEffect.user)
+                navToHome()
             }
 
             is LoginSideEffect.NavToTermAgreement -> {

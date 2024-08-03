@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
-import com.weit2nd.domain.model.User
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ProfileImage
@@ -40,7 +39,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun SignUpScreen(
     vm: SignUpViewModel = hiltViewModel(),
-    navToHome: (User) -> Unit,
+    navToHome: () -> Unit,
 ) {
     val state = vm.collectAsState()
     val context = LocalContext.current
@@ -98,12 +97,12 @@ fun SignUpScreen(
 
 private fun handleSideEffects(
     sideEffect: SignUpSideEffect,
-    navToHome: (User) -> Unit,
+    navToHome: () -> Unit,
     context: Context,
 ) {
     when (sideEffect) {
         is SignUpSideEffect.NavToHome -> {
-            navToHome(sideEffect.user)
+            navToHome()
         }
 
         is SignUpSideEffect.ShowToast -> {

@@ -1,10 +1,7 @@
 package com.weit2nd.presentation.ui.home
 
-import com.weit2nd.domain.model.User
+import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 
 data class HomeState(
-    val user: User =
-        User(
-            name = "",
-        ),
+    val placeSearch: PlaceSearchDTO? = null,
 )
