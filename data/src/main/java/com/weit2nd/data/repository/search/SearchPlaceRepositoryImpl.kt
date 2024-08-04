@@ -1,11 +1,10 @@
 package com.weit2nd.data.repository.search
 
-import com.weit2nd.data.model.LocationDTO
 import com.weit2nd.data.model.search.PlaceDTO
+import com.weit2nd.data.model.search.PlaceWithCoordinateDTO
 import com.weit2nd.data.model.search.TouristSpotDTO
 import com.weit2nd.data.source.search.SearchPlaceDataSource
 import com.weit2nd.domain.model.Coordinate
-import com.weit2nd.domain.model.Location
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.search.TourismType
 import com.weit2nd.domain.model.search.TouristSpot
@@ -39,15 +38,18 @@ class SearchPlaceRepositoryImpl @Inject constructor(
             .toPlaces()
     }
 
-    override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location {
-        return dataSource.getLocationWithCoordinate(coordinate).toLocation()
+    override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Place {
+        return dataSource.getLocationWithCoordinate(coordinate).toPlace()
     }
 
-    private fun LocationDTO.toLocation() =
-        Location(
-            name = name,
-            address = address,
-            coordinate = Coordinate(latitude = latitude, longitude = longitude),
+    private fun PlaceWithCoordinateDTO.toPlace() =
+        Place(
+            placeName = "",
+            addressName = addressName,
+            roadAddressName = roadAddressName ?: "",
+            longitude = longitude,
+            latitude = latitude,
+            tel = "",
         )
 
     private fun List<PlaceDTO>.toPlaces(): List<Place> {

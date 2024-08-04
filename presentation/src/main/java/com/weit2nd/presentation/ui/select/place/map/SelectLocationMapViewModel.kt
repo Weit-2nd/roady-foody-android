@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
-import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.usecase.search.SearchLocationWithCoordinateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
@@ -59,13 +58,7 @@ class SelectLocationMapViewModel @Inject constructor(
     }
 
     fun onClickSelectPlaceBtn() {
-        /*todo 좌표로 주소받는 api 연결 후 state 정돈 필요!
-        Location이 아닌 Place로 통일*/
-        val place =
-            container.stateFlow.value.location.coordinate.run {
-                Place("test", "test", "test", longitude = longitude, latitude = latitude, "")
-            }
-        SelectLocationMapIntent.SelectPlace(place).post()
+        SelectLocationMapIntent.SelectPlace(container.stateFlow.value.place).post()
     }
 
     private fun SelectLocationMapIntent.post() =
@@ -100,17 +93,21 @@ class SelectLocationMapViewModel @Inject constructor(
                     searchLocationJob =
                         viewModelScope
                             .launch {
-                                val location =
-                                    searchLocationWithCoordinateUseCase.invoke(
-                                        Coordinate(
-                                            latitude = coordinate.latitude,
-                                            longitude = coordinate.longitude,
-                                        ),
-                                    )
-                                reduce {
-                                    state.copy(
-                                        location = location,
-                                    )
+                                runCatching {
+                                    val place =
+                                        searchLocationWithCoordinateUseCase.invoke(
+                                            Coordinate(
+                                                latitude = coordinate.latitude,
+                                                longitude = coordinate.longitude,
+                                            ),
+                                        )
+                                    reduce {
+                                        state.copy(
+                                            place = place,
+                                        )
+                                    }
+                                }.onFailure {
+                                    postSideEffect(SelectLocationMapSideEffect.ShowToast("네트워크 오류가 발생했습니다."))
                                 }
                             }.apply {
                                 invokeOnCompletion {

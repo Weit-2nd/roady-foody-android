@@ -13,4 +13,8 @@ sealed class SelectLocationMapSideEffect {
     data class SelectPlace(
         val place: Place,
     ) : SelectLocationMapSideEffect()
+
+    data class ShowToast(
+        val message: String,
+    ) : SelectLocationMapSideEffect()
 }
