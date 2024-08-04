@@ -7,20 +7,20 @@ import com.weit2nd.domain.repository.searchhistory.SearchHistoryRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object SearchHistoryModule {
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesSearchHistoryRepository(dataSource: SearchHistoryDataSource): SearchHistoryRepository {
         return SearchHistoryRepositoryImpl(dataSource)
     }
 
-    @ViewModelScoped
+    @Singleton
     @Provides
     fun providesSearchHistoryDataSource(
         @ApplicationContext context: Context,
