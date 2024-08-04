@@ -1,11 +1,14 @@
 package com.weit2nd.presentation.ui.select.place.map
 
+import android.util.Log
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
+import com.weit2nd.domain.exception.SearchPlaceWithCoordinateException
 import com.weit2nd.domain.model.Coordinate
+import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.usecase.search.SearchLocationWithCoordinateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
@@ -103,11 +106,33 @@ class SelectLocationMapViewModel @Inject constructor(
                                         )
                                     reduce {
                                         state.copy(
+                                            isAvailablePlace = true,
                                             place = place,
                                         )
                                     }
                                 }.onFailure {
-                                    postSideEffect(SelectLocationMapSideEffect.ShowToast("네트워크 오류가 발생했습니다."))
+                                    if (it is SearchPlaceWithCoordinateException) {
+                                        postSideEffect(SelectLocationMapSideEffect.ShowToast(it.message.toString()))
+                                    } else {
+                                        Log.e(
+                                            "SearchPlaceWithCoordinateError",
+                                            it.message.toString(),
+                                        )
+                                    }
+                                    reduce {
+                                        state.copy(
+                                            isAvailablePlace = false,
+                                            place =
+                                                Place(
+                                                    placeName = "",
+                                                    addressName = "",
+                                                    roadAddressName = "",
+                                                    longitude = 0.0,
+                                                    latitude = 0.0,
+                                                    tel = "",
+                                                ),
+                                        )
+                                    }
                                 }
                             }.apply {
                                 invokeOnCompletion {

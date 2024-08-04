@@ -124,7 +124,7 @@ fun SelectPlaceMapScreen(
                 Modifier
                     .weight(1f)
                     .padding(16.dp),
-            isLoading = state.value.isLoading,
+            canSelect = state.value.isLoading.not() && state.value.isAvailablePlace,
             place = state.value.place,
             onClick = vm::onClickSelectPlaceBtn,
         )
@@ -164,7 +164,7 @@ private fun PositionSelectMarker(modifier: Modifier = Modifier) {
 @Composable
 private fun PlaceInfoView(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
+    canSelect: Boolean,
     place: Place,
     onClick: () -> Unit,
 ) {
@@ -190,7 +190,7 @@ private fun PlaceInfoView(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = { onClick() },
-            enabled = isLoading.not(),
+            enabled = canSelect,
         ) {
             Text(text = "이 위치로 등록")
         }

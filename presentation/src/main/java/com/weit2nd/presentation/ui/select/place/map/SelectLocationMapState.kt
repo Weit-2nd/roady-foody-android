@@ -18,5 +18,6 @@ data class SelectLocationMapState(
             tel = "",
         ),
     val isLoading: Boolean = false,
+    val isAvailablePlace: Boolean = false,
     val initialPosition: Coordinate = Coordinate(37.5597706, 126.9423666),
 )
