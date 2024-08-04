@@ -5,10 +5,10 @@ import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.repository.search.SearchPlaceRepository
 import javax.inject.Inject
 
-class SearchLocationWithCoordinateUseCase @Inject constructor(
+class SearchPlaceWithCoordinateUseCase @Inject constructor(
     val repository: SearchPlaceRepository,
 ) {
     suspend operator fun invoke(coordinate: Coordinate): Place {
-        return repository.searchLocationWithCoordinate(coordinate)
+        return repository.searchPlaceWithCoordinate(coordinate)
     }
 }

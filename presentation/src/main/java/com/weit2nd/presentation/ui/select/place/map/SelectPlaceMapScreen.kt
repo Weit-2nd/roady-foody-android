@@ -50,7 +50,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SelectPlaceMapScreen(
-    vm: SelectLocationMapViewModel = hiltViewModel(),
+    vm: SelectPlaceMapViewModel = hiltViewModel(),
     onSelectPlace: (Place) -> Unit,
 ) {
     val state = vm.collectAsState()
@@ -133,20 +133,20 @@ fun SelectPlaceMapScreen(
 
 private fun handleSideEffects(
     context: Context,
-    sideEffect: SelectLocationMapSideEffect,
+    sideEffect: SelectPlaceMapSideEffect,
     onSelectPlace: (Place) -> Unit,
 ) {
     when (sideEffect) {
-        is SelectLocationMapSideEffect.MoveCamera -> {
+        is SelectPlaceMapSideEffect.MoveCamera -> {
             val cameraUpdate = CameraUpdateFactory.newCenterPosition(sideEffect.position)
             sideEffect.map.moveCamera(cameraUpdate)
         }
 
-        is SelectLocationMapSideEffect.SelectPlace -> {
+        is SelectPlaceMapSideEffect.SelectPlace -> {
             onSelectPlace(sideEffect.place)
         }
 
-        is SelectLocationMapSideEffect.ShowToast -> {
+        is SelectPlaceMapSideEffect.ShowToast -> {
             Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
         }
     }

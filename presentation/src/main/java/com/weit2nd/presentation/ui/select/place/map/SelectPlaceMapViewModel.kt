@@ -9,7 +9,7 @@ import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.exception.SearchPlaceWithCoordinateException
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
-import com.weit2nd.domain.usecase.search.SearchLocationWithCoordinateUseCase
+import com.weit2nd.domain.usecase.search.SearchPlaceWithCoordinateUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
 import com.weit2nd.presentation.navigation.dto.CoordinateDTO
@@ -21,13 +21,13 @@ import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
 
 @HiltViewModel
-class SelectLocationMapViewModel @Inject constructor(
+class SelectPlaceMapViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val searchLocationWithCoordinateUseCase: SearchLocationWithCoordinateUseCase,
-) : BaseViewModel<SelectLocationMapState, SelectLocationMapSideEffect>() {
+    private val searchPlaceWithCoordinateUseCase: SearchPlaceWithCoordinateUseCase,
+) : BaseViewModel<SelectPlaceMapState, SelectPlaceMapSideEffect>() {
     override val container =
-        container<SelectLocationMapState, SelectLocationMapSideEffect>(
-            SelectLocationMapState(
+        container<SelectPlaceMapState, SelectPlaceMapSideEffect>(
+            SelectPlaceMapState(
                 initialPosition =
                     checkNotNull(
                         savedStateHandle
@@ -37,37 +37,37 @@ class SelectLocationMapViewModel @Inject constructor(
                     ),
             ),
         )
-    private var searchLocationJob: Job = Job().apply { complete() }
+    private var searchPlaceJob: Job = Job().apply { complete() }
 
     fun onMapReady(map: KakaoMap) {
-        SelectLocationMapIntent.StoreMap(map).post()
+        SelectPlaceMapIntent.StoreMap(map).post()
     }
 
     fun onGloballyPositioned(offset: IntOffset) {
-        SelectLocationMapIntent.StoreSelectMarkerOffset(offset).post()
+        SelectPlaceMapIntent.StoreSelectMarkerOffset(offset).post()
     }
 
     fun onCameraMoveStart() {
-        searchLocationJob.cancel()
-        SelectLocationMapIntent.StartLocatingMap.post()
+        searchPlaceJob.cancel()
+        SelectPlaceMapIntent.StartPlaceMap.post()
     }
 
     fun onCameraMoveEnd(coordinate: LatLng?) {
-        SelectLocationMapIntent.SearchLocation(coordinate).post()
+        SelectPlaceMapIntent.SearchPlace(coordinate).post()
     }
 
     fun onClickCurrentPositionBtn(currentPosition: LatLng) {
-        SelectLocationMapIntent.RequestCameraMove(currentPosition).post()
+        SelectPlaceMapIntent.RequestCameraMove(currentPosition).post()
     }
 
     fun onClickSelectPlaceBtn() {
-        SelectLocationMapIntent.SelectPlace(container.stateFlow.value.place).post()
+        SelectPlaceMapIntent.SelectPlace(container.stateFlow.value.place).post()
     }
 
-    private fun SelectLocationMapIntent.post() =
+    private fun SelectPlaceMapIntent.post() =
         intent {
             when (this@post) {
-                is SelectLocationMapIntent.StoreMap -> {
+                is SelectPlaceMapIntent.StoreMap -> {
                     reduce {
                         state.copy(
                             map = map,
@@ -75,7 +75,7 @@ class SelectLocationMapViewModel @Inject constructor(
                     }
                 }
 
-                is SelectLocationMapIntent.StoreSelectMarkerOffset -> {
+                is SelectPlaceMapIntent.StoreSelectMarkerOffset -> {
                     reduce {
                         state.copy(
                             selectMarkerOffset = offset,
@@ -83,7 +83,7 @@ class SelectLocationMapViewModel @Inject constructor(
                     }
                 }
 
-                SelectLocationMapIntent.StartLocatingMap -> {
+                SelectPlaceMapIntent.StartPlaceMap -> {
                     reduce {
                         state.copy(
                             isLoading = true,
@@ -91,14 +91,14 @@ class SelectLocationMapViewModel @Inject constructor(
                     }
                 }
 
-                is SelectLocationMapIntent.SearchLocation -> {
+                is SelectPlaceMapIntent.SearchPlace -> {
                     if (coordinate == null) return@intent
-                    searchLocationJob =
+                    searchPlaceJob =
                         viewModelScope
                             .launch {
                                 runCatching {
                                     val place =
-                                        searchLocationWithCoordinateUseCase.invoke(
+                                        searchPlaceWithCoordinateUseCase.invoke(
                                             Coordinate(
                                                 latitude = coordinate.latitude,
                                                 longitude = coordinate.longitude,
@@ -112,7 +112,7 @@ class SelectLocationMapViewModel @Inject constructor(
                                     }
                                 }.onFailure {
                                     if (it is SearchPlaceWithCoordinateException) {
-                                        postSideEffect(SelectLocationMapSideEffect.ShowToast(it.message.toString()))
+                                        postSideEffect(SelectPlaceMapSideEffect.ShowToast(it.message.toString()))
                                     } else {
                                         Log.e(
                                             "SearchPlaceWithCoordinateError",
@@ -147,14 +147,14 @@ class SelectLocationMapViewModel @Inject constructor(
                             }
                 }
 
-                is SelectLocationMapIntent.RequestCameraMove -> {
+                is SelectPlaceMapIntent.RequestCameraMove -> {
                     state.map?.let { map ->
-                        postSideEffect(SelectLocationMapSideEffect.MoveCamera(map, position))
+                        postSideEffect(SelectPlaceMapSideEffect.MoveCamera(map, position))
                     }
                 }
 
-                is SelectLocationMapIntent.SelectPlace -> {
-                    postSideEffect(SelectLocationMapSideEffect.SelectPlace(place))
+                is SelectPlaceMapIntent.SelectPlace -> {
+                    postSideEffect(SelectPlaceMapSideEffect.SelectPlace(place))
                 }
             }
         }

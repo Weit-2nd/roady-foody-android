@@ -15,5 +15,5 @@ interface SearchPlaceRepository {
         searchWord: String,
     ): List<Place>
 
-    suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Place
+    suspend fun searchPlaceWithCoordinate(coordinate: Coordinate): Place
 }

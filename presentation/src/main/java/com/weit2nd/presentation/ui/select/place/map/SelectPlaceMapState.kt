@@ -5,7 +5,7 @@ import com.kakao.vectormap.KakaoMap
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
 
-data class SelectLocationMapState(
+data class SelectPlaceMapState(
     val map: KakaoMap? = null,
     val selectMarkerOffset: IntOffset = IntOffset.Zero,
     val place: Place =

@@ -34,19 +34,19 @@ class SearchPlaceRepositoryImpl @Inject constructor(
         searchWord: String,
     ): List<Place> {
         return dataSource
-            .getLocationsWithWord(
+            .getPlacesWithWord(
                 count = count,
                 searchWord = searchWord,
             ).items
             .toPlaces()
     }
 
-    override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Place {
+    override suspend fun searchPlaceWithCoordinate(coordinate: Coordinate): Place {
         return runCatching {
-            dataSource.getLocationWithCoordinate(coordinate).toPlace()
+            dataSource.getPlaceWithCoordinate(coordinate).toPlace()
         }.getOrElse { throwable ->
             if (throwable is HttpException) {
-                throw handleSearchLocationWithCoordinateHttpException(throwable)
+                throw handleSearchPlaceWithCoordinateHttpException(throwable)
             } else {
                 throw throwable
             }
@@ -63,7 +63,7 @@ class SearchPlaceRepositoryImpl @Inject constructor(
             tel = "",
         )
 
-    private fun handleSearchLocationWithCoordinateHttpException(throwable: HttpException): Throwable {
+    private fun handleSearchPlaceWithCoordinateHttpException(throwable: HttpException): Throwable {
         return when (throwable.code()) {
             HTTP_INTERNAL_SERVER_ERROR -> SearchPlaceWithCoordinateException.ExternalApiException(throwable.message())
             else -> SearchPlaceWithCoordinateException.CanNotChangeToAddressException(throwable.message())

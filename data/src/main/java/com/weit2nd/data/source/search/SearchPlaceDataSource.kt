@@ -20,7 +20,7 @@ class SearchPlaceDataSource @Inject constructor(
         )
     }
 
-    suspend fun getLocationsWithWord(
+    suspend fun getPlacesWithWord(
         count: Int,
         searchWord: String,
     ): PlacesDTO {
@@ -30,7 +30,7 @@ class SearchPlaceDataSource @Inject constructor(
         )
     }
 
-    suspend fun getLocationWithCoordinate(coordinate: Coordinate): PlaceWithCoordinateDTO {
+    suspend fun getPlaceWithCoordinate(coordinate: Coordinate): PlaceWithCoordinateDTO {
         return service.getPlaceAddressWithCoordinate(
             latitude = coordinate.latitude,
             longitude = coordinate.longitude,
