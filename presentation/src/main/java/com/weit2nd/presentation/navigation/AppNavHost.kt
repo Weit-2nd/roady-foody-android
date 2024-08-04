@@ -178,6 +178,12 @@ private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
             navToMyPage = {
                 navController.navigateToMyPage()
             },
+            navToSearch = {
+                navController.navigateToSearch(it)
+            },
+            navToBack = {
+                navController.popBackStack()
+            },
         )
     }
 }
@@ -306,7 +312,13 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
             ),
     ) {
         SearchScreen(
-            navToMap = { },
+            navToHome = {
+                navController.navigateToHome(it) {
+                    popUpTo("${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.PLACE_SEARCH_KEY}}") {
+                        inclusive = true
+                    }
+                }
+            },
             navToBack = {
                 navController.popBackStack()
             },

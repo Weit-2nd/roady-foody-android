@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Row
@@ -29,10 +30,12 @@ import com.weit2nd.presentation.R
 fun SearchTopBar(
     modifier: Modifier = Modifier,
     textFieldEnabled: Boolean = true,
+    readOnly: Boolean = false,
     searchWords: String,
-    onClear: () -> Unit,
-    onSearchButtonClick: () -> Unit,
-    onSearchWordsChanged: (String) -> Unit,
+    onClear: (() -> Unit)? = null,
+    onTextFieldClick: (() -> Unit)? = null,
+    onSearchButtonClick: (() -> Unit)? = null,
+    onSearchWordsChanged: ((String) -> Unit)? = null,
     onNavigationButtonClick: () -> Unit,
 ) {
     Row(
@@ -48,12 +51,23 @@ fun SearchTopBar(
             )
         }
         SearchTextField(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .clickable {
+                        onTextFieldClick?.invoke()
+                    },
             enabled = textFieldEnabled,
             searchWords = searchWords,
-            onSearchWordsChanged = onSearchWordsChanged,
-            onClear = onClear,
-            onSearchButtonClick = onSearchButtonClick,
+            onSearchWordsChanged = {
+                onSearchWordsChanged?.invoke(it)
+            },
+            onClear = {
+                onClear?.invoke()
+            },
+            onSearchButtonClick = {
+                onSearchButtonClick?.invoke()
+            },
         )
     }
 }
@@ -63,6 +77,7 @@ fun SearchTopBar(
 private fun SearchTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
     searchWords: String,
     onSearchWordsChanged: (String) -> Unit,
     onClear: () -> Unit,
@@ -77,18 +92,20 @@ private fun SearchTextField(
     BasicTextField(
         modifier = modifier,
         value = searchWords,
+        enabled = enabled,
+        readOnly = readOnly,
         onValueChange = onSearchWordsChanged,
         interactionSource = interactionSource,
         keyboardOptions =
-        KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search,
-        ),
+            KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search,
+            ),
         keyboardActions =
-        KeyboardActions(
-            onSearch = {
-                onSearchButtonClick()
-            },
-        ),
+            KeyboardActions(
+                onSearch = {
+                    onSearchButtonClick()
+                },
+            ),
     ) { innerTextField ->
         TextFieldDefaults.DecorationBox(
             value = searchWords,
@@ -123,15 +140,15 @@ private fun SearchTextField(
             },
             // TODO Material Theme를 적용하고 나면 제거
             colors =
-            TextFieldDefaults.colors(
-                disabledContainerColor = Color.White,
-                errorContainerColor = Color.White,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.White,
-                disabledIndicatorColor = Color.White,
-                focusedIndicatorColor = Color(0xFF555555),
-            ),
+                TextFieldDefaults.colors(
+                    disabledContainerColor = Color.White,
+                    errorContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.White,
+                    disabledIndicatorColor = Color.White,
+                    focusedIndicatorColor = Color(0xFF555555),
+                ),
         )
     }
 }
@@ -152,9 +169,10 @@ private fun SearchTextFieldPreview() {
 @Composable
 private fun SearchTopBarPerview() {
     SearchTopBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White),
         searchWords = "감사해요",
         onClear = {},
         onSearchButtonClick = {},

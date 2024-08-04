@@ -9,6 +9,8 @@ import com.weit2nd.domain.usecase.search.RemoveSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.SearchPlacesWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.SearchRoutes
+import com.weit2nd.presentation.navigation.dto.CoordinateDTO
+import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
@@ -104,9 +106,26 @@ class SearchViewModel @Inject constructor(
                 }
                 is SearchIntent.SearchWithWords -> {
                     addSearchHistoriesUseCase(words)
+                    val placeSearch =
+                        PlaceSearchDTO(
+                            searchWords = words,
+                            coordinate = null,
+                        )
+                    postSideEffect(SearchSideEffect.NavToHome(placeSearch))
                 }
                 is SearchIntent.SearchWithPlace -> {
                     addSearchHistoriesUseCase(place.placeName)
+                    val coordinate =
+                        CoordinateDTO(
+                            latitude = place.latitude,
+                            longitude = place.longitude,
+                        )
+                    val placeSearch =
+                        PlaceSearchDTO(
+                            searchWords = place.placeName,
+                            coordinate = coordinate,
+                        )
+                    postSideEffect(SearchSideEffect.NavToHome(placeSearch))
                 }
 
                 SearchIntent.GetSearchHistory -> {
