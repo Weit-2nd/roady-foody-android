@@ -17,7 +17,7 @@ sealed class SelectPlaceMapIntent {
     data object StartPlaceMap : SelectPlaceMapIntent()
 
     data class SearchPlace(
-        val coordinate: LatLng?,
+        val position: LatLng?,
     ) : SelectPlaceMapIntent()
 
     data class RequestCameraMove(

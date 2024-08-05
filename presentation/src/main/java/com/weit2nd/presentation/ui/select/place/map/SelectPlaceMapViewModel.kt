@@ -92,7 +92,7 @@ class SelectPlaceMapViewModel @Inject constructor(
                 }
 
                 is SelectPlaceMapIntent.SearchPlace -> {
-                    if (coordinate == null) return@intent
+                    if (position == null) return@intent
                     searchPlaceJob =
                         viewModelScope
                             .launch {
@@ -100,8 +100,8 @@ class SelectPlaceMapViewModel @Inject constructor(
                                     val place =
                                         searchPlaceWithCoordinateUseCase.invoke(
                                             Coordinate(
-                                                latitude = coordinate.latitude,
-                                                longitude = coordinate.longitude,
+                                                latitude = position.latitude,
+                                                longitude = position.longitude,
                                             ),
                                         )
                                     reduce {
