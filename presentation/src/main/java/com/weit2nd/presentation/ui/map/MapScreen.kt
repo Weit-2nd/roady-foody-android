@@ -37,11 +37,24 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun MapScreen(
     modifier: Modifier = Modifier,
     vm: MapViewModel = hiltViewModel(),
-    position: LatLng = LatLng.from(37.5597706, 126.9423666),
+    initialPosition: LatLng = LatLng.from(37.5597706, 126.9423666),
+    onCameraMoveEnd: (LatLng) -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
-        handleSideEffects(sideEffect)
+        when (sideEffect) {
+            is MapSideEffect.RefreshMarkers -> {
+                drawMarkers(sideEffect.map, sideEffect.foodSpotMarkers)
+            }
+
+            is MapSideEffect.MoveCamera -> {
+                moveCamera(sideEffect.map, sideEffect.position)
+            }
+
+            is MapSideEffect.SendCameraPosition -> {
+                onCameraMoveEnd(sideEffect.position)
+            }
+        }
     }
     val context = LocalContext.current
     val mapView =
@@ -52,7 +65,7 @@ fun MapScreen(
                     kakaoMapReadyCallback(
                         vm::onMapReady,
                         vm::onCameraMoveEnd,
-                        position,
+                        initialPosition,
                     ),
                 )
             }
@@ -93,18 +106,6 @@ fun MapScreen(
     }
 }
 
-private fun handleSideEffects(sideEffect: MapSideEffect) {
-    when (sideEffect) {
-        is MapSideEffect.RefreshMarkers -> {
-            drawMarkers(sideEffect.map, sideEffect.foodSpotMarkers)
-        }
-
-        is MapSideEffect.MoveCamera -> {
-            moveCamera(sideEffect.map, sideEffect.position)
-        }
-    }
-}
-
 private fun moveCamera(
     map: KakaoMap,
     position: LatLng,
@@ -126,13 +127,13 @@ private fun mapLifeCycleCallback() =
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
-    onCameraMoveEnd: () -> Unit,
+    onCameraMoveEnd: (LatLng) -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
-        map.setOnCameraMoveEndListener { _, _, _ ->
-            onCameraMoveEnd()
+        map.setOnCameraMoveEndListener { _, cameraPosition, _ ->
+            onCameraMoveEnd(cameraPosition.position)
         }
     }
 

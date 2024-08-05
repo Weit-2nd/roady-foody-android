@@ -26,10 +26,16 @@ class SearchViewModel @Inject constructor(
     private val clearSearchHistoriesUseCase: ClearSearchHistoriesUseCase,
     private val searchPlacesWithWordUseCase: SearchPlacesWithWordUseCase,
 ) : BaseViewModel<SearchState, SearchSideEffect>() {
+    private val placeSearch =
+        savedStateHandle.get<PlaceSearchDTO>(SearchRoutes.INITIAL_SEARCH_WORDS_KEY) ?: PlaceSearchDTO(
+            "",
+            CoordinateDTO(0.0, 0.0),
+        )
+
     override val container: Container<SearchState, SearchSideEffect> =
         container(
             SearchState(
-                searchWords = savedStateHandle[SearchRoutes.INITIAL_SEARCH_WORDS_KEY] ?: "",
+                searchWords = placeSearch.searchWords,
             ),
         )
 
@@ -109,7 +115,7 @@ class SearchViewModel @Inject constructor(
                     val placeSearch =
                         PlaceSearchDTO(
                             searchWords = words,
-                            coordinate = null,
+                            coordinate = placeSearch.coordinate,
                         )
                     postSideEffect(SearchSideEffect.NavToHome(placeSearch))
                 }

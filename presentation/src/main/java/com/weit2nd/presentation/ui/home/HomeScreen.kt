@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.SearchTopBar
 import com.weit2nd.presentation.ui.map.MapScreen
 import org.orbitmvi.orbit.compose.collectAsState
@@ -30,7 +31,7 @@ fun HomeScreen(
     vm: HomeViewModel = hiltViewModel(),
     navToFoodSpotReport: () -> Unit,
     navToMyPage: () -> Unit,
-    navToSearch: (String) -> Unit,
+    navToSearch: (PlaceSearchDTO) -> Unit,
     navToBack: () -> Unit,
 ) {
     val state by vm.collectAsState()
@@ -40,7 +41,7 @@ fun HomeScreen(
                 navToFoodSpotReport()
             }
             is HomeSideEffect.NavToSearch -> {
-                navToSearch(sideEffect.initialSearchWords)
+                navToSearch(sideEffect.placeSearchDTO)
             }
             HomeSideEffect.NavToBack -> {
                 navToBack()
@@ -64,7 +65,8 @@ fun HomeScreen(
         ) {
             MapScreen(
                 modifier = Modifier.fillMaxSize(),
-                position = state.initialLatLng,
+                initialPosition = state.initialLatLng,
+                onCameraMoveEnd = vm::onCameraMoved,
             )
             Box(
                 modifier =

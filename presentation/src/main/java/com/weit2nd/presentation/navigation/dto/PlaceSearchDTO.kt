@@ -6,5 +6,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PlaceSearchDTO(
     val searchWords: String,
-    val coordinate: CoordinateDTO?,
+    val coordinate: CoordinateDTO,
 ) : Parcelable

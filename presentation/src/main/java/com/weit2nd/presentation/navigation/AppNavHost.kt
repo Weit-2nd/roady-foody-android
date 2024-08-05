@@ -306,8 +306,7 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
         arguments =
             listOf(
                 navArgument(SearchRoutes.INITIAL_SEARCH_WORDS_KEY) {
-                    type = NavType.StringType
-                    nullable = true
+                    type = PlaceSearchType()
                 },
             ),
     ) {
@@ -384,11 +383,11 @@ private fun NavHostController.navigateToPostReview(
 }
 
 private fun NavHostController.navigateToSearch(
-    initialSearchWords: String,
+    placeSearchDTO: PlaceSearchDTO,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val searchWords = initialSearchWords.takeIf { it.isNotBlank() }
-    navigate("${SearchRoutes.GRAPH}/$searchWords", builder)
+    val placeJson = Uri.encode(Gson().toJson(placeSearchDTO))
+    navigate("${SearchRoutes.GRAPH}/$placeJson", builder)
 }
 
 object SplashRoutes {

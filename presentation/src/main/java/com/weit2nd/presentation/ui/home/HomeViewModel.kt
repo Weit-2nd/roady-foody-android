@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.kakao.vectormap.LatLng
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.HomeNavRoutes
+import com.weit2nd.presentation.navigation.dto.CoordinateDTO
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.viewmodel.container
@@ -25,6 +26,7 @@ class HomeViewModel @Inject constructor(
                     } ?: LatLng.from(37.5597706, 126.9423666),
             ),
         )
+    private var currentCameraPosition: LatLng = container.stateFlow.value.initialLatLng
 
     fun onClickReportBtn() {
         HomeIntent.NavToFoodSpotReport.post()
@@ -38,6 +40,10 @@ class HomeViewModel @Inject constructor(
         HomeIntent.NavToSearch.post()
     }
 
+    fun onCameraMoved(position: LatLng) {
+        currentCameraPosition = position
+    }
+
     private fun HomeIntent.post() =
         intent {
             when (this@post) {
@@ -45,7 +51,18 @@ class HomeViewModel @Inject constructor(
                     postSideEffect(HomeSideEffect.NavToFoodSpotReport)
                 }
                 HomeIntent.NavToSearch -> {
-                    postSideEffect(HomeSideEffect.NavToSearch(state.searchWords))
+                    postSideEffect(
+                        HomeSideEffect.NavToSearch(
+                            PlaceSearchDTO(
+                                searchWords = state.searchWords,
+                                coordinate =
+                                    CoordinateDTO(
+                                        currentCameraPosition.latitude,
+                                        currentCameraPosition.longitude,
+                                    ),
+                            ),
+                        ),
+                    )
                 }
                 HomeIntent.NavToBack -> {
                     postSideEffect(HomeSideEffect.NavToBack)
