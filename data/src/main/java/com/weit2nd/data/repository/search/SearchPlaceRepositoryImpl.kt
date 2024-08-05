@@ -10,6 +10,7 @@ import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.search.TourismType
 import com.weit2nd.domain.model.search.TouristSpot
 import com.weit2nd.domain.repository.search.SearchPlaceRepository
+import okhttp3.internal.http.HTTP_BAD_REQUEST
 import okhttp3.internal.http.HTTP_INTERNAL_SERVER_ERROR
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -65,8 +66,17 @@ class SearchPlaceRepositoryImpl @Inject constructor(
 
     private fun handleSearchPlaceWithCoordinateHttpException(throwable: HttpException): Throwable {
         return when (throwable.code()) {
-            HTTP_INTERNAL_SERVER_ERROR -> SearchPlaceWithCoordinateException.ExternalApiException(throwable.message())
-            else -> SearchPlaceWithCoordinateException.CanNotChangeToAddressException(throwable.message())
+            HTTP_INTERNAL_SERVER_ERROR ->
+                SearchPlaceWithCoordinateException.ExternalApiException(
+                    throwable.message(),
+                )
+
+            HTTP_BAD_REQUEST ->
+                SearchPlaceWithCoordinateException.CanNotChangeToAddressException(
+                    throwable.message(),
+                )
+
+            else -> throwable
         }
     }
 
