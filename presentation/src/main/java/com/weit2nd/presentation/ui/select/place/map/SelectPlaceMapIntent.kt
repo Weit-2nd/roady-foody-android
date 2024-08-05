@@ -5,26 +5,26 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.search.Place
 
-sealed class SelectLocationMapIntent {
+sealed class SelectPlaceMapIntent {
     data class StoreMap(
         val map: KakaoMap,
-    ) : SelectLocationMapIntent()
+    ) : SelectPlaceMapIntent()
 
     data class StoreSelectMarkerOffset(
         val offset: IntOffset,
-    ) : SelectLocationMapIntent()
+    ) : SelectPlaceMapIntent()
 
-    data object StartLocatingMap : SelectLocationMapIntent()
+    data object StartPlaceMap : SelectPlaceMapIntent()
 
-    data class SearchLocation(
-        val coordinate: LatLng?,
-    ) : SelectLocationMapIntent()
+    data class SearchPlace(
+        val position: LatLng?,
+    ) : SelectPlaceMapIntent()
 
     data class RequestCameraMove(
         val position: LatLng,
-    ) : SelectLocationMapIntent()
+    ) : SelectPlaceMapIntent()
 
     data class SelectPlace(
         val place: Place,
-    ) : SelectLocationMapIntent()
+    ) : SelectPlaceMapIntent()
 }

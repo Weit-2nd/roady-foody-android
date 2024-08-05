@@ -1,7 +1,6 @@
 package com.weit2nd.domain.repository.search
 
 import com.weit2nd.domain.model.Coordinate
-import com.weit2nd.domain.model.Location
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.search.TouristSpot
 
@@ -16,5 +15,5 @@ interface SearchPlaceRepository {
         searchWord: String,
     ): List<Place>
 
-    suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location
+    suspend fun searchPlaceWithCoordinate(coordinate: Coordinate): Place
 }

@@ -1,6 +1,7 @@
 package com.weit2nd.data.service
 
 import com.weit2nd.data.model.search.FoodSpotsDTO
+import com.weit2nd.data.model.search.PlaceWithCoordinateDTO
 import com.weit2nd.data.model.search.PlacesDTO
 import com.weit2nd.data.model.search.TouristSpotsDTO
 import retrofit2.http.GET
@@ -18,6 +19,12 @@ interface SearchService {
         @Query("numOfRows") numOfRows: Int,
         @Query("keyword") keyword: String,
     ): PlacesDTO
+
+    @GET("/api/v1/address/coordinate")
+    suspend fun getPlaceAddressWithCoordinate(
+        @Query("longitude") longitude: Double,
+        @Query("latitude") latitude: Double,
+    ): PlaceWithCoordinateDTO
 
     @GET("/api/v1/food-spots/search")
     suspend fun getFoodSpots(

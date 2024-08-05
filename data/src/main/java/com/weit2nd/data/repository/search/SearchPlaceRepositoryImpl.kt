@@ -1,15 +1,18 @@
 package com.weit2nd.data.repository.search
 
-import com.weit2nd.data.model.LocationDTO
 import com.weit2nd.data.model.search.PlaceDTO
+import com.weit2nd.data.model.search.PlaceWithCoordinateDTO
 import com.weit2nd.data.model.search.TouristSpotDTO
 import com.weit2nd.data.source.search.SearchPlaceDataSource
+import com.weit2nd.domain.exception.SearchPlaceWithCoordinateException
 import com.weit2nd.domain.model.Coordinate
-import com.weit2nd.domain.model.Location
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.search.TourismType
 import com.weit2nd.domain.model.search.TouristSpot
 import com.weit2nd.domain.repository.search.SearchPlaceRepository
+import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_INTERNAL_SERVER_ERROR
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class SearchPlaceRepositoryImpl @Inject constructor(
@@ -32,23 +35,50 @@ class SearchPlaceRepositoryImpl @Inject constructor(
         searchWord: String,
     ): List<Place> {
         return dataSource
-            .getLocationsWithWord(
+            .getPlacesWithWord(
                 count = count,
                 searchWord = searchWord,
             ).items
             .toPlaces()
     }
 
-    override suspend fun searchLocationWithCoordinate(coordinate: Coordinate): Location {
-        return dataSource.getLocationWithCoordinate(coordinate).toLocation()
+    override suspend fun searchPlaceWithCoordinate(coordinate: Coordinate): Place {
+        return runCatching {
+            dataSource.getPlaceWithCoordinate(coordinate).toPlace()
+        }.getOrElse { throwable ->
+            if (throwable is HttpException) {
+                throw handleSearchPlaceWithCoordinateHttpException(throwable)
+            } else {
+                throw throwable
+            }
+        }
     }
 
-    private fun LocationDTO.toLocation() =
-        Location(
-            name = name,
-            address = address,
-            coordinate = Coordinate(latitude = latitude, longitude = longitude),
+    private fun PlaceWithCoordinateDTO.toPlace() =
+        Place(
+            placeName = "",
+            addressName = addressName,
+            roadAddressName = roadAddressName ?: "",
+            longitude = longitude,
+            latitude = latitude,
+            tel = "",
         )
+
+    private fun handleSearchPlaceWithCoordinateHttpException(throwable: HttpException): Throwable {
+        return when (throwable.code()) {
+            HTTP_INTERNAL_SERVER_ERROR ->
+                SearchPlaceWithCoordinateException.ExternalApiException(
+                    throwable.message(),
+                )
+
+            HTTP_BAD_REQUEST ->
+                SearchPlaceWithCoordinateException.CanNotChangeToAddressException(
+                    throwable.message(),
+                )
+
+            else -> throwable
+        }
+    }
 
     private fun List<PlaceDTO>.toPlaces(): List<Place> {
         return this.map { it.toPlace() }

@@ -1,11 +1,10 @@
 package com.weit2nd.data.source.search
 
-import com.weit2nd.data.model.LocationDTO
+import com.weit2nd.data.model.search.PlaceWithCoordinateDTO
 import com.weit2nd.data.model.search.PlacesDTO
 import com.weit2nd.data.model.search.TouristSpotsDTO
 import com.weit2nd.data.service.SearchService
 import com.weit2nd.domain.model.Coordinate
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class SearchPlaceDataSource @Inject constructor(
@@ -21,7 +20,7 @@ class SearchPlaceDataSource @Inject constructor(
         )
     }
 
-    suspend fun getLocationsWithWord(
+    suspend fun getPlacesWithWord(
         count: Int,
         searchWord: String,
     ): PlacesDTO {
@@ -31,11 +30,8 @@ class SearchPlaceDataSource @Inject constructor(
         )
     }
 
-    suspend fun getLocationWithCoordinate(coordinate: Coordinate): LocationDTO {
-        delay(1000)
-        return LocationDTO(
-            name = "위치이름",
-            address = "서울 중구 세종대로${coordinate.latitude}",
+    suspend fun getPlaceWithCoordinate(coordinate: Coordinate): PlaceWithCoordinateDTO {
+        return service.getPlaceAddressWithCoordinate(
             latitude = coordinate.latitude,
             longitude = coordinate.longitude,
         )

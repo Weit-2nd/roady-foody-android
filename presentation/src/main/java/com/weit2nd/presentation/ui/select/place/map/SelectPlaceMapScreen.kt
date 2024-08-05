@@ -1,6 +1,8 @@
 package com.weit2nd.presentation.ui.select.place.map
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +43,6 @@ import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.weit2nd.domain.model.Location
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import org.orbitmvi.orbit.compose.collectAsState
@@ -49,14 +50,14 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
 fun SelectPlaceMapScreen(
-    vm: SelectLocationMapViewModel = hiltViewModel(),
+    vm: SelectPlaceMapViewModel = hiltViewModel(),
     onSelectPlace: (Place) -> Unit,
 ) {
     val state = vm.collectAsState()
-    vm.collectSideEffect { sideEffect ->
-        handleSideEffects(sideEffect, onSelectPlace)
-    }
     val context = LocalContext.current
+    vm.collectSideEffect { sideEffect ->
+        handleSideEffects(context, sideEffect, onSelectPlace)
+    }
     val mapView =
         remember {
             MapView(context).apply {
@@ -118,30 +119,35 @@ fun SelectPlaceMapScreen(
                         }.offset { state.value.selectMarkerOffset },
             )
         }
-        LocationInfoView(
+        PlaceInfoView(
             modifier =
                 Modifier
                     .weight(1f)
                     .padding(16.dp),
-            isLoading = state.value.isLoading,
-            location = state.value.location,
+            canSelect = state.value.isLoading.not() && state.value.isAvailablePlace,
+            place = state.value.place,
             onClick = vm::onClickSelectPlaceBtn,
         )
     }
 }
 
 private fun handleSideEffects(
-    sideEffect: SelectLocationMapSideEffect,
+    context: Context,
+    sideEffect: SelectPlaceMapSideEffect,
     onSelectPlace: (Place) -> Unit,
 ) {
     when (sideEffect) {
-        is SelectLocationMapSideEffect.MoveCamera -> {
+        is SelectPlaceMapSideEffect.MoveCamera -> {
             val cameraUpdate = CameraUpdateFactory.newCenterPosition(sideEffect.position)
             sideEffect.map.moveCamera(cameraUpdate)
         }
 
-        is SelectLocationMapSideEffect.SelectPlace -> {
+        is SelectPlaceMapSideEffect.SelectPlace -> {
             onSelectPlace(sideEffect.place)
+        }
+
+        is SelectPlaceMapSideEffect.ShowToast -> {
+            Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
         }
     }
 }
@@ -156,10 +162,10 @@ private fun PositionSelectMarker(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun LocationInfoView(
+private fun PlaceInfoView(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
-    location: Location,
+    canSelect: Boolean,
+    place: Place,
     onClick: () -> Unit,
 ) {
     Column(
@@ -168,7 +174,7 @@ private fun LocationInfoView(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = location.address,
+            text = place.addressName,
             style =
                 TextStyle(
                     fontSize = 24.sp,
@@ -176,10 +182,15 @@ private fun LocationInfoView(
                     color = Color.Black,
                 ),
         )
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = place.roadAddressName,
+            style = TextStyle(fontSize = 16.sp),
+        )
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = { onClick() },
-            enabled = isLoading.not(),
+            enabled = canSelect,
         ) {
             Text(text = "이 위치로 등록")
         }
