@@ -52,8 +52,12 @@ class SelectPlaceMapViewModel @Inject constructor(
         SelectPlaceMapIntent.StartPlaceMap.post()
     }
 
-    fun onCameraMoveEnd(coordinate: LatLng?) {
-        SelectPlaceMapIntent.SearchPlace(coordinate).post()
+    fun onCameraMoveEnd() {
+        val selectedPosition =
+            container.stateFlow.value.run {
+                map?.fromScreenPoint(selectMarkerOffset.x, selectMarkerOffset.y)
+            }
+        SelectPlaceMapIntent.SearchPlace(selectedPosition).post()
     }
 
     fun onClickCurrentPositionBtn(currentPosition: LatLng) {
