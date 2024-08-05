@@ -108,15 +108,21 @@ fun SelectPlaceMapScreen(
                 onClick = vm::onClickCurrentPositionBtn,
             )
 
+            var selectMarkerIconSize by remember { mutableStateOf(IntSize.Zero) }
             PositionSelectMarker(
                 modifier =
                     Modifier
                         .onGloballyPositioned { layoutCoordinates ->
-                            val imageSize = layoutCoordinates.size
-                            val centerX = mapRectSize.width / 2 - imageSize.width / 2
-                            val centerY = mapRectSize.height / 2 - imageSize.height / 2
+                            selectMarkerIconSize = layoutCoordinates.size
+                            val centerX = mapRectSize.width / 2
+                            val centerY = mapRectSize.height / 2
                             vm.onGloballyPositioned(IntOffset(centerX, centerY))
-                        }.offset { state.value.selectMarkerOffset },
+                        }.offset {
+                            IntOffset(
+                                state.value.selectMarkerOffset.x - selectMarkerIconSize.width / 2,
+                                state.value.selectMarkerOffset.y - selectMarkerIconSize.height / 2,
+                            )
+                        },
             )
         }
         PlaceInfoView(
