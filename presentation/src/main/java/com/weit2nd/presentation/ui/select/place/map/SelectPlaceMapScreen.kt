@@ -67,7 +67,6 @@ fun SelectPlaceMapScreen(
                         vm::onMapReady,
                         onCameraMoveStart = vm::onCameraMoveStart,
                         onCameraMoveEnd = vm::onCameraMoveEnd,
-                        selectMarkerOffset = state.value.selectMarkerOffset,
                         position =
                             state.value.initialPosition.run {
                                 LatLng.from(
@@ -108,15 +107,21 @@ fun SelectPlaceMapScreen(
                 onClick = vm::onClickCurrentPositionBtn,
             )
 
+            var selectMarkerIconSize by remember { mutableStateOf(IntSize.Zero) }
             PositionSelectMarker(
                 modifier =
                     Modifier
                         .onGloballyPositioned { layoutCoordinates ->
-                            val imageSize = layoutCoordinates.size
-                            val centerX = mapRectSize.width / 2 - imageSize.width / 2
-                            val centerY = mapRectSize.height / 2 - imageSize.height / 2
+                            selectMarkerIconSize = layoutCoordinates.size
+                            val centerX = mapRectSize.width / 2
+                            val centerY = mapRectSize.height / 2
                             vm.onGloballyPositioned(IntOffset(centerX, centerY))
-                        }.offset { state.value.selectMarkerOffset },
+                        }.offset {
+                            IntOffset(
+                                state.value.selectMarkerOffset.x - selectMarkerIconSize.width / 2,
+                                state.value.selectMarkerOffset.y - selectMarkerIconSize.height / 2,
+                            )
+                        },
             )
         }
         PlaceInfoView(
@@ -211,31 +216,21 @@ private fun mapLifeCycleCallback() =
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
     onCameraMoveStart: () -> Unit,
-    onCameraMoveEnd: (LatLng?) -> Unit,
-    selectMarkerOffset: IntOffset,
+    onCameraMoveEnd: () -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
-        onCameraMoveEnd(map, onCameraMoveEnd, selectMarkerOffset)
+        onCameraMoveEnd()
         map.setOnCameraMoveStartListener { _, _ ->
             onCameraMoveStart()
         }
         map.setOnCameraMoveEndListener { kakaoMap, _, _ ->
-            onCameraMoveEnd(kakaoMap, onCameraMoveEnd, selectMarkerOffset)
+            onCameraMoveEnd()
         }
     }
 
     override fun getPosition(): LatLng = position
-}
-
-private fun onCameraMoveEnd(
-    map: KakaoMap,
-    onCameraMoveEnd: (LatLng?) -> Unit,
-    selectMarkerOffset: IntOffset,
-) {
-    val position = map.fromScreenPoint(selectMarkerOffset.x, selectMarkerOffset.y)
-    onCameraMoveEnd(position)
 }
 
 @Composable
