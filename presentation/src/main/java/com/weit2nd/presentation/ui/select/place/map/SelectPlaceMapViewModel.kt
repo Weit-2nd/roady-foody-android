@@ -57,7 +57,7 @@ class SelectPlaceMapViewModel @Inject constructor(
             container.stateFlow.value.run {
                 map?.fromScreenPoint(selectMarkerOffset.x, selectMarkerOffset.y)
             }
-        SelectPlaceMapIntent.SearchPlace(selectedPosition).post()
+        searchPlaceJob = SelectPlaceMapIntent.SearchPlace(selectedPosition).post()
     }
 
     fun onClickCurrentPositionBtn(currentPosition: LatLng) {
@@ -97,58 +97,57 @@ class SelectPlaceMapViewModel @Inject constructor(
 
                 is SelectPlaceMapIntent.SearchPlace -> {
                     if (position == null) return@intent
-                    searchPlaceJob =
-                        viewModelScope
-                            .launch {
-                                runCatching {
-                                    val place =
-                                        searchPlaceWithCoordinateUseCase.invoke(
-                                            Coordinate(
-                                                latitude = position.latitude,
-                                                longitude = position.longitude,
-                                            ),
-                                        )
-                                    reduce {
-                                        state.copy(
-                                            isAvailablePlace = true,
-                                            place = place,
-                                        )
-                                    }
-                                }.onFailure {
-                                    if (it is SearchPlaceWithCoordinateException) {
-                                        postSideEffect(SelectPlaceMapSideEffect.ShowToast(it.message.toString()))
-                                    } else {
-                                        Log.e(
-                                            "SearchPlaceWithCoordinateError",
-                                            it.message.toString(),
-                                        )
-                                    }
-                                    reduce {
-                                        state.copy(
-                                            isAvailablePlace = false,
-                                            place =
-                                                Place(
-                                                    placeName = "",
-                                                    addressName = "",
-                                                    roadAddressName = "",
-                                                    longitude = 0.0,
-                                                    latitude = 0.0,
-                                                    tel = "",
-                                                ),
-                                        )
-                                    }
+                    viewModelScope
+                        .launch {
+                            runCatching {
+                                val place =
+                                    searchPlaceWithCoordinateUseCase.invoke(
+                                        Coordinate(
+                                            latitude = position.latitude,
+                                            longitude = position.longitude,
+                                        ),
+                                    )
+                                reduce {
+                                    state.copy(
+                                        isAvailablePlace = true,
+                                        place = place,
+                                    )
                                 }
-                            }.apply {
-                                invokeOnCompletion {
-                                    intent {
-                                        reduce {
-                                            state.copy(
-                                                isLoading = false,
-                                            )
-                                        }
+                            }.onFailure {
+                                if (it is SearchPlaceWithCoordinateException) {
+                                    postSideEffect(SelectPlaceMapSideEffect.ShowToast(it.message.toString()))
+                                } else {
+                                    Log.e(
+                                        "SearchPlaceWithCoordinateError",
+                                        it.message.toString(),
+                                    )
+                                }
+                                reduce {
+                                    state.copy(
+                                        isAvailablePlace = false,
+                                        place =
+                                            Place(
+                                                placeName = "",
+                                                addressName = "",
+                                                roadAddressName = "",
+                                                longitude = 0.0,
+                                                latitude = 0.0,
+                                                tel = "",
+                                            ),
+                                    )
+                                }
+                            }
+                        }.apply {
+                            invokeOnCompletion {
+                                intent {
+                                    reduce {
+                                        state.copy(
+                                            isLoading = false,
+                                        )
                                     }
                                 }
                             }
+                        }
                 }
 
                 is SelectPlaceMapIntent.RequestCameraMove -> {
