@@ -13,4 +13,8 @@ sealed class MapSideEffect {
         val map: KakaoMap,
         val position: LatLng,
     ) : MapSideEffect()
+
+    data class SendCameraPosition(
+        val position: LatLng,
+    ) : MapSideEffect()
 }

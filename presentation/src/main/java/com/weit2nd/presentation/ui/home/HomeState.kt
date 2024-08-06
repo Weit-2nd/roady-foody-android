@@ -1,10 +1,8 @@
 package com.weit2nd.presentation.ui.home
 
-import com.weit2nd.domain.model.User
+import com.kakao.vectormap.LatLng
 
 data class HomeState(
-    val user: User =
-        User(
-            name = "",
-        ),
+    val searchWords: String,
+    val initialLatLng: LatLng,
 )

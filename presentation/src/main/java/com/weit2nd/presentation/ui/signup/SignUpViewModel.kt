@@ -4,7 +4,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.weit2nd.domain.exception.imageuri.NotImageException
-import com.weit2nd.domain.model.User
 import com.weit2nd.domain.usecase.pickimage.PickSingleImageUseCase
 import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
 import com.weit2nd.domain.usecase.signup.SignUpUseCase
@@ -82,7 +81,7 @@ class SignUpViewModel @Inject constructor(
                             )
                         }
                     }.onSuccess {
-                        postSideEffect(SignUpSideEffect.NavToHome(User("으악")))
+                        postSideEffect(SignUpSideEffect.NavToHome)
                     }.onFailure { throwable ->
                         if (throwable is NotImageException) {
                             postSideEffect(SignUpSideEffect.ShowToast("업로드된 파일이 이미지 형식이 아닙니다."))

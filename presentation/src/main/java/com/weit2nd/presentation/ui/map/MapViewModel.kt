@@ -20,8 +20,8 @@ class MapViewModel @Inject constructor(
     override val container = container<MapState, MapSideEffect>(MapState())
     private var searchFoodSpotsJob: Job = Job().apply { complete() }
 
-    fun onCameraMoveEnd() {
-        MapIntent.SetMovedStateTrue.post()
+    fun onCameraMoveEnd(position: LatLng) {
+        MapIntent.SendCameraPosition(position).post()
     }
 
     fun onClickRefreshFoodSpotBtn(map: KakaoMap) {
@@ -45,12 +45,13 @@ class MapViewModel @Inject constructor(
     private fun MapIntent.post() =
         intent {
             when (this@post) {
-                is MapIntent.SetMovedStateTrue -> {
+                is MapIntent.SendCameraPosition -> {
                     reduce {
                         state.copy(
                             isMoved = true,
                         )
                     }
+                    postSideEffect(MapSideEffect.SendCameraPosition(position))
                 }
 
                 is MapIntent.RequestFoodSpots -> {

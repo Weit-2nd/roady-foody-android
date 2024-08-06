@@ -4,7 +4,9 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 
 sealed class MapIntent {
-    data object SetMovedStateTrue : MapIntent()
+    data class SendCameraPosition(
+        val position: LatLng,
+    ) : MapIntent()
 
     data class RequestFoodSpots(
         val centerLat: Double,
