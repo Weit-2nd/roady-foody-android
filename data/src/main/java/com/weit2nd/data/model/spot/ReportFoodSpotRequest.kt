@@ -1,5 +1,7 @@
 package com.weit2nd.data.model.spot
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import com.weit2nd.domain.model.spot.OperationHour
 import java.time.format.DateTimeFormatter
 
@@ -14,10 +16,11 @@ data class ReportFoodSpotRequest(
     val operationHours: List<OperationHourRequest>,
 )
 
+@JsonClass(generateAdapter = true)
 data class OperationHourRequest(
-    val dayOfWeek: String,
-    val openingHours: String,
-    val closingHours: String,
+    @Json(name = "dayOfWeek") val dayOfWeek: String,
+    @Json(name = "openingHours") val openingHours: String,
+    @Json(name = "closingHours") val closingHours: String,
 )
 
 private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")

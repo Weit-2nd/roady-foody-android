@@ -25,4 +25,15 @@ interface FoodSpotRepository {
     ): ReportFoodSpotState
 
     suspend fun deleteFoodSpotHistory(historyId: Long)
+
+    suspend fun updateFoodSpotReport(
+        foodSpotsId: Long,
+        name: String?,
+        longitude: Double?,
+        latitude: Double?,
+        open: Boolean?,
+        closed: Boolean?,
+        foodCategories: List<Long>?,
+        operationHours: List<OperationHour>?,
+    )
 }

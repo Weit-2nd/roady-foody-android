@@ -2,18 +2,22 @@ package com.weit2nd.data.repository.spot
 
 import com.squareup.moshi.Moshi
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
+import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
 import com.weit2nd.data.model.spot.toRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
 import com.weit2nd.domain.exception.imageuri.NotImageException
+import com.weit2nd.domain.exception.spot.UpdateFoodSpotReportException
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_CONFLICT
 import okhttp3.internal.http.HTTP_FORBIDDEN
 import okhttp3.internal.http.HTTP_NOT_FOUND
+import okhttp3.internal.http.HTTP_TOO_MANY_REQUESTS
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -152,6 +156,57 @@ class FoodSpotRepositoryImpl @Inject constructor(
                 HTTP_BAD_REQUEST,
                 HTTP_NOT_FOUND,
                 -> DeleteFoodSpotHistoryException.HistoryNotFoundException(errorMessage)
+                else -> throwable
+            }
+        } else {
+            throwable
+        }
+
+    override suspend fun updateFoodSpotReport(
+        foodSpotsId: Long,
+        name: String?,
+        longitude: Double?,
+        latitude: Double?,
+        open: Boolean?,
+        closed: Boolean?,
+        foodCategories: List<Long>?,
+        operationHours: List<OperationHour>?,
+    ) {
+        val request =
+            UpdateFoodSpotReportRequest(
+                name = name,
+                longitude = longitude,
+                latitude = latitude,
+                open = open,
+                closed = closed,
+                foodCategories = foodCategories,
+                operationHours =
+                    operationHours?.map {
+                        it.toRequest()
+                    },
+            )
+        runCatching {
+            foodSpotDataSource.updateFoodSpotReport(
+                foodSpotsId = foodSpotsId,
+                request = request,
+            )
+        }.onFailure {
+            throw handleUpdateFoodSpotReportException(it)
+        }
+    }
+
+    private fun handleUpdateFoodSpotReportException(throwable: Throwable) =
+        if (throwable is HttpException) {
+            val errorMessage = throwable.message()
+            when (throwable.code()) {
+                HTTP_BAD_REQUEST ->
+                    UpdateFoodSpotReportException.InvalidFoodSpotNameException(errorMessage)
+                HTTP_NOT_FOUND ->
+                    UpdateFoodSpotReportException.NotFoundFoodCategoryException(errorMessage)
+                HTTP_CONFLICT ->
+                    UpdateFoodSpotReportException.FoodSpotAlreadyClosedException(errorMessage)
+                HTTP_TOO_MANY_REQUESTS ->
+                    UpdateFoodSpotReportException.TooManyReportRequestException(errorMessage)
                 else -> throwable
             }
         } else {
