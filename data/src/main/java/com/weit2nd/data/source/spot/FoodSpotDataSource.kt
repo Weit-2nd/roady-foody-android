@@ -1,5 +1,6 @@
 package com.weit2nd.data.source.spot
 
+import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
 import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
 import com.weit2nd.data.service.SpotService
 import okhttp3.MultipartBody
@@ -29,6 +30,20 @@ class FoodSpotDataSource @Inject constructor(
         service.updateFoodSpotReport(
             foodSpotsId = foodSpotsId,
             request = request,
+        )
+    }
+
+    suspend fun getFoodSpotReviews(
+        foodSpotsId: Long,
+        count: Int,
+        lastItemId: Long?,
+        sortType: String,
+    ): FoodSpotReviewsDTO {
+        return service.getFoodSpotReviews(
+            foodSpotsId = foodSpotsId,
+            size = count,
+            lastId = lastItemId,
+            sortType = sortType,
         )
     }
 }

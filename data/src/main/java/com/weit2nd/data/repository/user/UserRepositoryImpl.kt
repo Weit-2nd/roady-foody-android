@@ -63,7 +63,7 @@ class UserRepositoryImpl @Inject constructor(
     private fun FoodSpotReportPhotoDTO.toFoodSpotPhoto() =
         FoodSpotPhoto(
             id = id,
-            url = url,
+            image = url,
         )
 
     private fun FoodSpotCategoryDTO.toFoodSpotCategory() =
