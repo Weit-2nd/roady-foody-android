@@ -26,7 +26,7 @@ data class FoodSpotReviewContentDTO(
 data class FoodSpotReviewUserInfoDTO(
     @field:Json(name = "id") val id: Long,
     @field:Json(name = "nickname") val nickname: String,
-    @field:Json(name = "url") val profileImage: String,
+    @field:Json(name = "url") val profileImage: String?,
 )
 
 @JsonClass(generateAdapter = true)

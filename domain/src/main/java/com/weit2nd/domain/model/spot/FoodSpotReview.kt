@@ -20,7 +20,7 @@ data class FoodSpotReview(
 data class FoodSpotReviewUserInfo(
     val id: Long,
     val nickname: String,
-    val profileImage: String,
+    val profileImage: String?,
 )
 
 enum class ReviewSortType {
