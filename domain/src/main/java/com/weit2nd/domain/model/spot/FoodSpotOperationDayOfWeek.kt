@@ -1,6 +1,5 @@
 package com.weit2nd.domain.model.spot
 
-import com.weit2nd.domain.exception.UnknownException
 import java.time.DayOfWeek
 
 enum class FoodSpotOperationDayOfWeek(
@@ -17,7 +16,7 @@ enum class FoodSpotOperationDayOfWeek(
 
     companion object {
         fun findDayOfWeek(dayOfWeek: String): FoodSpotOperationDayOfWeek {
-            return entries.find { it.name == dayOfWeek } ?: throw UnknownException()
+            return entries.find { it.name == dayOfWeek } ?: throw NoSuchElementException()
         }
     }
 }
