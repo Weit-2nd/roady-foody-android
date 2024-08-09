@@ -1,6 +1,10 @@
 package com.weit2nd.data.repository.spot
 
 import com.squareup.moshi.Moshi
+import com.weit2nd.data.model.spot.FoodSpotPhotoDTO
+import com.weit2nd.data.model.spot.FoodSpotReviewContentDTO
+import com.weit2nd.data.model.spot.FoodSpotReviewUserInfoDTO
+import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
 import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
 import com.weit2nd.data.model.spot.toRequest
@@ -10,8 +14,13 @@ import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.spot.UpdateFoodSpotReportException
+import com.weit2nd.domain.model.spot.FoodSpotPhoto
+import com.weit2nd.domain.model.spot.FoodSpotReview
+import com.weit2nd.domain.model.spot.FoodSpotReviewUserInfo
+import com.weit2nd.domain.model.spot.FoodSpotReviews
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
+import com.weit2nd.domain.model.spot.ReviewSortType
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
 import okhttp3.internal.http.HTTP_CONFLICT
@@ -212,6 +221,51 @@ class FoodSpotRepositoryImpl @Inject constructor(
         } else {
             throwable
         }
+
+    override suspend fun getFoodSpotReviews(
+        foodSpotsId: Long,
+        count: Int,
+        lastItemId: Long?,
+        sortType: ReviewSortType,
+    ): FoodSpotReviews {
+        return foodSpotDataSource
+            .getFoodSpotReviews(
+                foodSpotsId = foodSpotsId,
+                count = count,
+                lastItemId = lastItemId,
+                sortType = sortType.name,
+            ).toFoodSpotReviews()
+    }
+
+    private fun FoodSpotReviewsDTO.toFoodSpotReviews() =
+        FoodSpotReviews(
+            reviews = contents.map { it.toFoodSpotReview() },
+            hasNext = hasNext,
+        )
+
+    private fun FoodSpotReviewContentDTO.toFoodSpotReview() =
+        FoodSpotReview(
+            id = id,
+            foodSpotsId = foodSpotsId,
+            userInfo = userInfo.toFoodSpotReviewUserInfo(),
+            contents = contents,
+            rate = rate,
+            photos = photos.map { it.toFoodSpotReviewPhoto() },
+            createdAt = createdAt,
+        )
+
+    private fun FoodSpotReviewUserInfoDTO.toFoodSpotReviewUserInfo() =
+        FoodSpotReviewUserInfo(
+            id = id,
+            nickname = nickname,
+            profileImage = profileImage,
+        )
+
+    private fun FoodSpotPhotoDTO.toFoodSpotReviewPhoto() =
+        FoodSpotPhoto(
+            id = id,
+            image = image,
+        )
 
     companion object {
         private const val MAX_COORDINATE = 180f

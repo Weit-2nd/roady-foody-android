@@ -2,5 +2,5 @@ package com.weit2nd.domain.model.spot
 
 data class FoodSpotPhoto(
     val id: Long,
-    val url: String,
+    val image: String,
 )

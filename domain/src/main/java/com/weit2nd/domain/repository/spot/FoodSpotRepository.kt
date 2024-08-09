@@ -1,7 +1,9 @@
 package com.weit2nd.domain.repository.spot
 
+import com.weit2nd.domain.model.spot.FoodSpotReviews
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
+import com.weit2nd.domain.model.spot.ReviewSortType
 
 interface FoodSpotRepository {
     suspend fun reportFoodSpot(
@@ -36,4 +38,11 @@ interface FoodSpotRepository {
         foodCategories: List<Long>?,
         operationHours: List<OperationHour>?,
     )
+
+    suspend fun getFoodSpotReviews(
+        foodSpotsId: Long,
+        count: Int,
+        lastItemId: Long?,
+        sortType: ReviewSortType,
+    ): FoodSpotReviews
 }
