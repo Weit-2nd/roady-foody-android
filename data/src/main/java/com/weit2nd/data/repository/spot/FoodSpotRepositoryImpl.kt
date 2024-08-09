@@ -1,12 +1,16 @@
 package com.weit2nd.data.repository.spot
 
 import com.squareup.moshi.Moshi
+import com.weit2nd.data.model.category.toFoodCategory
+import com.weit2nd.data.model.spot.FoodSpotDetailDTO
+import com.weit2nd.data.model.spot.FoodSpotDetailOperationHoursDTO
 import com.weit2nd.data.model.spot.FoodSpotPhotoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewContentDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewUserInfoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
 import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
+import com.weit2nd.data.model.spot.toFoodSpotPhoto
 import com.weit2nd.data.model.spot.toRequest
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
@@ -14,6 +18,8 @@ import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.spot.UpdateFoodSpotReportException
+import com.weit2nd.domain.model.spot.FoodSpotDetail
+import com.weit2nd.domain.model.spot.FoodSpotDetailOperationHours
 import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.domain.model.spot.FoodSpotReview
 import com.weit2nd.domain.model.spot.FoodSpotReviewUserInfo
@@ -161,10 +167,15 @@ class FoodSpotRepositoryImpl @Inject constructor(
         if (throwable is HttpException) {
             val errorMessage = throwable.message()
             when (throwable.code()) {
-                HTTP_FORBIDDEN -> DeleteFoodSpotHistoryException.NotHistoryOwnerException(errorMessage)
+                HTTP_FORBIDDEN ->
+                    DeleteFoodSpotHistoryException.NotHistoryOwnerException(
+                        errorMessage,
+                    )
+
                 HTTP_BAD_REQUEST,
                 HTTP_NOT_FOUND,
                 -> DeleteFoodSpotHistoryException.HistoryNotFoundException(errorMessage)
+
                 else -> throwable
             }
         } else {
@@ -210,12 +221,16 @@ class FoodSpotRepositoryImpl @Inject constructor(
             when (throwable.code()) {
                 HTTP_BAD_REQUEST ->
                     UpdateFoodSpotReportException.InvalidFoodSpotNameException(errorMessage)
+
                 HTTP_NOT_FOUND ->
                     UpdateFoodSpotReportException.NotFoundFoodCategoryException(errorMessage)
+
                 HTTP_CONFLICT ->
                     UpdateFoodSpotReportException.FoodSpotAlreadyClosedException(errorMessage)
+
                 HTTP_TOO_MANY_REQUESTS ->
                     UpdateFoodSpotReportException.TooManyReportRequestException(errorMessage)
+
                 else -> throwable
             }
         } else {
@@ -265,6 +280,33 @@ class FoodSpotRepositoryImpl @Inject constructor(
         FoodSpotPhoto(
             id = id,
             image = image,
+        )
+
+    override suspend fun getFoodSpotDetail(foodSpotsId: Long): FoodSpotDetail {
+        return foodSpotDataSource.getFoodSpotDetail(foodSpotsId = foodSpotsId).toFoodSpotDetail()
+    }
+
+    private fun FoodSpotDetailDTO.toFoodSpotDetail() =
+        FoodSpotDetail(
+            id = id,
+            name = name,
+            longitude = longitude,
+            latitude = latitude,
+            movableFoodSpots = movableFoodSpots,
+            open = open,
+            storeClosure = storeClosure,
+            operationHoursList = operationHoursList.map { it.toFoodSpotDetailOperationHours() },
+            foodCategoryList = foodCategoryList.map { it.toFoodCategory() },
+            foodSpotsPhotos = foodSpotsPhotos.map { it.toFoodSpotPhoto() },
+            createdDateTime = createdDateTime,
+        )
+
+    private fun FoodSpotDetailOperationHoursDTO.toFoodSpotDetailOperationHours() =
+        FoodSpotDetailOperationHours(
+            foodSpotsId = foodSpotsId,
+            dayOfWeek = dayOfWeek,
+            openingHours = openingHours,
+            closingHours = closingHours,
         )
 
     companion object {

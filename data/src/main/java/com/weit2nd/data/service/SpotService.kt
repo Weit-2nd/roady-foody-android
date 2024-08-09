@@ -1,5 +1,6 @@
 package com.weit2nd.data.service
 
+import com.weit2nd.data.model.spot.FoodSpotDetailDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
 import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
 import okhttp3.MultipartBody
@@ -39,4 +40,9 @@ interface SpotService {
         @Query("lastId") lastId: Long?,
         @Query("sortType") sortType: String,
     ): FoodSpotReviewsDTO
+
+    @GET("/api/v1/food-spots/{foodSpotsId}")
+    suspend fun getFoodSpotDetail(
+        @Path("foodSpotsId") foodSpotsId: Long,
+    ): FoodSpotDetailDTO
 }
