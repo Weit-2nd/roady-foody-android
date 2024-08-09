@@ -1,8 +1,8 @@
 package com.weit2nd.data.repository.spot
 
 import com.squareup.moshi.Moshi
+import com.weit2nd.data.model.spot.FoodSpotPhotoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewContentDTO
-import com.weit2nd.data.model.spot.FoodSpotReviewPhotoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewUserInfoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
@@ -261,7 +261,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
             profileImage = profileImage,
         )
 
-    private fun FoodSpotReviewPhotoDTO.toFoodSpotReviewPhoto() =
+    private fun FoodSpotPhotoDTO.toFoodSpotReviewPhoto() =
         FoodSpotPhoto(
             id = id,
             image = image,
