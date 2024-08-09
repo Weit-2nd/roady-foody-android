@@ -16,12 +16,12 @@ import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
-import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.spot.UpdateFoodSpotReportException
 import com.weit2nd.domain.model.spot.FoodSpotDetail
 import com.weit2nd.domain.model.spot.FoodSpotDetailOperationHours
 import com.weit2nd.domain.model.spot.FoodSpotOpenState
+import com.weit2nd.domain.model.spot.FoodSpotOperationDayOfWeek
 import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.domain.model.spot.FoodSpotReview
 import com.weit2nd.domain.model.spot.FoodSpotReviewUserInfo
@@ -36,7 +36,6 @@ import okhttp3.internal.http.HTTP_FORBIDDEN
 import okhttp3.internal.http.HTTP_NOT_FOUND
 import okhttp3.internal.http.HTTP_TOO_MANY_REQUESTS
 import retrofit2.HttpException
-import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -309,7 +308,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
     private fun FoodSpotDetailOperationHoursDTO.toFoodSpotDetailOperationHours() =
         FoodSpotDetailOperationHours(
             foodSpotsId = foodSpotsId,
-            dayOfWeek = toDayOfWeek(dayOfWeek),
+            dayOfWeek = FoodSpotOperationDayOfWeek.findDayOfWeek(dayOfWeek),
             openingHours = toLocalTime(openingHours),
             closingHours = toLocalTime(closingHours),
         )
