@@ -1,5 +1,6 @@
 package com.weit2nd.data.source.spot
 
+import com.weit2nd.data.model.spot.FoodSpotDetailDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
 import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
 import com.weit2nd.data.service.SpotService
@@ -45,5 +46,9 @@ class FoodSpotDataSource @Inject constructor(
             lastId = lastItemId,
             sortType = sortType,
         )
+    }
+
+    suspend fun getFoodSpotDetail(foodSpotsId: Long): FoodSpotDetailDTO {
+        return service.getFoodSpotDetail(foodSpotsId = foodSpotsId)
     }
 }
