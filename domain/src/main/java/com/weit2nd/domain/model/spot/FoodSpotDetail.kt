@@ -1,6 +1,8 @@
 package com.weit2nd.domain.model.spot
 
+import java.time.DayOfWeek
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 data class FoodSpotDetail(
     val id: Long,
@@ -18,7 +20,7 @@ data class FoodSpotDetail(
 
 data class FoodSpotDetailOperationHours(
     val foodSpotsId: Long,
-    val dayOfWeek: String,
-    val openingHours: String,
-    val closingHours: String,
+    val dayOfWeek: DayOfWeek,
+    val openingHours: LocalTime,
+    val closingHours: LocalTime,
 )

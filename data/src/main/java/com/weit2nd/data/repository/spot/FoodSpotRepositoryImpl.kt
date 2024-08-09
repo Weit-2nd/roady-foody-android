@@ -16,6 +16,7 @@ import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.spot.FoodSpotDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.DeleteFoodSpotHistoryException
+import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.spot.UpdateFoodSpotReportException
 import com.weit2nd.domain.model.spot.FoodSpotDetail
@@ -34,6 +35,9 @@ import okhttp3.internal.http.HTTP_FORBIDDEN
 import okhttp3.internal.http.HTTP_NOT_FOUND
 import okhttp3.internal.http.HTTP_TOO_MANY_REQUESTS
 import retrofit2.HttpException
+import java.time.DayOfWeek
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class FoodSpotRepositoryImpl @Inject constructor(
@@ -304,10 +308,19 @@ class FoodSpotRepositoryImpl @Inject constructor(
     private fun FoodSpotDetailOperationHoursDTO.toFoodSpotDetailOperationHours() =
         FoodSpotDetailOperationHours(
             foodSpotsId = foodSpotsId,
-            dayOfWeek = dayOfWeek,
-            openingHours = openingHours,
-            closingHours = closingHours,
+            dayOfWeek = toDayOfWeek(dayOfWeek),
+            openingHours = toLocalTime(openingHours),
+            closingHours = toLocalTime(closingHours),
         )
+
+    private fun toDayOfWeek(dayOfWeek: String): DayOfWeek {
+        return DayOfWeek.entries.find { it.name.substring(0, 3) == dayOfWeek }
+            ?: throw UnknownException()
+    }
+
+    private fun toLocalTime(time: String): LocalTime {
+        return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"))
+    }
 
     companion object {
         private const val MAX_COORDINATE = 180f
