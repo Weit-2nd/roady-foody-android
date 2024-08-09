@@ -21,6 +21,7 @@ import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.spot.UpdateFoodSpotReportException
 import com.weit2nd.domain.model.spot.FoodSpotDetail
 import com.weit2nd.domain.model.spot.FoodSpotDetailOperationHours
+import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.domain.model.spot.FoodSpotReview
 import com.weit2nd.domain.model.spot.FoodSpotReviewUserInfo
@@ -297,7 +298,7 @@ class FoodSpotRepositoryImpl @Inject constructor(
             longitude = longitude,
             latitude = latitude,
             movableFoodSpots = movableFoodSpots,
-            open = open,
+            openState = FoodSpotOpenState.valueOf(openState),
             storeClosure = storeClosure,
             operationHoursList = operationHoursList.map { it.toFoodSpotDetailOperationHours() },
             foodCategoryList = foodCategoryList.map { it.toFoodCategory() },

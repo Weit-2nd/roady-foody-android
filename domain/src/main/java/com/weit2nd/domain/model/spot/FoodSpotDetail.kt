@@ -10,7 +10,7 @@ data class FoodSpotDetail(
     val longitude: Double,
     val latitude: Double,
     val movableFoodSpots: Boolean,
-    val `open`: String,
+    val openState: FoodSpotOpenState,
     val storeClosure: Boolean,
     val operationHoursList: List<FoodSpotDetailOperationHours>,
     val foodCategoryList: List<FoodCategory>,
@@ -24,3 +24,9 @@ data class FoodSpotDetailOperationHours(
     val openingHours: LocalTime,
     val closingHours: LocalTime,
 )
+
+enum class FoodSpotOpenState {
+    OPEN,
+    CLOSED,
+    TEMPORARILY_CLOSED,
+}
