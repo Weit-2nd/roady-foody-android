@@ -39,6 +39,7 @@ fun MapScreen(
     vm: MapViewModel = hiltViewModel(),
     initialPosition: LatLng = LatLng.from(37.5597706, 126.9423666),
     onCameraMoveEnd: (LatLng) -> Unit,
+    onMarkerClick: (foodSpotId: Long) -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
@@ -54,6 +55,10 @@ fun MapScreen(
             is MapSideEffect.SendCameraPosition -> {
                 onCameraMoveEnd(sideEffect.position)
             }
+
+            is MapSideEffect.SendClickedFoodSpotId -> {
+                onMarkerClick(sideEffect.foodSpotId)
+            }
         }
     }
     val context = LocalContext.current
@@ -63,9 +68,10 @@ fun MapScreen(
                 start(
                     mapLifeCycleCallback(),
                     kakaoMapReadyCallback(
-                        vm::onMapReady,
-                        vm::onCameraMoveEnd,
-                        initialPosition,
+                        onMapReady = vm::onMapReady,
+                        onCameraMoveEnd = vm::onCameraMoveEnd,
+                        onMarkerClick = vm::onMarkerClick,
+                        position = initialPosition,
                     ),
                 )
             }
@@ -128,12 +134,16 @@ private fun mapLifeCycleCallback() =
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
     onCameraMoveEnd: (LatLng) -> Unit,
+    onMarkerClick: (Long) -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
         onMapReady(map)
         map.setOnCameraMoveEndListener { _, cameraPosition, _ ->
             onCameraMoveEnd(cameraPosition.position)
+        }
+        map.setOnLabelClickListener { _, _, label ->
+            onMarkerClick(label.labelId.toLong())
         }
     }
 
@@ -152,7 +162,14 @@ private fun drawMarkers(
         val styles =
             map.labelManager
                 ?.addLabelStyles(LabelStyles.from(LabelStyle.from(android.R.drawable.star_on)))
-        val options = LabelOptions.from(it.position).setStyles(styles)
+        val options =
+            LabelOptions
+                .from(it.position)
+                .setStyles(styles)
+                .apply {
+                    labelId = it.id.toString()
+                }
+        options.labelId = it.id.toString()
         map.labelManager?.layer?.addLabel(options)
     }
 }

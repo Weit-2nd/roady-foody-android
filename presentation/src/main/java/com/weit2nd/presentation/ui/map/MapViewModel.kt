@@ -42,6 +42,10 @@ class MapViewModel @Inject constructor(
         MapIntent.RequestCameraMove(currentPosition).post()
     }
 
+    fun onMarkerClick(foodSpotId: Long) {
+        MapIntent.SendClickedFoodSpotId(foodSpotId).post()
+    }
+
     private fun MapIntent.post() =
         intent {
             when (this@post) {
@@ -110,6 +114,10 @@ class MapViewModel @Inject constructor(
                     state.map?.let { map ->
                         postSideEffect(MapSideEffect.MoveCamera(map, position))
                     }
+                }
+
+                is MapIntent.SendClickedFoodSpotId -> {
+                    postSideEffect(MapSideEffect.SendClickedFoodSpotId(foodSpotId))
                 }
             }
         }

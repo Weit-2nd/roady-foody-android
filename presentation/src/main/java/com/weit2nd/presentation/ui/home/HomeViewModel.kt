@@ -44,6 +44,10 @@ class HomeViewModel @Inject constructor(
         currentCameraPosition = position
     }
 
+    fun onFoodSpotMarkerClick(foodSpotId: Long) {
+        HomeIntent.NavToFoodSpotDetail(foodSpotId).post()
+    }
+
     private fun HomeIntent.post() =
         intent {
             when (this@post) {
@@ -66,6 +70,10 @@ class HomeViewModel @Inject constructor(
                 }
                 HomeIntent.NavToBack -> {
                     postSideEffect(HomeSideEffect.NavToBack)
+                }
+
+                is HomeIntent.NavToFoodSpotDetail -> {
+                    postSideEffect(HomeSideEffect.NavToFoodSpotDetail(foodSpotId))
                 }
             }
         }

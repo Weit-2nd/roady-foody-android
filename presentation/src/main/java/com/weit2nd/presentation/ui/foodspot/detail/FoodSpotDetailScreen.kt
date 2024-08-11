@@ -54,13 +54,25 @@ import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.ui.common.ReviewItem
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun FoodSpotDetailScreen(vm: FoodSpotDetailViewModel = hiltViewModel()) {
+fun FoodSpotDetailScreen(
+    vm: FoodSpotDetailViewModel = hiltViewModel(),
+    navToBack: () -> Unit,
+) {
     val state by vm.collectAsState()
 
     LaunchedEffect(Unit) {
         vm.onCreate()
+    }
+
+    vm.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            FoodSpotDetailSideEffect.NavToBack -> {
+                navToBack()
+            }
+        }
     }
 
     Scaffold(

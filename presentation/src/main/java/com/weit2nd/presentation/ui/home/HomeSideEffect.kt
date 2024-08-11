@@ -10,4 +10,8 @@ sealed class HomeSideEffect {
     ) : HomeSideEffect()
 
     data object NavToBack : HomeSideEffect()
+
+    data class NavToFoodSpotDetail(
+        val foodSpotId: Long,
+    ) : HomeSideEffect()
 }

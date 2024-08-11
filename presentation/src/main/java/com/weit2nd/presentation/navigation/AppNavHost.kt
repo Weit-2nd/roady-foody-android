@@ -28,6 +28,7 @@ import com.weit2nd.presentation.navigation.type.PlaceSearchType
 import com.weit2nd.presentation.navigation.type.TermIdsType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
+import com.weit2nd.presentation.ui.foodspot.detail.FoodSpotDetailScreen
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
@@ -68,6 +69,7 @@ fun AppNavHost(
         myPageComposable(navController)
         postReviewComposable(navController)
         searchComposable(navController)
+        foodSpotDetailComposable(navController)
     }
 }
 
@@ -183,6 +185,9 @@ private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
             },
             navToBack = {
                 navController.popBackStack()
+            },
+            navToFoodSpotDetail = { id ->
+                navController.navigateToFoodSpotDetail(id)
             },
         )
     }
@@ -325,6 +330,24 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
     }
 }
 
+private fun NavGraphBuilder.foodSpotDetailComposable(navController: NavHostController) {
+    composable(
+        route = "${FoodSpotDetailRoutes.GRAPH}/{${FoodSpotDetailRoutes.FOOD_SPOT_ID_KEY}}",
+        arguments =
+            listOf(
+                navArgument(FoodSpotDetailRoutes.FOOD_SPOT_ID_KEY) {
+                    type = NavType.LongType
+                },
+            ),
+    ) {
+        FoodSpotDetailScreen(
+            navToBack = {
+                navController.popBackStack()
+            },
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     placeSearch: PlaceSearchDTO? = null,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -390,6 +413,13 @@ private fun NavHostController.navigateToSearch(
     navigate("${SearchRoutes.GRAPH}/$placeJson", builder)
 }
 
+private fun NavHostController.navigateToFoodSpotDetail(
+    foodSpotId: Long,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    navigate("${FoodSpotDetailRoutes.GRAPH}/$foodSpotId", builder)
+}
+
 object SplashRoutes {
     const val GRAPH = "splash"
 }
@@ -453,4 +483,9 @@ object PostReviewRoutes {
 object SearchRoutes {
     const val GRAPH = "search"
     const val INITIAL_SEARCH_WORDS_KEY = "initial_search_words_key"
+}
+
+object FoodSpotDetailRoutes {
+    const val GRAPH = "food_spot_detail"
+    const val FOOD_SPOT_ID_KEY = "food_spot_id_key"
 }

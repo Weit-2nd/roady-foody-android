@@ -8,4 +8,6 @@ sealed interface FoodSpotDetailIntent {
     data class ChangeOperationHoursOpenState(
         val updatedState: Boolean,
     ) : FoodSpotDetailIntent
+
+    data object NavToBack : FoodSpotDetailIntent
 }

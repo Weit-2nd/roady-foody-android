@@ -10,6 +10,7 @@ import com.weit2nd.domain.usecase.spot.GetFoodSpotReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -27,8 +28,14 @@ class FoodSpotDetailViewModel @Inject constructor(
     override val container: Container<FoodSpotDetailState, FoodSpotDetailSideEffect> =
         container(FoodSpotDetailState())
 
+    private val foodSpotId = savedStateHandle.get<Long>(FoodSpotDetailRoutes.FOOD_SPOT_ID_KEY)
+
     fun onCreate() {
-        FoodSpotDetailIntent.LoadFoodSpotDetail(1).post()
+        if (foodSpotId != null) {
+            FoodSpotDetailIntent.LoadFoodSpotDetail(foodSpotId).post()
+        } else {
+            FoodSpotDetailIntent.NavToBack.post()
+        }
     }
 
     fun onImageClick(
@@ -103,6 +110,10 @@ class FoodSpotDetailViewModel @Inject constructor(
                             isOperationHoursOpen = updatedState,
                         )
                     }
+                }
+
+                FoodSpotDetailIntent.NavToBack -> {
+                    postSideEffect(FoodSpotDetailSideEffect.NavToBack)
                 }
             }
         }
