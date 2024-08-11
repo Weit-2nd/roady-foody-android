@@ -24,6 +24,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -44,9 +45,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.placeholder
 import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.R
@@ -75,29 +75,6 @@ fun FoodSpotDetailScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-        },
-    ) {
-        FoodSpotDetailContent(
-            modifier = Modifier.padding(it),
-            state = state,
-            onImageClick = vm::onImageClick,
-            onOperationHourClick = vm::onOperationHourClick,
-            onPostReviewClick = vm::onPostReviewClick,
-        )
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun FoodSpotDetailContent(
-    modifier: Modifier = Modifier,
-    state: FoodSpotDetailState,
-    onImageClick: (images: List<String>, position: Int) -> Unit,
-    onOperationHourClick: (Boolean) -> Unit,
-    onPostReviewClick: () -> Unit,
-) {
     val isViewMoreOperationHoursEnabled by remember {
         derivedStateOf {
             state.openState == FoodSpotOpenState.OPEN &&
@@ -110,6 +87,34 @@ private fun FoodSpotDetailContent(
             state.openState != FoodSpotOpenState.UNKNOWN
         }
     }
+
+    Scaffold(
+        topBar = {
+        },
+    ) {
+        FoodSpotDetailContent(
+            modifier = Modifier.padding(it),
+            state = state,
+            isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
+            isBusinessInformationShow = isBusinessInformationShow,
+            onImageClick = vm::onImageClick,
+            onOperationHourClick = vm::onOperationHourClick,
+            onPostReviewClick = vm::onPostReviewClick,
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun FoodSpotDetailContent(
+    modifier: Modifier = Modifier,
+    state: FoodSpotDetailState,
+    isViewMoreOperationHoursEnabled: Boolean,
+    isBusinessInformationShow: Boolean,
+    onImageClick: (images: List<String>, position: Int) -> Unit,
+    onOperationHourClick: (Boolean) -> Unit,
+    onPostReviewClick: () -> Unit,
+) {
     val imagePagerState =
         rememberPagerState(
             pageCount = { state.foodSpotsPhotos.size },
@@ -130,6 +135,9 @@ private fun FoodSpotDetailContent(
                 onImageClick = { position ->
                     onImageClick(state.foodSpotsPhotos, position)
                 },
+            )
+            HorizontalDivider(
+                thickness = 1.dp,
             )
         }
         item {
@@ -202,7 +210,7 @@ private fun FoodSpotImagePager(
         modifier = modifier,
         state = pagerState,
     ) { page ->
-        GlideImage(
+        AsyncImage(
             modifier =
                 Modifier
                     .fillMaxSize()
@@ -212,8 +220,7 @@ private fun FoodSpotImagePager(
             model = images[page],
             contentDescription = "foodSpotImage$page",
             contentScale = ContentScale.Fit,
-            loading = placeholder(painterResource(id = R.drawable.ic_input_delete_filled)),
-            failure = placeholder(painterResource(id = R.drawable.ic_input_delete_filled)),
+            fallback = painterResource(id = R.drawable.ic_input_delete_filled),
         )
     }
 }
@@ -224,18 +231,10 @@ private fun TitleAndCategory(
     title: String,
     categories: List<FoodCategory>,
 ) {
-    val isCategoryVisible by remember {
-        derivedStateOf {
-            categories.isNotEmpty()
+    val categoriseText =
+        categories.joinToString(", ") {
+            it.name
         }
-    }
-    val categoriseText by remember {
-        derivedStateOf {
-            categories.joinToString(", ") {
-                it.name
-            }
-        }
-    }
     Column(
         modifier = modifier,
     ) {
@@ -245,7 +244,7 @@ private fun TitleAndCategory(
             color = Color.Black,
             fontSize = 21.sp,
         )
-        if (isCategoryVisible) {
+        if (categories.isNotEmpty()) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = categoriseText,
@@ -333,11 +332,7 @@ private fun FoodSpotBusinessInformation(
     openState: FoodSpotOpenState,
     isViewMoreEnabled: Boolean,
 ) {
-    val openStateTextRes by remember {
-        derivedStateOf {
-            openState.getStringRes()
-        }
-    }
+    val openStateTextRes = openState.getStringRes()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -440,6 +435,8 @@ private fun FoodSpotDetailPreview() {
                         ),
                     foodSpotsPhotos = listOf("a"),
                 ),
+            isViewMoreOperationHoursEnabled = true,
+            isBusinessInformationShow = false,
             onImageClick = { _, _ -> },
             onOperationHourClick = {},
             onPostReviewClick = {},
