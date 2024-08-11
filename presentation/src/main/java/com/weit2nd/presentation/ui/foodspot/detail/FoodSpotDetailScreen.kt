@@ -52,6 +52,7 @@ import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.ui.common.CommonTopBar
 import com.weit2nd.presentation.ui.common.ReviewItem
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -90,6 +91,10 @@ fun FoodSpotDetailScreen(
 
     Scaffold(
         topBar = {
+            CommonTopBar(
+                modifier = Modifier.fillMaxWidth(),
+                onNavigationButtonClick = vm::onNavigationButtonClick,
+            )
         },
     ) {
         FoodSpotDetailContent(
@@ -124,6 +129,9 @@ private fun FoodSpotDetailContent(
         modifier = modifier,
     ) {
         item {
+            HorizontalDivider(
+                thickness = 1.dp,
+            )
             FoodSpotImagePager(
                 modifier =
                     Modifier
