@@ -78,7 +78,8 @@ fun FoodSpotDetailScreen(
 
     val isViewMoreOperationHoursEnabled by remember {
         derivedStateOf {
-            state.openState == FoodSpotOpenState.OPEN &&
+            (state.openState == FoodSpotOpenState.CLOSED ||
+            state.openState == FoodSpotOpenState.OPEN) &&
                 state.operationHours.isNotEmpty() &&
                 state.isOperationHoursOpen.not()
         }
@@ -162,6 +163,7 @@ private fun FoodSpotDetailContent(
                 FoodSpotBusinessInformation(
                     modifier =
                         Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = horizontalPadding)
                             .clickable {
                                 onOperationHourClick(state.isOperationHoursOpen)
@@ -176,6 +178,7 @@ private fun FoodSpotDetailContent(
                 Box(
                     modifier =
                         Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = horizontalPadding)
                             .clickable {
                                 onOperationHourClick(true)

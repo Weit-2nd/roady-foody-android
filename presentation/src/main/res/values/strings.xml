@@ -18,7 +18,7 @@
     
     <!-- FoodSpotDetail -->
     <string name="food_spot_detail_open">영업 중</string>
-    <string name="food_spot_detail_temporarily_closed">영업 종료</string>
-    <string name="food_spot_detail_closed">이젠 안해..</string>
+    <string name="food_spot_detail_closed">영업 종료</string>
+    <string name="food_spot_detail_temporarily_closed">이젠 안해..</string>
     <string name="food_spot_detail_operation_hours">%s %s - %s</string>
 </resources>
