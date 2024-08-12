@@ -17,4 +17,8 @@ sealed class MapSideEffect {
     data class SendCameraPosition(
         val position: LatLng,
     ) : MapSideEffect()
+
+    data class SendClickedFoodSpotId(
+        val foodSpotId: Long,
+    ) : MapSideEffect()
 }

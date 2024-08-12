@@ -15,4 +15,10 @@
     <!-- TermDetail -->
     <string name="term_detail_network_error">인터넷 연결 상태를 확인 후 다시 시도해주세요</string>
     <string name="term_detail_id_not_found">없는 약관 이야!</string>
+    
+    <!-- FoodSpotDetail -->
+    <string name="food_spot_detail_open">영업 중</string>
+    <string name="food_spot_detail_closed">영업 종료</string>
+    <string name="food_spot_detail_temporarily_closed">이젠 안해..</string>
+    <string name="food_spot_detail_operation_hours">%s %s - %s</string>
 </resources>

@@ -26,7 +26,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 import com.gowtham.ratingbar.StepSize
-import com.weit2nd.domain.model.Review
+import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.util.LocalDateTimeFormatter.reviewDateFormatter
 import java.time.LocalDateTime
 
@@ -65,7 +65,7 @@ fun ReviewItem(
 
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = review.reviewDetail,
+            text = review.contents,
             style =
                 TextStyle(
                     fontSize = 14.sp,
@@ -78,7 +78,7 @@ fun ReviewItem(
 @Composable
 private fun UserInfo(
     modifier: Modifier = Modifier,
-    profileImage: String,
+    profileImage: String?,
     nickname: String,
 ) {
     Row(
@@ -91,7 +91,7 @@ private fun UserInfo(
                 Modifier
                     .clip(CircleShape)
                     .size(24.dp),
-            imgUri = profileImage.toUri(),
+            imgUri = profileImage?.toUri(),
         )
         Text(
             text = nickname,

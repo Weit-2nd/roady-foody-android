@@ -20,4 +20,8 @@ sealed class MapIntent {
     data class RequestCameraMove(
         val position: LatLng,
     ) : MapIntent()
+
+    data class SendClickedFoodSpotId(
+        val foodSpotId: Long,
+    ) : MapIntent()
 }

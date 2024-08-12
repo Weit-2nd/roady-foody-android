@@ -33,6 +33,7 @@ fun HomeScreen(
     navToMyPage: () -> Unit,
     navToSearch: (PlaceSearchDTO) -> Unit,
     navToBack: () -> Unit,
+    navToFoodSpotDetail: (Long) -> Unit,
 ) {
     val state by vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
@@ -45,6 +46,9 @@ fun HomeScreen(
             }
             HomeSideEffect.NavToBack -> {
                 navToBack()
+            }
+            is HomeSideEffect.NavToFoodSpotDetail -> {
+                navToFoodSpotDetail(sideEffect.foodSpotId)
             }
         }
     }
@@ -67,6 +71,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 initialPosition = state.initialLatLng,
                 onCameraMoveEnd = vm::onCameraMoved,
+                onMarkerClick = vm::onFoodSpotMarkerClick,
             )
             Box(
                 modifier =

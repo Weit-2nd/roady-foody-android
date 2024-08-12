@@ -6,4 +6,8 @@ sealed class HomeIntent {
     data object NavToBack : HomeIntent()
 
     data object NavToSearch : HomeIntent()
+
+    data class NavToFoodSpotDetail(
+        val foodSpotId: Long,
+    ) : HomeIntent()
 }

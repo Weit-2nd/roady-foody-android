@@ -42,4 +42,5 @@ enum class FoodSpotOpenState {
     OPEN,
     CLOSED,
     TEMPORARILY_CLOSED,
+    UNKNOWN,
 }
