@@ -14,35 +14,65 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.weit2nd.presentation.theme.Pink40
-import com.weit2nd.presentation.theme.Pink80
-import com.weit2nd.presentation.theme.Purple40
-import com.weit2nd.presentation.theme.Purple80
-import com.weit2nd.presentation.theme.PurpleGrey40
-import com.weit2nd.presentation.theme.PurpleGrey80
-import com.weit2nd.presentation.theme.Typography
 
 private val DarkColorScheme =
     darkColorScheme(
-        primary = Purple80,
-        secondary = PurpleGrey80,
-        tertiary = Pink80,
+        primary = Primary,
+        onPrimary = White,
+        primaryContainer = White,
+        onPrimaryContainer = Black,
+        inversePrimary = Black,
+        secondary = Secondary,
+        onSecondary = White,
+        secondaryContainer = White,
+        onSecondaryContainer = Black,
+        tertiary = Tertiary,
+        onTertiary = White,
+        tertiaryContainer = White,
+        onTertiaryContainer = Black,
+        background = White,
+        onBackground = Black,
+        surface = White,
+        onSurface = Black,
+        surfaceVariant = Gray5,
+        onSurfaceVariant = Black,
+        error = Error,
+        onError = White,
+        errorContainer = Gray5,
+        onErrorContainer = Black,
+        outline = Outline,
+        outlineVariant = OutlineVariant,
+        scrim = Scrim,
     )
 
 private val LightColorScheme =
     lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-     */
+        primary = Primary,
+        onPrimary = White,
+        primaryContainer = White,
+        onPrimaryContainer = Black,
+        inversePrimary = Black,
+        secondary = Secondary,
+        onSecondary = White,
+        secondaryContainer = White,
+        onSecondaryContainer = Black,
+        tertiary = Tertiary,
+        onTertiary = White,
+        tertiaryContainer = White,
+        onTertiaryContainer = Black,
+        background = White,
+        onBackground = Black,
+        surface = White,
+        onSurface = Black,
+        surfaceVariant = Gray5,
+        onSurfaceVariant = Black,
+        error = Error,
+        onError = White,
+        errorContainer = Gray5,
+        onErrorContainer = Black,
+        outline = Outline,
+        outlineVariant = OutlineVariant,
+        scrim = Scrim,
     )
 
 @Composable
