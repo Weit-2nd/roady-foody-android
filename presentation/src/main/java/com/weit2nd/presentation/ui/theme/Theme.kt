@@ -10,39 +10,70 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.weit2nd.presentation.theme.Pink40
-import com.weit2nd.presentation.theme.Pink80
-import com.weit2nd.presentation.theme.Purple40
-import com.weit2nd.presentation.theme.Purple80
-import com.weit2nd.presentation.theme.PurpleGrey40
-import com.weit2nd.presentation.theme.PurpleGrey80
-import com.weit2nd.presentation.theme.Typography
 
 private val DarkColorScheme =
     darkColorScheme(
-        primary = Purple80,
-        secondary = PurpleGrey80,
-        tertiary = Pink80,
+        primary = Color(0xFF5356FF),
+        onPrimary = White,
+        primaryContainer = White,
+        onPrimaryContainer = Black,
+        inversePrimary = Black,
+        secondary = Color(0xFF1EC997),
+        onSecondary = White,
+        secondaryContainer = White,
+        onSecondaryContainer = Black,
+        tertiary = Color(0xFFFF0000),
+        onTertiary = White,
+        tertiaryContainer = White,
+        onTertiaryContainer = Black,
+        background = White,
+        onBackground = Black,
+        surface = White,
+        onSurface = Black,
+        surfaceVariant = Gray5,
+        onSurfaceVariant = Black,
+        error = Color(0xFFBB0003),
+        onError = White,
+        errorContainer = Gray5,
+        onErrorContainer = Black,
+        outline = Color(0xFF444648),
+        outlineVariant = Color(0xFF999897),
+        scrim = Color(0x80212223),
     )
 
 private val LightColorScheme =
     lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-     */
+        primary = Color(0xFF5356FF),
+        onPrimary = White,
+        primaryContainer = White,
+        onPrimaryContainer = Black,
+        inversePrimary = Black,
+        secondary = Color(0xFF1EC997),
+        onSecondary = White,
+        secondaryContainer = White,
+        onSecondaryContainer = Black,
+        tertiary = Color(0xFFFF0000),
+        onTertiary = White,
+        tertiaryContainer = White,
+        onTertiaryContainer = Black,
+        background = White,
+        onBackground = Black,
+        surface = White,
+        onSurface = Black,
+        surfaceVariant = Gray5,
+        onSurfaceVariant = Black,
+        error = Color(0xFFBB0003),
+        onError = White,
+        errorContainer = Gray5,
+        onErrorContainer = Black,
+        outline = Color(0xFF444648),
+        outlineVariant = Color(0xFF999897),
+        scrim = Color(0x80212223),
     )
 
 @Composable
