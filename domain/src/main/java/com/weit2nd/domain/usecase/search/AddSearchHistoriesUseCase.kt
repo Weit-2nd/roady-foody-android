@@ -1,5 +1,6 @@
 package com.weit2nd.domain.usecase.search
 
+import com.weit2nd.domain.model.search.SearchHistory
 import com.weit2nd.domain.repository.searchhistory.SearchHistoryRepository
 import javax.inject.Inject
 
@@ -12,7 +13,7 @@ class AddSearchHistoriesUseCase @Inject constructor(
      *
      * 이미 존재하는 기록 이라면 해당 요소의 position을 첫번째로 옮깁니다.
      */
-    suspend operator fun invoke(searchWord: String) {
-        repository.addSearchHistory(searchWord)
+    suspend operator fun invoke(searchHistory: SearchHistory) {
+        repository.addSearchHistory(searchHistory)
     }
 }

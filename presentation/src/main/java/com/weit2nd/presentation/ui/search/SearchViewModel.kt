@@ -1,7 +1,9 @@
 package com.weit2nd.presentation.ui.search
 
 import androidx.lifecycle.SavedStateHandle
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.domain.model.search.SearchHistory
 import com.weit2nd.domain.usecase.search.AddSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.ClearSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.GetSearchHistoriesUseCase
@@ -53,28 +55,45 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onSearchWordsClear() {
-        SearchIntent.ChangeSearchWords("").post()
+        searchPlaceJob.cancel()
+        searchPlaceJob = SearchIntent.ChangeSearchWords("").post()
     }
 
     fun onSearchWordsChanged(searchWords: String) {
-        SearchIntent.ChangeSearchWords(searchWords).post()
+        searchPlaceJob.cancel()
+        searchPlaceJob = SearchIntent.ChangeSearchWords(searchWords).post()
     }
 
     fun onSearchButtonClick() {
         SearchIntent.SearchWithWords(container.stateFlow.value.searchWords).post()
     }
 
-    fun onHistoryClick(history: String) {
-        SearchIntent.SearchWithWords(history).post()
+    fun onHistoryClick(history: SearchHistory) {
+        if (history.isPlace) {
+            SearchIntent
+                .SearchWithPlace(
+                    name = history.words,
+                    coordinate = history.coordinate,
+                ).post()
+        } else {
+            SearchIntent.SearchWithWords(history.words).post()
+        }
     }
 
-    fun onHistoryRemove(history: String) {
+    fun onHistoryRemove(history: SearchHistory) {
         SearchIntent.RemoveHistory(history).post()
     }
 
     fun onSearchResultClick(place: Place) {
-        searchPlaceJob.cancel()
-        searchPlaceJob = SearchIntent.SearchWithPlace(place).post()
+        SearchIntent
+            .SearchWithPlace(
+                name = place.placeName,
+                coordinate =
+                    Coordinate(
+                        latitude = place.latitude,
+                        longitude = place.longitude,
+                    ),
+            ).post()
     }
 
     private fun SearchIntent.post() =
@@ -111,7 +130,17 @@ class SearchViewModel @Inject constructor(
                     }
                 }
                 is SearchIntent.SearchWithWords -> {
-                    addSearchHistoriesUseCase(words)
+                    val searchHistory =
+                        SearchHistory(
+                            words = words,
+                            coordinate =
+                                Coordinate(
+                                    latitude = placeSearch.coordinate.latitude,
+                                    longitude = placeSearch.coordinate.longitude,
+                                ),
+                            isPlace = false,
+                        )
+                    addSearchHistoriesUseCase(searchHistory)
                     val placeSearch =
                         PlaceSearchDTO(
                             searchWords = words,
@@ -120,15 +149,21 @@ class SearchViewModel @Inject constructor(
                     postSideEffect(SearchSideEffect.NavToHome(placeSearch))
                 }
                 is SearchIntent.SearchWithPlace -> {
-                    addSearchHistoriesUseCase(place.placeName)
+                    val searchHistory =
+                        SearchHistory(
+                            words = name,
+                            coordinate = coordinate,
+                            isPlace = true,
+                        )
+                    addSearchHistoriesUseCase(searchHistory)
                     val coordinate =
                         CoordinateDTO(
-                            latitude = place.latitude,
-                            longitude = place.longitude,
+                            latitude = coordinate.latitude,
+                            longitude = coordinate.longitude,
                         )
                     val placeSearch =
                         PlaceSearchDTO(
-                            searchWords = place.placeName,
+                            searchWords = name,
                             coordinate = coordinate,
                         )
                     postSideEffect(SearchSideEffect.NavToHome(placeSearch))

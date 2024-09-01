@@ -33,7 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.domain.model.search.SearchHistory
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.SearchTopBar
@@ -93,8 +95,8 @@ fun SearchScreen(
 private fun SearchContent(
     modifier: Modifier = Modifier,
     state: SearchState,
-    onHistoryClick: (String) -> Unit,
-    onHistoryRemove: (String) -> Unit,
+    onHistoryClick: (SearchHistory) -> Unit,
+    onHistoryRemove: (SearchHistory) -> Unit,
     onPlaceClick: (Place) -> Unit,
 ) {
     LazyColumn(
@@ -213,7 +215,7 @@ private fun SearchPlaceItem(
 @Composable
 private fun SearchHistoryItem(
     modifier: Modifier = Modifier,
-    history: String,
+    history: SearchHistory,
     onClick: () -> Unit,
     onRemove: () -> Unit,
 ) {
@@ -228,7 +230,7 @@ private fun SearchHistoryItem(
                     .clickable {
                         onClick()
                     },
-            text = history,
+            text = history.words,
             fontSize = 18.sp,
         )
         IconButton(
@@ -253,7 +255,24 @@ private fun SearchContentPreview() {
         SearchContent(
             state =
                 SearchState(
-                    histories = listOf("안녕하세요", "감사해요", "잘있어요"),
+                    histories =
+                        listOf(
+                            SearchHistory(
+                                "안녕하세요",
+                                Coordinate(0.0, 0.0),
+                                true,
+                            ),
+                            SearchHistory(
+                                "감사해요",
+                                Coordinate(0.0, 0.0),
+                                false,
+                            ),
+                            SearchHistory(
+                                "잘있어요",
+                                Coordinate(0.0, 0.0),
+                                true,
+                            ),
+                        ),
                     searchResults =
                         listOf(
                             Place(
@@ -297,7 +316,12 @@ private fun SearchHistoryItemPreview() {
             Modifier
                 .fillMaxWidth()
                 .background(Color.White),
-        history = "명륜진사",
+        history =
+            SearchHistory(
+                "명륜진사",
+                Coordinate(0.0, 0.0),
+                true,
+            ),
         onClick = {},
         onRemove = {},
     )
