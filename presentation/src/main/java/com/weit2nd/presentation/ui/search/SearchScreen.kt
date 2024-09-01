@@ -38,12 +38,15 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.model.search.SearchHistory
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.model.foodspot.SearchPlaceResult
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.SearchTopBar
+import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray4
 import com.weit2nd.presentation.ui.theme.Gray5
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
+import com.weit2nd.presentation.util.getDistanceString
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -154,7 +157,7 @@ private fun SearchContent(
                 )
             }
         }
-        itemsIndexed(state.searchResults) { index, place ->
+        itemsIndexed(state.searchResults) { index, searchPlaceResult ->
             if (index > 0) {
                 HorizontalDivider(
                     color = Gray4,
@@ -170,10 +173,11 @@ private fun SearchContent(
                     Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                name = place.placeName,
-                address = place.roadAddressName.takeIf { it.isNotEmpty() } ?: place.addressName,
+                name = searchPlaceResult.place.placeName,
+                address = searchPlaceResult.place.roadAddressName.takeIf { it.isNotEmpty() } ?: searchPlaceResult.place.addressName,
+                distanceMeter = searchPlaceResult.distance,
                 onClick = {
-                    onPlaceClick(place)
+                    onPlaceClick(searchPlaceResult.place)
                 },
             )
         }
@@ -185,6 +189,7 @@ private fun SearchPlaceItem(
     modifier: Modifier = Modifier,
     name: String,
     address: String,
+    distanceMeter: Int,
     onClick: () -> Unit,
 ) {
     Row(
@@ -219,6 +224,11 @@ private fun SearchPlaceItem(
                 fontSize = 12.sp,
             )
         }
+        Text(
+            text = getDistanceString(LocalContext.current, distanceMeter),
+            style = MaterialTheme.typography.bodyMedium,
+            color = DarkGray,
+        )
     }
 }
 
@@ -233,20 +243,23 @@ private fun SearchHistoryItem(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val iconRes = if (history.isPlace) {
-            R.drawable.ic_search_history_marker
-        } else {
-            R.drawable.ic_search_glass
-        }
-        val tint = if (history.isPlace) {
-            Color.Unspecified
-        } else {
-            Gray1
-        }
+        val iconRes =
+            if (history.isPlace) {
+                R.drawable.ic_search_history_marker
+            } else {
+                R.drawable.ic_search_glass
+            }
+        val tint =
+            if (history.isPlace) {
+                Color.Unspecified
+            } else {
+                Gray1
+            }
         Icon(
-            modifier = Modifier
-                .padding(horizontal = 16.dp,)
-                .size(32.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .size(32.dp),
             painter = painterResource(id = iconRes),
             tint = tint,
             contentDescription = "검색 결과",
@@ -307,29 +320,38 @@ private fun SearchContentPreview() {
                             ),
                         searchResults =
                             listOf(
-                                Place(
-                                    placeName = "aaa",
-                                    addressName = "aaa",
-                                    roadAddressName = "Aaa",
-                                    longitude = 0.0,
-                                    latitude = 0.0,
-                                    tel = "",
+                                SearchPlaceResult(
+                                    Place(
+                                        placeName = "aaa",
+                                        addressName = "aaa",
+                                        roadAddressName = "Aaa",
+                                        longitude = 0.0,
+                                        latitude = 0.0,
+                                        tel = "",
+                                    ),
+                                    100,
                                 ),
-                                Place(
-                                    placeName = "aaa",
-                                    addressName = "aaa",
-                                    roadAddressName = "Aaa",
-                                    longitude = 0.0,
-                                    latitude = 0.0,
-                                    tel = "",
+                                SearchPlaceResult(
+                                    Place(
+                                        placeName = "aaa",
+                                        addressName = "aaa",
+                                        roadAddressName = "Aaa",
+                                        longitude = 0.0,
+                                        latitude = 0.0,
+                                        tel = "",
+                                    ),
+                                    1234,
                                 ),
-                                Place(
-                                    placeName = "aaa",
-                                    addressName = "aaa",
-                                    roadAddressName = "Aaa",
-                                    longitude = 0.0,
-                                    latitude = 0.0,
-                                    tel = "",
+                                SearchPlaceResult(
+                                    Place(
+                                        placeName = "aaa",
+                                        addressName = "aaa",
+                                        roadAddressName = "Aaa",
+                                        longitude = 0.0,
+                                        latitude = 0.0,
+                                        tel = "",
+                                    ),
+                                    500000,
                                 ),
                             ),
                     ),

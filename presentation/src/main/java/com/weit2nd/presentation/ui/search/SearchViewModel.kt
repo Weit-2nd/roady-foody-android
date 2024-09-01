@@ -10,9 +10,11 @@ import com.weit2nd.domain.usecase.search.GetSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.RemoveSearchHistoriesUseCase
 import com.weit2nd.domain.usecase.search.SearchPlacesWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.model.foodspot.toSearchPlaceResult
 import com.weit2nd.presentation.navigation.SearchRoutes
 import com.weit2nd.presentation.navigation.dto.CoordinateDTO
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
+import com.weit2nd.presentation.navigation.dto.toCoordinate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
@@ -112,9 +114,14 @@ class SearchViewModel @Inject constructor(
                             emptyList()
                         }
                     }.onSuccess { places ->
+                        val coordinate = placeSearch.coordinate.toCoordinate()
+                        val searchResults =
+                            places.map {
+                                it.toSearchPlaceResult(coordinate)
+                            }
                         reduce {
                             state.copy(
-                                searchResults = places,
+                                searchResults = searchResults,
                             )
                         }
                     }.onFailure {

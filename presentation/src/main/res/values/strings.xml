@@ -27,4 +27,7 @@
 
     <!-- SearchPlace -->
     <string name="search_place_history">최근검색</string>
+
+    <string name="distance_km">%.1fkm</string>
+    <string name="distance_m">%dm</string>
 </resources>

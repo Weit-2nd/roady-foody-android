@@ -1,6 +1,8 @@
 package com.weit2nd.presentation.util
 
+import android.content.Context
 import com.weit2nd.domain.model.Coordinate
+import com.weit2nd.presentation.R
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -28,4 +30,21 @@ fun getDistanceMeter(
     val angularDistance = 2 * atan2(sqrt(haversineFormula), sqrt(1 - haversineFormula))
 
     return (EARTH_RADIUS * angularDistance).toInt() // 거리 (미터)
+}
+
+fun getDistanceString(
+    context: Context,
+    distanceMeter: Int,
+): String {
+    return if (distanceMeter >= 1000) {
+        context.getString(
+            R.string.distance_km,
+            distanceMeter / 1000.0,
+        )
+    } else {
+        context.getString(
+            R.string.distance_m,
+            distanceMeter,
+        )
+    }
 }
