@@ -392,11 +392,13 @@ private fun OpenCloseSelector(
 
 @Composable
 private fun PrimaryRadioButton(
+    modifier: Modifier = Modifier,
     selected: Boolean,
     onClick: () -> Unit,
     text: String,
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(
@@ -438,23 +440,37 @@ private fun OperationTimeSetting(
         }
     }
     Spacer(modifier = Modifier.padding(vertical = 4.dp))
-    DayOfWeekSelector(operationHours, onClickDayOfWeekBtn, dayOfWeekTitle)
+    DayOfWeekSelector(
+        modifier = Modifier.fillMaxWidth(),
+        operationHours,
+        onClickDayOfWeekBtn,
+        dayOfWeekTitle,
+    )
     Spacer(modifier = Modifier.padding(vertical = 4.dp))
     operationHours.forEach { operationHourStatus ->
         if (operationHourStatus.isSelected) {
-            TimeSelector(dayOfWeekTitle, operationHourStatus, onClickEditTimeBtn)
+            TimeSelector(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 2.dp),
+                dayOfWeekTitle,
+                operationHourStatus,
+                onClickEditTimeBtn,
+            )
         }
     }
 }
 
 @Composable
 private fun DayOfWeekSelector(
+    modifier: Modifier = Modifier,
     operationHours: List<OperationHourStatus>,
     onClickDayOfWeekBtn: (OperationHourStatus, isSelected: Boolean) -> Unit,
     dayOfWeekTitle: List<String>,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         operationHours.forEach { operationHourStatus ->
@@ -488,15 +504,13 @@ private fun DayOfWeekSelector(
 
 @Composable
 private fun TimeSelector(
+    modifier: Modifier = Modifier,
     dayOfWeekTitle: List<String>,
     operationHourStatus: OperationHourStatus,
     onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
 ) {
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 2.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -522,10 +536,11 @@ private fun OperationTime(
     onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
     operationHourStatus: OperationHourStatus,
     isOpeningTime: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
-            Modifier.clickable {
+            modifier.clickable {
                 onClickEditTimeBtn(operationHourStatus.operationHour, isOpeningTime)
             },
         verticalAlignment = Alignment.CenterVertically,
@@ -555,10 +570,13 @@ private fun OperationTime(
 
 @Composable
 private fun FoodCategoryContainer(
+    modifier: Modifier = Modifier,
     categories: List<CategoryStatus>,
     onClickCategory: (CategoryStatus) -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = modifier,
+    ) {
         Text(
             text = stringResource(R.string.food_category),
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -570,6 +588,10 @@ private fun FoodCategoryContainer(
             color = Gray2,
         )
         FoodCategory(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 4.dp),
             categories = categories,
             onClickCategory = onClickCategory,
         )
@@ -579,14 +601,12 @@ private fun FoodCategoryContainer(
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun FoodCategory(
+    modifier: Modifier = Modifier,
     categories: List<CategoryStatus>,
     onClickCategory: (CategoryStatus) -> Unit,
 ) {
     FlowRow(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 4.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         categories.forEach { categoryStatus ->
@@ -612,11 +632,14 @@ private fun FoodCategory(
 
 @Composable
 private fun FoodSpotImageContainer(
+    modifier: Modifier = Modifier,
     reportImages: List<String>,
     onDeleteImage: (String) -> Unit,
     onClickSelectImagesBtn: () -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = modifier,
+    ) {
         Text(
             text = stringResource(R.string.food_spot_image_title),
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -638,11 +661,13 @@ private fun FoodSpotImageContainer(
 
 @Composable
 private fun FoodSpotImage(
+    modifier: Modifier = Modifier,
     reportImages: List<String>,
     onDeleteImage: (String) -> Unit,
     onClickSelectImagesBtn: () -> Unit,
 ) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (reportImages.size < IMAGE_MAX_SIZE) {
@@ -767,6 +792,7 @@ private fun TimeSelectorPreview() {
 private fun FoodCategoryPreview() {
     RoadyFoodyTheme {
         FoodCategory(
+            modifier = Modifier,
             listOf(CategoryStatus(FoodCategory(0L, "포장마차"), true)),
             onClickCategory = { _ -> },
         )
