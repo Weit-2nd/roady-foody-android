@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
+import com.weit2nd.presentation.R
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CancelableImage(
     modifier: Modifier = Modifier,
@@ -33,11 +33,12 @@ fun CancelableImage(
         modifier = modifier,
         contentAlignment = Alignment.TopEnd,
     ) {
-        GlideImage(
-            model = imgUri,
+        AsyncImage(
             modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop,
+            model = imgUri,
             contentDescription = null,
+            contentScale = ContentScale.Crop,
+            fallback = painterResource(id = R.drawable.ic_input_delete_filled),
         )
 
         IconButton(
