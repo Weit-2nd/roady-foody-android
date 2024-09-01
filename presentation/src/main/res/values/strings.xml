@@ -21,4 +21,25 @@
     <string name="food_spot_detail_closed">영업 종료</string>
     <string name="food_spot_detail_temporarily_closed">이젠 안해..</string>
     <string name="food_spot_detail_operation_hours">%s %s - %s</string>
+
+    <!-- FoodSpotReport -->
+    <string name="food_spot_open_title">영업 시간 입력</string>
+    <string name="food_category">음식 카테고리</string>
+    <string name="food_category_label">*최소 1개 이상 선택해주세요</string>
+    <string name="food_spot_image_title">음식점 사진</string>
+    <string name="food_spot_image_label">*최대 3개까지 등록 가능합니다</string>
+    <string name="tood_spot_report_toolbar_title">음식점 제보하기</string>
+    <string name="food_spot_name_placeholder">음식점 이름</string>
+    <string name="food_spot_name_label">1자리~20자리 이내로 입력해주세요</string>
+    <string name="food_spot_place_title">위치 설정</string>
+    <string name="food_spot_place">주소 입력</string>
+    <string name="food_spot_food_truck_title">푸드트럭 여부 설정</string>
+    <string name="food_spot_food_truck_label">*푸드트럭이란 어쩌구저쩌구 입니다</string>
+    <string name="food_spot_food_truck">푸드트럭 여부</string>
+    <string name="food_spot_open_setting_title">현재 영업 여부 설정</string>
+    <string name="food_spot_isopen">영업중</string>
+    <string name="food_spot_isclose">폐업</string>
+    <string name="food_spot_report_btn">음식점 등록하기</string>
+    <string name="food_spot_report_time_pattern">HH:mm</string>
+
 </resources>

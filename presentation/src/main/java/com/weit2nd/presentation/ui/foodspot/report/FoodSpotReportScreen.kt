@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -158,7 +159,7 @@ fun FoodSpotReportScreen(
                     if (state.value.isOpen) {
                         Column {
                             Text(
-                                text = "영업 시간 입력",
+                                text = stringResource(R.string.food_spot_open_title),
                                 style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                                 color = Black,
                             )
@@ -175,12 +176,12 @@ fun FoodSpotReportScreen(
 
                     Column {
                         Text(
-                            text = "음식 카테고리",
+                            text = stringResource(R.string.food_category),
                             style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                             color = Black,
                         )
                         Text(
-                            text = "*최소 1개 이상 선택해주세요",
+                            text = stringResource(R.string.food_category_label),
                             style = Typography.bodyMedium,
                             color = Gray2,
                         )
@@ -192,12 +193,12 @@ fun FoodSpotReportScreen(
 
                     Column {
                         Text(
-                            text = "음식점 사진",
+                            text = stringResource(R.string.food_spot_image_title),
                             style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                             color = Black,
                         )
                         Text(
-                            text = "*최대 3개까지 등록 가능합니다",
+                            text = stringResource(R.string.food_spot_image_label),
                             style = Typography.bodyMedium,
                             color = Gray2,
                         )
@@ -233,13 +234,16 @@ private fun TopBar(
     onClickBackBtn: () -> Unit,
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().height(50.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(50.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = modifier,
             textAlign = TextAlign.Center,
-            text = "음식점 제보하기",
+            text = stringResource(R.string.tood_spot_report_toolbar_title),
             style = Typography.headlineSmall,
         )
         Row(
@@ -283,7 +287,7 @@ private fun NameTextField(
             // Placeholder
             if (userInput.text.isEmpty()) {
                 Text(
-                    text = "음식점 이름",
+                    text = stringResource(R.string.food_spot_name_placeholder),
                     style = Typography.bodyLarge.copy(color = Gray2), // Placeholder 스타일
                 )
             }
@@ -300,7 +304,7 @@ private fun NameTextField(
         Text(
             style = Typography.bodyMedium,
             color = Gray2,
-            text = "1자리~20자리 이내로 입력해주세요",
+            text = stringResource(R.string.food_spot_name_label),
         )
     }
 }
@@ -312,7 +316,7 @@ private fun PlacementBtn(
 ) {
     Column {
         Text(
-            text = "위치 설정",
+            text = stringResource(R.string.food_spot_place_title),
             style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
@@ -322,7 +326,7 @@ private fun PlacementBtn(
         ) {
             var address = "$addressName"
             if (addressName == null) {
-                address = "주소 입력"
+                address = stringResource(R.string.food_spot_place)
             }
             Text(text = address, style = Typography.bodyLarge, color = Gray1)
             IconButton(onClick = { onClickSetPlaceBtn() }) {
@@ -343,12 +347,12 @@ private fun FoodTruckSwitch(
 ) {
     Column {
         Text(
-            text = "푸드트럭 여부 설정",
+            text = stringResource(R.string.food_spot_food_truck_title),
             style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
         Text(
-            text = "*푸드트럭이란 어쩌구저쩌구 입니다",
+            text = stringResource(R.string.food_spot_food_truck_label),
             style = Typography.bodyMedium,
             color = Gray2,
         )
@@ -363,7 +367,7 @@ private fun FoodTruckSwitch(
                 onCheckedChange = { onSwitchCheckedChange(it) },
             )
             Text(
-                text = "푸드트럭 여부",
+                text = stringResource(R.string.food_spot_food_truck),
                 style = Typography.bodyLarge,
                 color = Black,
             )
@@ -378,7 +382,7 @@ private fun OpenCloseSelector(
 ) {
     Column {
         Text(
-            text = "현재 영업 여부 설정",
+            text = stringResource(R.string.food_spot_open_setting_title),
             style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
@@ -388,13 +392,13 @@ private fun OpenCloseSelector(
             PrimaryRadioButton(
                 selected = isOpen,
                 onClick = { onClickIsOpenBtn(true) },
-                text = "영업중",
+                text = stringResource(R.string.food_spot_isopen),
             )
             Spacer(modifier = Modifier.padding(horizontal = 28.dp))
             PrimaryRadioButton(
                 selected = isOpen.not(),
                 onClick = { onClickIsOpenBtn(false) },
-                text = "폐업",
+                text = stringResource(R.string.food_spot_isclose),
             )
         }
     }
@@ -552,7 +556,7 @@ private fun OperationTime(
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
-            text = hours.format(DateTimeFormatter.ofPattern("HH:mm")),
+            text = hours.format(DateTimeFormatter.ofPattern(stringResource(R.string.food_spot_report_time_pattern))),
             style = Typography.titleMedium,
             color = Black,
         )
@@ -636,7 +640,7 @@ private fun ReportButton(
     ) {
         Text(
             modifier = Modifier.padding(vertical = 4.dp),
-            text = "음식점 등록하기",
+            text = stringResource(R.string.food_spot_report_btn),
             style = Typography.headlineSmall,
             color = White,
         )
