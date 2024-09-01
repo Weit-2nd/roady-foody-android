@@ -174,41 +174,16 @@ fun FoodSpotReportScreen(
                         }
                     }
 
-                    Column {
-                        Text(
-                            text = stringResource(R.string.food_category),
-                            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            color = Black,
-                        )
-                        Text(
-                            text = stringResource(R.string.food_category_label),
-                            style = Typography.bodyMedium,
-                            color = Gray2,
-                        )
-                        FoodCategory(
-                            categories = state.value.categories,
-                            onClickCategory = vm::onClickCategory,
-                        )
-                    }
+                    FoodCategoryContainer(
+                        categories = state.value.categories,
+                        onClickCategory = vm::onClickCategory,
+                    )
 
-                    Column {
-                        Text(
-                            text = stringResource(R.string.food_spot_image_title),
-                            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            color = Black,
-                        )
-                        Text(
-                            text = stringResource(R.string.food_spot_image_label),
-                            style = Typography.bodyMedium,
-                            color = Gray2,
-                        )
-                        Spacer(modifier = Modifier.padding(vertical = 2.dp))
-                        FoodSpotImage(
-                            reportImages = state.value.reportImages,
-                            onDeleteImage = vm::onDeleteImage,
-                            onClickSelectImagesBtn = vm::onClickSelectImagesBtn,
-                        )
-                    }
+                    FoodSpotImageContainer(
+                        reportImages = state.value.reportImages,
+                        onDeleteImage = vm::onDeleteImage,
+                        onClickSelectImagesBtn = vm::onClickSelectImagesBtn,
+                    )
                 }
                 ReportButton(
                     modifier = Modifier.fillMaxWidth(),
@@ -564,6 +539,29 @@ private fun OperationTime(
 }
 
 @Composable
+private fun FoodCategoryContainer(
+    categories: List<CategoryStatus>,
+    onClickCategory: (CategoryStatus) -> Unit,
+) {
+    Column {
+        Text(
+            text = stringResource(R.string.food_category),
+            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = Black,
+        )
+        Text(
+            text = stringResource(R.string.food_category_label),
+            style = Typography.bodyMedium,
+            color = Gray2,
+        )
+        FoodCategory(
+            categories = categories,
+            onClickCategory = onClickCategory,
+        )
+    }
+}
+
+@Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun FoodCategory(
     categories: List<CategoryStatus>,
@@ -594,6 +592,32 @@ private fun FoodCategory(
                 },
             )
         }
+    }
+}
+
+@Composable
+private fun FoodSpotImageContainer(
+    reportImages: List<String>,
+    onDeleteImage: (String) -> Unit,
+    onClickSelectImagesBtn: () -> Unit,
+) {
+    Column {
+        Text(
+            text = stringResource(R.string.food_spot_image_title),
+            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = Black,
+        )
+        Text(
+            text = stringResource(R.string.food_spot_image_label),
+            style = Typography.bodyMedium,
+            color = Gray2,
+        )
+        Spacer(modifier = Modifier.padding(vertical = 2.dp))
+        FoodSpotImage(
+            reportImages = reportImages,
+            onDeleteImage = onDeleteImage,
+            onClickSelectImagesBtn = onClickSelectImagesBtn,
+        )
     }
 }
 
