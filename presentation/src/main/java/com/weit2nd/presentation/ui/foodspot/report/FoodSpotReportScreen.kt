@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.SelectPlaceRoutes
@@ -170,11 +171,15 @@ fun FoodSpotReportScreen(
                     }
 
                     Column {
-                        Text(text = "음식 카테고리")
                         Text(
-                            text = "*최소 1개 이상 선택해야 합니다.",
-                            fontSize = 12.sp,
-                            fontStyle = FontStyle.Italic,
+                            text = "음식 카테고리",
+                            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = Black,
+                        )
+                        Text(
+                            text = "*최소 1개 이상 선택해주세요",
+                            style = Typography.bodyMedium,
+                            color = Gray2,
                         )
                         FoodCategory(
                             categories = state.value.categories,
@@ -534,14 +539,25 @@ private fun FoodCategory(
     onClickCategory: (CategoryStatus) -> Unit,
 ) {
     FlowRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(start = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         categories.forEach { categoryStatus ->
             FilterChip(
                 onClick = { onClickCategory(categoryStatus) },
                 selected = categoryStatus.isChecked,
-                label = { Text(categoryStatus.category.name) },
+                colors =
+                    FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Primary,
+                        selectedLabelColor = White,
+                    ),
+                border = BorderStroke(1.dp, Primary),
+                label = {
+                    Text(
+                        categoryStatus.category.name,
+                        style = Typography.titleSmall,
+                    )
+                },
             )
         }
     }
@@ -644,5 +660,14 @@ private fun TimeSelectorPreview() {
                 true,
             ),
         onClickEditTimeBtn = { _, _ -> },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FoodCategoryPreview() {
+    FoodCategory(
+        listOf(CategoryStatus(FoodCategory(0L, "포장마차"), true)),
+        onClickCategory = { _ -> },
     )
 }
