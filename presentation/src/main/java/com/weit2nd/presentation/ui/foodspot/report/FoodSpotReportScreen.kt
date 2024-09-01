@@ -142,8 +142,7 @@ fun FoodSpotReportScreen(
 
                     PlacementBtn(
                         onClickSetPlaceBtn = vm::onClickSetPlaceBtn,
-                        longitude = state.value.place?.longitude,
-                        latitude = state.value.place?.latitude,
+                        addressName = state.value.place?.addressName,
                     )
 
                     FoodTruckSwitch(
@@ -309,8 +308,7 @@ private fun NameTextField(
 @Composable
 private fun PlacementBtn(
     onClickSetPlaceBtn: () -> Unit,
-    longitude: Double?,
-    latitude: Double?,
+    addressName: String?,
 ) {
     Column {
         Text(
@@ -322,8 +320,8 @@ private fun PlacementBtn(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            var address = "$longitude | $latitude"
-            if (longitude == null || latitude == null) {
+            var address = "$addressName"
+            if (addressName == null) {
                 address = "주소 입력"
             }
             Text(text = address, style = Typography.bodyLarge, color = Gray1)
@@ -658,8 +656,7 @@ private fun SearchTextFieldPreview() {
 private fun PlacementPreview() {
     PlacementBtn(
         {},
-        null,
-        null,
+        "addressName",
     )
 }
 
