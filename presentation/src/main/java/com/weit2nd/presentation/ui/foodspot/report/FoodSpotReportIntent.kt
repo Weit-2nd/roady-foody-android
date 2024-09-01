@@ -54,4 +54,6 @@ sealed class FoodSpotReportIntent {
     ) : FoodSpotReportIntent()
 
     data object ReportFoodSpot : FoodSpotReportIntent()
+
+    data object NavToBack : FoodSpotReportIntent()
 }

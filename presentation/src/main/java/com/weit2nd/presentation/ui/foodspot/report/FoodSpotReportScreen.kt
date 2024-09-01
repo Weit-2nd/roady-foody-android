@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -98,6 +100,10 @@ fun FoodSpotReportScreen(
             FoodSpotReportSideEffect.ReportSuccess -> {
                 navToBack()
             }
+
+            FoodSpotReportSideEffect.NavToBack -> {
+                navToBack()
+            }
         }
     }
 
@@ -109,6 +115,7 @@ fun FoodSpotReportScreen(
         topBar = {
             TopBar(
                 modifier = Modifier.fillMaxWidth(),
+                onClickBackBtn = vm::onClickBackBtn,
             )
         },
         content = { innerPadding ->
@@ -124,7 +131,8 @@ fun FoodSpotReportScreen(
                     modifier =
                         Modifier
                             .verticalScroll(rememberScrollState())
-                            .weight(1.0f).padding(bottom = 16.dp),
+                            .weight(1.0f)
+                            .padding(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start,
                 ) {
@@ -222,28 +230,34 @@ fun FoodSpotReportScreen(
 }
 
 @Composable
-private fun TopBar(modifier: Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+private fun TopBar(
+    modifier: Modifier,
+    onClickBackBtn: () -> Unit,
+) {
+    Box(
+        modifier = modifier.fillMaxWidth().height(50.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        IconButton(
-            modifier = Modifier.padding(start = 4.dp),
-            onClick = {},
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Close,
-                contentDescription = "",
-            )
-        }
         Text(
+            modifier = modifier,
             textAlign = TextAlign.Center,
-            modifier =
-                Modifier
-                    .weight(1f),
             text = "음식점 제보하기",
             style = Typography.headlineSmall,
         )
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = { onClickBackBtn() },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = "",
+                )
+            }
+        }
     }
 }
 
@@ -624,7 +638,7 @@ private fun ReportButton(
 private fun SearchTextFieldPreview() {
     TopBar(
         modifier = Modifier.fillMaxWidth(),
-    )
+    ) {}
 }
 
 @Preview(showBackground = true)

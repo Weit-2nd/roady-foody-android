@@ -93,6 +93,10 @@ class FoodSpotReportViewModel @Inject constructor(
         FoodSpotReportIntent.ReportFoodSpot.post()
     }
 
+    fun onClickBackBtn() {
+        FoodSpotReportIntent.NavToBack.post()
+    }
+
     private fun FoodSpotReportIntent.post() =
         intent {
             when (this@post) {
@@ -308,6 +312,10 @@ class FoodSpotReportViewModel @Inject constructor(
                             isLoading = false,
                         )
                     }
+                }
+
+                FoodSpotReportIntent.NavToBack -> {
+                    postSideEffect(FoodSpotReportSideEffect.NavToBack)
                 }
             }
         }
