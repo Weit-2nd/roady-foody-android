@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -116,14 +117,14 @@ fun FoodSpotReportScreen(
                     Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .padding(16.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(
                     modifier =
                         Modifier
                             .verticalScroll(rememberScrollState())
-                            .weight(1.0f),
+                            .weight(1.0f).padding(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start,
                 ) {
@@ -202,13 +203,11 @@ fun FoodSpotReportScreen(
                         )
                     }
                 }
-                Button(
+                ReportButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { vm.onClickReportBtn() },
                     enabled = state.value.isLoading.not(),
-                ) {
-                    Text(text = "음식점 등록하기")
-                }
+                )
             }
         },
     )
@@ -599,6 +598,27 @@ private fun FoodSpotImage(
     }
 }
 
+@Composable
+private fun ReportButton(
+    modifier: Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean,
+) {
+    Button(
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+        onClick = { onClick() },
+        enabled = enabled,
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 4.dp),
+            text = "음식점 등록하기",
+            style = Typography.headlineSmall,
+            color = White,
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun SearchTextFieldPreview() {
@@ -673,4 +693,10 @@ private fun FoodCategoryPreview() {
         listOf(CategoryStatus(FoodCategory(0L, "포장마차"), true)),
         onClickCategory = { _ -> },
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReportButtonPreview() {
+    ReportButton(modifier = Modifier.fillMaxWidth(), onClick = { }, enabled = true)
 }
