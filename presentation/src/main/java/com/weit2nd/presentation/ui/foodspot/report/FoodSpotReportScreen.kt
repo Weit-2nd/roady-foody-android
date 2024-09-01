@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,14 +16,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
@@ -47,7 +52,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,9 +70,11 @@ import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Primary
 import com.weit2nd.presentation.ui.theme.Typography
+import com.weit2nd.presentation.ui.theme.White
 import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -147,7 +153,11 @@ fun FoodSpotReportScreen(
 
                     if (state.value.isOpen) {
                         Column {
-                            Text(text = "영업 시간 입력")
+                            Text(
+                                text = "영업 시간 입력",
+                                style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                color = Black,
+                            )
                             OperationTimeSetting(
                                 operationHours = state.value.operationHours,
                                 dialogStatus = state.value.dialogStatus,
@@ -217,7 +227,7 @@ private fun TopBar(modifier: Modifier) {
             onClick = {},
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_cancel),
+                imageVector = Icons.Outlined.Close,
                 contentDescription = "",
             )
         }
@@ -288,7 +298,7 @@ private fun PlacementBtn(
             Text(text = address, style = Typography.bodyLarge, color = Gray1)
             IconButton(onClick = { onClickSetPlaceBtn() }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
+                    imageVector = Icons.Outlined.Edit,
                     contentDescription = "",
                     tint = Gray2,
                 )
@@ -404,7 +414,9 @@ private fun OperationTimeSetting(
             )
         }
     }
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
     DayOfWeekSelector(operationHours, onClickDayOfWeekBtn, dayOfWeekTitle)
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
     operationHours.forEach { operationHourStatus ->
         if (operationHourStatus.isSelected) {
             TimeSelector(dayOfWeekTitle, operationHourStatus, onClickEditTimeBtn)
@@ -424,6 +436,14 @@ private fun DayOfWeekSelector(
     ) {
         operationHours.forEach { operationHourStatus ->
             FilterChip(
+                modifier = Modifier.size(36.dp),
+                shape = CircleShape,
+                colors =
+                    FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Primary,
+                        selectedLabelColor = White,
+                    ),
+                border = BorderStroke(1.dp, Primary),
                 selected = operationHourStatus.isSelected,
                 onClick = {
                     onClickDayOfWeekBtn(
@@ -431,7 +451,13 @@ private fun DayOfWeekSelector(
                         operationHourStatus.isSelected.not(),
                     )
                 },
-                label = { Text(text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1]) },
+                label = {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1],
+                        style = Typography.headlineSmall,
+                    )
+                },
             )
         }
     }
@@ -443,13 +469,24 @@ private fun TimeSelector(
     operationHourStatus: OperationHourStatus,
     onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
 ) {
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
             modifier = Modifier.padding(end = 8.dp),
             text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1],
+            style = Typography.headlineSmall,
+            color = Black,
         )
+        Spacer(modifier = Modifier.padding(horizontal = 22.dp))
         OperationTime(onClickEditTimeBtn, operationHourStatus, true)
-        Text(text = " ~ ", modifier = Modifier.padding(horizontal = 4.dp))
+        Text(
+            text = " ~ ",
+            style = Typography.titleMedium,
+            color = Black,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
         OperationTime(onClickEditTimeBtn, operationHourStatus, false)
     }
 }
@@ -465,6 +502,7 @@ private fun OperationTime(
             Modifier.clickable {
                 onClickEditTimeBtn(operationHourStatus.operationHour, isOpeningTime)
             },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         val hours =
             operationHourStatus.operationHour.run {
@@ -475,11 +513,17 @@ private fun OperationTime(
                 }
             }
 
-        Text(
-            text = hours.format(DateTimeFormatter.ofPattern("HH:mm")),
-            textDecoration = TextDecoration.Underline,
+        Icon(
+            painter = painterResource(id = R.drawable.ic_outline_clock),
+            tint = Gray1,
+            contentDescription = null,
         )
-        Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = hours.format(DateTimeFormatter.ofPattern("HH:mm")),
+            style = Typography.titleMedium,
+            color = Black,
+        )
     }
 }
 
@@ -564,4 +608,41 @@ private fun FoodTruckPreview() {
 @Composable
 private fun OpenClosePreview() {
     OpenCloseSelector(true) {}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DayOfWeekPreview() {
+    DayOfWeekSelector(
+        operationHours =
+            DayOfWeek.entries.map { dayOfWeek ->
+                OperationHourStatus(
+                    OperationHour(
+                        dayOfWeek = dayOfWeek,
+                        openingHours = LocalTime.of(9, 0),
+                        closingHours = LocalTime.of(18, 0),
+                    ),
+                )
+            },
+        onClickDayOfWeekBtn = { _, _ -> },
+        dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일"),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TimeSelectorPreview() {
+    TimeSelector(
+        dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일"),
+        operationHourStatus =
+            OperationHourStatus(
+                OperationHour(
+                    DayOfWeek.MONDAY,
+                    LocalTime.of(9, 0),
+                    LocalTime.of(12, 0),
+                ),
+                true,
+            ),
+        onClickEditTimeBtn = { _, _ -> },
+    )
 }
