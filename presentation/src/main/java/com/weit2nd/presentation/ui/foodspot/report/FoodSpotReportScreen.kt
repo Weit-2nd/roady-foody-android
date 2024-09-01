@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -29,14 +30,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -268,30 +267,43 @@ private fun NameTextField(
 ) {
     var userInput by remember { mutableStateOf(TextFieldValue(name)) }
 
-    TextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = userInput,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        placeholder = { Text(text = "음식점 이름") },
-        onValueChange = { newValue ->
-            userInput = newValue
-            onNameValueChange(newValue.text)
-        },
-        textStyle = Typography.bodyLarge,
-        singleLine = true,
-        colors =
-            TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-            ),
-        supportingText = {
-            Text(
-                style = Typography.bodyMedium,
-                color = Gray1,
-                text = "1자리~20자리 이내로 입력해주세요",
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box {
+            BasicTextField(
+                value = userInput,
+                onValueChange = { newValue ->
+                    userInput = newValue
+                    onNameValueChange(newValue.text)
+                },
+                textStyle = Typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                singleLine = true,
             )
-        },
-    )
+
+            // Placeholder
+            if (userInput.text.isEmpty()) {
+                Text(
+                    text = "음식점 이름",
+                    style = Typography.bodyLarge.copy(color = Gray2), // Placeholder 스타일
+                )
+            }
+        }
+
+        // Line below the BasicTextField
+        HorizontalDivider(
+            modifier = Modifier.padding(top = 4.dp), // 라인과 TextField 간격
+            thickness = 1.dp,
+            color = Gray2,
+        )
+
+        // Supporting text
+        Text(
+            style = Typography.bodyMedium,
+            color = Gray2,
+            text = "1자리~20자리 이내로 입력해주세요",
+        )
+    }
 }
 
 @Composable
