@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "com.weit2nd.data";
+option java_multiple_files = true;
+
+message SearchHistoryPreferences {
+  string words = 1;
+  optional double latitude = 2;
+  optional double longitude = 3;
+  bool isPlace = 4;
+}
+
+message SearchHistoriesPreferences {
+  repeated SearchHistoryPreferences histories = 1;
+}

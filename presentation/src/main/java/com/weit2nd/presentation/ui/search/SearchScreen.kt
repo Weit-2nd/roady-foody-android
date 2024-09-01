@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,15 +29,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.domain.model.search.SearchHistory
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.model.foodspot.SearchPlaceResult
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.SearchTopBar
+import com.weit2nd.presentation.ui.theme.DarkGray
+import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.theme.Gray4
+import com.weit2nd.presentation.ui.theme.Gray5
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
+import com.weit2nd.presentation.util.getDistanceString
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -69,14 +79,20 @@ fun SearchScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            SearchTopBar(
-                modifier = Modifier.background(Color.White),
-                searchWords = state.searchWords,
-                onClear = vm::onSearchWordsClear,
-                onSearchButtonClick = vm::onSearchButtonClick,
-                onSearchWordsChanged = vm::onSearchWordsChanged,
-                onNavigationButtonClick = vm::onNavigationButtonClick,
-            )
+            Column {
+                SearchTopBar(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                    searchWords = state.searchWords,
+                    onClear = vm::onSearchWordsClear,
+                    onSearchButtonClick = vm::onSearchButtonClick,
+                    onSearchWordsChanged = vm::onSearchWordsChanged,
+                    onNavigationButtonClick = vm::onNavigationButtonClick,
+                )
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Gray4,
+                )
+            }
         },
     ) {
         SearchContent(
@@ -93,8 +109,8 @@ fun SearchScreen(
 private fun SearchContent(
     modifier: Modifier = Modifier,
     state: SearchState,
-    onHistoryClick: (String) -> Unit,
-    onHistoryRemove: (String) -> Unit,
+    onHistoryClick: (SearchHistory) -> Unit,
+    onHistoryRemove: (SearchHistory) -> Unit,
     onPlaceClick: (Place) -> Unit,
 ) {
     LazyColumn(
@@ -103,26 +119,26 @@ private fun SearchContent(
         if (state.histories.isNotEmpty()) {
             item {
                 Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = "최근 검색",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(16.dp),
+                    text = stringResource(id = R.string.search_place_history),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall,
                 )
             }
         }
         itemsIndexed(state.histories) { index, history ->
             if (index > 0) {
                 HorizontalDivider(
-                    color = Color.Gray,
+                    color = Gray4,
                     thickness = 1.dp,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                 )
             }
             SearchHistoryItem(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 8.dp),
+                modifier = Modifier.fillMaxSize(),
                 history = history,
                 onClick = {
                     onHistoryClick(history)
@@ -135,39 +151,33 @@ private fun SearchContent(
         if (state.histories.isNotEmpty() && state.searchResults.isNotEmpty()) {
             item {
                 HorizontalDivider(
-                    color = Color.Gray,
-                    thickness = 4.dp,
+                    color = Gray5,
+                    thickness = 8.dp,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
-        if (state.searchResults.isNotEmpty()) {
-            item {
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = "검색 결과",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-        }
-        itemsIndexed(state.searchResults) { index, place ->
+        itemsIndexed(state.searchResults) { index, searchPlaceResult ->
             if (index > 0) {
                 HorizontalDivider(
-                    color = Color.Gray,
+                    color = Gray4,
                     thickness = 1.dp,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                 )
             }
             SearchPlaceItem(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
-                name = place.placeName,
-                address = place.roadAddressName.takeIf { it.isNotEmpty() } ?: place.addressName,
+                        .padding(16.dp),
+                name = searchPlaceResult.place.placeName,
+                address = searchPlaceResult.place.roadAddressName.takeIf { it.isNotEmpty() } ?: searchPlaceResult.place.addressName,
+                distanceMeter = searchPlaceResult.distance,
                 onClick = {
-                    onPlaceClick(place)
+                    onPlaceClick(searchPlaceResult.place)
                 },
             )
         }
@@ -179,6 +189,7 @@ private fun SearchPlaceItem(
     modifier: Modifier = Modifier,
     name: String,
     address: String,
+    distanceMeter: Int,
     onClick: () -> Unit,
 ) {
     Row(
@@ -189,7 +200,18 @@ private fun SearchPlaceItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column {
+        Icon(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = R.drawable.ic_search_result_marker),
+            tint = Color.Unspecified,
+            contentDescription = "검색 결과",
+        )
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp),
+        ) {
             Text(
                 text = name,
                 color = Color.Black,
@@ -202,10 +224,10 @@ private fun SearchPlaceItem(
                 fontSize = 12.sp,
             )
         }
-        Icon(
-            modifier = Modifier,
-            painter = painterResource(id = R.drawable.ic_search_glass),
-            contentDescription = "검색 결과",
+        Text(
+            text = getDistanceString(LocalContext.current, distanceMeter),
+            style = MaterialTheme.typography.bodyMedium,
+            color = DarkGray,
         )
     }
 }
@@ -213,7 +235,7 @@ private fun SearchPlaceItem(
 @Composable
 private fun SearchHistoryItem(
     modifier: Modifier = Modifier,
-    history: String,
+    history: SearchHistory,
     onClick: () -> Unit,
     onRemove: () -> Unit,
 ) {
@@ -221,15 +243,38 @@ private fun SearchHistoryItem(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val iconRes =
+            if (history.isPlace) {
+                R.drawable.ic_search_history_marker
+            } else {
+                R.drawable.ic_search_glass
+            }
+        val tint =
+            if (history.isPlace) {
+                Color.Unspecified
+            } else {
+                Gray1
+            }
+        Icon(
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .size(32.dp),
+            painter = painterResource(id = iconRes),
+            tint = tint,
+            contentDescription = "검색 결과",
+        )
         Text(
             modifier =
                 Modifier
+                    .padding(vertical = 16.dp)
                     .weight(1f)
                     .clickable {
                         onClick()
                     },
-            text = history,
-            fontSize = 18.sp,
+            text = history.words,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
         )
         IconButton(
             modifier = Modifier.size(48.dp),
@@ -237,7 +282,8 @@ private fun SearchHistoryItem(
         ) {
             Icon(
                 modifier = Modifier.padding(0.dp),
-                painter = painterResource(id = android.R.drawable.ic_menu_close_clear_cancel),
+                painter = painterResource(id = R.drawable.ic_input_delete_filled),
+                tint = Color.Unspecified,
                 contentDescription = "제거",
             )
         }
@@ -247,58 +293,93 @@ private fun SearchHistoryItem(
 @Preview
 @Composable
 private fun SearchContentPreview() {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        SearchContent(
-            state =
-                SearchState(
-                    histories = listOf("안녕하세요", "감사해요", "잘있어요"),
-                    searchResults =
-                        listOf(
-                            Place(
-                                placeName = "aaa",
-                                addressName = "aaa",
-                                roadAddressName = "Aaa",
-                                longitude = 0.0,
-                                latitude = 0.0,
-                                tel = "",
+    RoadyFoodyTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            SearchContent(
+                state =
+                    SearchState(
+                        histories =
+                            listOf(
+                                SearchHistory(
+                                    "안녕하세요",
+                                    Coordinate(0.0, 0.0),
+                                    true,
+                                ),
+                                SearchHistory(
+                                    "감사해요",
+                                    Coordinate(0.0, 0.0),
+                                    false,
+                                ),
+                                SearchHistory(
+                                    "잘있어요",
+                                    Coordinate(0.0, 0.0),
+                                    true,
+                                ),
                             ),
-                            Place(
-                                placeName = "aaa",
-                                addressName = "aaa",
-                                roadAddressName = "Aaa",
-                                longitude = 0.0,
-                                latitude = 0.0,
-                                tel = "",
+                        searchResults =
+                            listOf(
+                                SearchPlaceResult(
+                                    Place(
+                                        placeName = "aaa",
+                                        addressName = "aaa",
+                                        roadAddressName = "Aaa",
+                                        longitude = 0.0,
+                                        latitude = 0.0,
+                                        tel = "",
+                                    ),
+                                    100,
+                                ),
+                                SearchPlaceResult(
+                                    Place(
+                                        placeName = "aaa",
+                                        addressName = "aaa",
+                                        roadAddressName = "Aaa",
+                                        longitude = 0.0,
+                                        latitude = 0.0,
+                                        tel = "",
+                                    ),
+                                    1234,
+                                ),
+                                SearchPlaceResult(
+                                    Place(
+                                        placeName = "aaa",
+                                        addressName = "aaa",
+                                        roadAddressName = "Aaa",
+                                        longitude = 0.0,
+                                        latitude = 0.0,
+                                        tel = "",
+                                    ),
+                                    500000,
+                                ),
                             ),
-                            Place(
-                                placeName = "aaa",
-                                addressName = "aaa",
-                                roadAddressName = "Aaa",
-                                longitude = 0.0,
-                                latitude = 0.0,
-                                tel = "",
-                            ),
-                        ),
-                ),
-            onHistoryRemove = {},
-            onHistoryClick = {},
-            onPlaceClick = {},
-        )
+                    ),
+                onHistoryRemove = {},
+                onHistoryClick = {},
+                onPlaceClick = {},
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 private fun SearchHistoryItemPreview() {
-    SearchHistoryItem(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White),
-        history = "명륜진사",
-        onClick = {},
-        onRemove = {},
-    )
+    RoadyFoodyTheme {
+        SearchHistoryItem(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+            history =
+                SearchHistory(
+                    "명륜진사",
+                    Coordinate(0.0, 0.0),
+                    true,
+                ),
+            onClick = {},
+            onRemove = {},
+        )
+    }
 }

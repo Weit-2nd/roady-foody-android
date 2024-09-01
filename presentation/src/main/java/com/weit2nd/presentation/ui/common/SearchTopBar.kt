@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -21,10 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.theme.DarkGray
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 
 @Composable
 fun SearchTopBar(
@@ -96,6 +101,10 @@ private fun SearchTextField(
         readOnly = readOnly,
         onValueChange = onSearchWordsChanged,
         interactionSource = interactionSource,
+        textStyle =
+            MaterialTheme.typography.bodyLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
         keyboardOptions =
             KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search,
@@ -116,13 +125,9 @@ private fun SearchTextField(
             interactionSource = remember { MutableInteractionSource() },
             placeholder = {
                 Text(
-                    text = "장소를 입력해!",
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search_glass),
-                    contentDescription = "장소 검색 바",
+                    text = stringResource(id = R.string.search_top_bar_hint),
+                    color = Gray2,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             },
             trailingIcon = {
@@ -138,7 +143,6 @@ private fun SearchTextField(
                     }
                 }
             },
-            // TODO Material Theme를 적용하고 나면 제거
             colors =
                 TextFieldDefaults.colors(
                     disabledContainerColor = Color.White,
@@ -147,7 +151,7 @@ private fun SearchTextField(
                     unfocusedContainerColor = Color.White,
                     unfocusedIndicatorColor = Color.White,
                     disabledIndicatorColor = Color.White,
-                    focusedIndicatorColor = Color(0xFF555555),
+                    focusedIndicatorColor = DarkGray,
                 ),
         )
     }
@@ -156,27 +160,31 @@ private fun SearchTextField(
 @Preview
 @Composable
 private fun SearchTextFieldPreview() {
-    SearchTextField(
-        modifier = Modifier.fillMaxWidth(),
-        searchWords = "안녕하세요",
-        onSearchWordsChanged = {},
-        onClear = {},
-        onSearchButtonClick = {},
-    )
+    RoadyFoodyTheme {
+        SearchTextField(
+            modifier = Modifier.fillMaxWidth(),
+            searchWords = "안녕하세요",
+            onSearchWordsChanged = {},
+            onClear = {},
+            onSearchButtonClick = {},
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun SearchTopBarPerview() {
-    SearchTopBar(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White),
-        searchWords = "감사해요",
-        onClear = {},
-        onSearchButtonClick = {},
-        onSearchWordsChanged = {},
-        onNavigationButtonClick = {},
-    )
+    RoadyFoodyTheme {
+        SearchTopBar(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
+            searchWords = "감사해요",
+            onClear = {},
+            onSearchButtonClick = {},
+            onSearchWordsChanged = {},
+            onNavigationButtonClick = {},
+        )
+    }
 }

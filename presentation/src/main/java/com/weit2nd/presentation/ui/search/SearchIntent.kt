@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.search
 
-import com.weit2nd.domain.model.search.Place
+import com.weit2nd.domain.model.Coordinate
+import com.weit2nd.domain.model.search.SearchHistory
 
 sealed interface SearchIntent {
     data object GetSearchHistory : SearchIntent
@@ -10,7 +11,7 @@ sealed interface SearchIntent {
     ) : SearchIntent
 
     data class RemoveHistory(
-        val history: String,
+        val history: SearchHistory,
     ) : SearchIntent
 
     data class SearchWithWords(
@@ -18,7 +19,8 @@ sealed interface SearchIntent {
     ) : SearchIntent
 
     data class SearchWithPlace(
-        val place: Place,
+        val name: String,
+        val coordinate: Coordinate,
     ) : SearchIntent
 
     data object NavToBack : SearchIntent
