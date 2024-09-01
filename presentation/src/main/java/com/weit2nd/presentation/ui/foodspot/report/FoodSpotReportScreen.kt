@@ -522,10 +522,10 @@ private fun TimeSelector(
         Spacer(modifier = Modifier.padding(horizontal = 22.dp))
         OperationTime(onClickEditTimeBtn, operationHourStatus, true)
         Text(
-            text = " ~ ",
+            text = "~",
             style = MaterialTheme.typography.titleMedium,
             color = Black,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
         OperationTime(onClickEditTimeBtn, operationHourStatus, false)
     }
