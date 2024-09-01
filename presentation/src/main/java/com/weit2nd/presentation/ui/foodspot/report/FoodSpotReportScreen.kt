@@ -2,7 +2,7 @@ package com.weit2nd.presentation.ui.foodspot.report
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
@@ -47,14 +45,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
@@ -188,12 +184,17 @@ fun FoodSpotReportScreen(
                     }
 
                     Column {
-                        Text(text = "음식점 사진")
                         Text(
-                            text = "*최대 3개까지 등록 가능합니다.",
-                            fontSize = 12.sp,
-                            fontStyle = FontStyle.Italic,
+                            text = "음식점 사진",
+                            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = Black,
                         )
+                        Text(
+                            text = "*최대 3개까지 등록 가능합니다",
+                            style = Typography.bodyMedium,
+                            color = Gray2,
+                        )
+                        Spacer(modifier = Modifier.padding(vertical = 2.dp))
                         FoodSpotImage(
                             reportImages = state.value.reportImages,
                             onDeleteImage = vm::onDeleteImage,
@@ -475,7 +476,10 @@ private fun TimeSelector(
     onClickEditTimeBtn: (operationHour: OperationHour, isOpeningTime: Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 2.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -539,7 +543,10 @@ private fun FoodCategory(
     onClickCategory: (CategoryStatus) -> Unit,
 ) {
     FlowRow(
-        modifier = Modifier.fillMaxWidth().padding(start = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         categories.forEach { categoryStatus ->
@@ -573,22 +580,18 @@ private fun FoodSpotImage(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (reportImages.size < IMAGE_MAX_SIZE) {
-            IconButton(
+            Image(
                 modifier =
-                    Modifier
-                        .size(100.dp)
-                        .background(Color.LightGray),
-                onClick = onClickSelectImagesBtn,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "select_image",
-                )
-            }
+                    Modifier.clickable {
+                        onClickSelectImagesBtn()
+                    },
+                painter = painterResource(id = R.drawable.ic_add_image),
+                contentDescription = "",
+            )
         }
         reportImages.forEach { imgUri ->
             CancelableImage(
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier.size(80.dp),
                 imgUri = imgUri,
                 onDeleteImage = onDeleteImage,
             )
