@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -336,29 +338,48 @@ private fun OpenCloseSelector(
     onClickIsOpenBtn: (Boolean) -> Unit,
 ) {
     Column {
-        Text(text = "현재 영업여부")
+        Text(
+            text = "현재 영업 여부 설정",
+            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = Black,
+        )
         Row(
             modifier = Modifier.selectableGroup(),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(
-                    selected = isOpen,
-                    onClick = { onClickIsOpenBtn(true) },
-                )
-                Text(text = "영업중")
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(
-                    selected = isOpen.not(),
-                    onClick = { onClickIsOpenBtn(false) },
-                )
-                Text(text = "폐업")
-            }
+            PrimaryRadioButton(
+                selected = isOpen,
+                onClick = { onClickIsOpenBtn(true) },
+                text = "영업중",
+            )
+            Spacer(modifier = Modifier.padding(horizontal = 28.dp))
+            PrimaryRadioButton(
+                selected = isOpen.not(),
+                onClick = { onClickIsOpenBtn(false) },
+                text = "폐업",
+            )
         }
+    }
+}
+
+@Composable
+private fun PrimaryRadioButton(
+    selected: Boolean,
+    onClick: () -> Unit,
+    text: String,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(
+            colors = RadioButtonDefaults.colors(selectedColor = Primary, unselectedColor = Primary),
+            selected = selected,
+            onClick = { onClick() },
+        )
+        Text(
+            text = text,
+            style = Typography.bodyLarge,
+            color = Black,
+        )
     }
 }
 
@@ -536,5 +557,11 @@ private fun PlacementPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FoodTruckPreview() {
-    FoodTruckSwitch(isFoodTruck = true) {}
+    FoodTruckSwitch(isFoodTruck = false) {}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OpenClosePreview() {
+    OpenCloseSelector(true) {}
 }
