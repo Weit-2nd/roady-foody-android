@@ -236,6 +236,7 @@ private fun TopBar(
                 onClick = { onClickBackBtn() },
             ) {
                 Icon(
+                    modifier = Modifier.size(24.dp),
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "",
                 )
@@ -317,6 +318,7 @@ private fun PlacementBtn(
             Text(text = address, style = MaterialTheme.typography.bodyLarge, color = Gray1)
             IconButton(onClick = { onClickSetPlaceBtn() }) {
                 Icon(
+                    modifier = Modifier.size(24.dp),
                     imageVector = Icons.Outlined.Edit,
                     contentDescription = "",
                     tint = Gray2,
@@ -555,6 +557,7 @@ private fun OperationTime(
             }
 
         Icon(
+            modifier = Modifier.size(24.dp),
             painter = painterResource(id = R.drawable.ic_outline_clock),
             tint = Gray1,
             contentDescription = null,
