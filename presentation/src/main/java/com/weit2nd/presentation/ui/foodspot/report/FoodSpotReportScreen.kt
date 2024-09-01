@@ -2,7 +2,6 @@ package com.weit2nd.presentation.ui.foodspot.report
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,6 +62,7 @@ import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.SelectPlaceRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
 import com.weit2nd.presentation.navigation.dto.toPlace
+import com.weit2nd.presentation.ui.common.AddImageButton
 import com.weit2nd.presentation.ui.common.CancelableImage
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Companion.IMAGE_MAX_SIZE
 import com.weit2nd.presentation.ui.theme.Black
@@ -631,13 +631,11 @@ private fun FoodSpotImage(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (reportImages.size < IMAGE_MAX_SIZE) {
-            Image(
+            AddImageButton(
                 modifier =
                     Modifier.clickable {
                         onClickSelectImagesBtn()
                     },
-                painter = painterResource(id = R.drawable.ic_add_image),
-                contentDescription = "",
             )
         }
         reportImages.forEach { imgUri ->
