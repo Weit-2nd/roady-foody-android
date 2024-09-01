@@ -20,6 +20,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
+import java.util.concurrent.CopyOnWriteArrayList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,6 +37,8 @@ class SearchViewModel @Inject constructor(
             "",
             CoordinateDTO(0.0, 0.0),
         )
+
+    private val historyCache = CopyOnWriteArrayList<SearchHistory>()
 
     override val container: Container<SearchState, SearchSideEffect> =
         container(
@@ -103,9 +106,16 @@ class SearchViewModel @Inject constructor(
         intent {
             when (this@post) {
                 is SearchIntent.ChangeSearchWords -> {
+                    val histories =
+                        if (searchWords.isNotBlank()) {
+                            historyCache.filter { it.words.contains(searchWords) }
+                        } else {
+                            historyCache
+                        }
                     reduce {
                         state.copy(
                             searchWords = searchWords,
+                            histories = histories,
                         )
                     }
                     runCatching {
@@ -133,6 +143,7 @@ class SearchViewModel @Inject constructor(
                 }
                 is SearchIntent.RemoveHistory -> {
                     removeSearchHistoriesUseCase(history)
+                    historyCache.remove(history)
                     reduce {
                         state.copy(
                             histories = state.histories.minus(history),
@@ -181,6 +192,7 @@ class SearchViewModel @Inject constructor(
 
                 SearchIntent.GetSearchHistory -> {
                     val histories = getSearchHistoriesUseCase()
+                    historyCache.addAll(histories)
                     reduce {
                         state.copy(
                             histories = histories,
