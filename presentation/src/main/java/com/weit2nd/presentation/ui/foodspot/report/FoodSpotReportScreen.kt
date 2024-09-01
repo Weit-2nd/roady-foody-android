@@ -14,19 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -63,6 +62,7 @@ import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Compa
 import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.Primary
 import com.weit2nd.presentation.ui.theme.Typography
 import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
@@ -300,15 +300,33 @@ private fun FoodTruckSwitch(
     isFoodTruck: Boolean,
     onSwitchCheckedChange: (Boolean) -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(text = "푸드트럭 여부")
-        Switch(
-            checked = isFoodTruck,
-            onCheckedChange = { onSwitchCheckedChange(it) },
+    Column {
+        Text(
+            text = "푸드트럭 여부 설정",
+            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = Black,
         )
+        Text(
+            text = "*푸드트럭이란 어쩌구저쩌구 입니다",
+            style = Typography.bodyMedium,
+            color = Gray2,
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                colors =
+                    androidx.compose.material3.CheckboxDefaults
+                        .colors(checkedColor = Primary),
+                checked = isFoodTruck,
+                onCheckedChange = { onSwitchCheckedChange(it) },
+            )
+            Text(
+                text = "푸드트럭 여부",
+                style = Typography.bodyLarge,
+                color = Black,
+            )
+        }
     }
 }
 
@@ -513,4 +531,10 @@ private fun PlacementPreview() {
         null,
         null,
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FoodTruckPreview() {
+    FoodTruckSwitch(isFoodTruck = true) {}
 }
