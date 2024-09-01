@@ -26,8 +26,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -70,6 +68,7 @@ import com.weit2nd.presentation.navigation.SelectPlaceRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
 import com.weit2nd.presentation.navigation.dto.toPlace
 import com.weit2nd.presentation.ui.common.AddImageButton
+import com.weit2nd.presentation.ui.common.BottomButton
 import com.weit2nd.presentation.ui.common.CancelableImage
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Companion.IMAGE_MAX_SIZE
 import com.weit2nd.presentation.ui.theme.Black
@@ -191,10 +190,11 @@ fun FoodSpotReportScreen(
                         onClickSelectImagesBtn = vm::onClickSelectImagesBtn,
                     )
                 }
-                ReportButton(
+                BottomButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { vm.onClickReportBtn() },
                     enabled = state.value.isLoading.not(),
+                    text = stringResource(R.string.food_spot_report_btn),
                 )
             }
         },
@@ -691,27 +691,6 @@ private fun FoodSpotImage(
     }
 }
 
-@Composable
-private fun ReportButton(
-    modifier: Modifier,
-    onClick: () -> Unit,
-    enabled: Boolean,
-) {
-    Button(
-        modifier = modifier,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        onClick = { onClick() },
-        enabled = enabled,
-    ) {
-        Text(
-            modifier = Modifier.padding(vertical = 4.dp),
-            text = stringResource(R.string.food_spot_report_btn),
-            style = MaterialTheme.typography.headlineSmall,
-            color = White,
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun SearchTextFieldPreview() {
@@ -799,13 +778,5 @@ private fun FoodCategoryPreview() {
             listOf(CategoryStatus(FoodCategory(0L, "포장마차"), true)),
             onClickCategory = { _ -> },
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ReportButtonPreview() {
-    RoadyFoodyTheme {
-        ReportButton(modifier = Modifier.fillMaxWidth(), onClick = { }, enabled = true)
     }
 }
