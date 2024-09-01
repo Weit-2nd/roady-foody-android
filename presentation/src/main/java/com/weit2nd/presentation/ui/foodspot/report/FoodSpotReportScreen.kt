@@ -299,10 +299,7 @@ private fun PlacementBtn(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            var address = "$addressName"
-            if (addressName == null) {
-                address = stringResource(R.string.food_spot_place)
-            }
+            val address = addressName ?: stringResource(R.string.food_spot_place)
             Text(text = address, style = Typography.bodyLarge, color = Gray1)
             IconButton(onClick = { onClickSetPlaceBtn() }) {
                 Icon(
