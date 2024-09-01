@@ -21,4 +21,7 @@
     <string name="food_spot_detail_closed">영업 종료</string>
     <string name="food_spot_detail_temporarily_closed">이젠 안해..</string>
     <string name="food_spot_detail_operation_hours">%s %s - %s</string>
+
+    <!-- SearchTopBar -->
+    <string name="search_top_bar_hint">지번, 도로명, 건물명으로 검색</string>
 </resources>
