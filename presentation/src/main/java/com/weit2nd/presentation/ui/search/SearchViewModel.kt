@@ -16,6 +16,7 @@ import com.weit2nd.presentation.navigation.dto.CoordinateDTO
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -125,7 +126,9 @@ class SearchViewModel @Inject constructor(
                             )
                         }
                     }.onFailure {
-                        postSideEffect(SearchSideEffect.ShowToastMessage(it.message.toString()))
+                        if (it !is CancellationException) {
+                            postSideEffect(SearchSideEffect.ShowToastMessage(it.message.toString()))
+                        }
                     }
                 }
                 is SearchIntent.RemoveHistory -> {
