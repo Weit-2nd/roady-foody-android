@@ -32,6 +32,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -68,8 +69,7 @@ import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Compa
 import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
-import com.weit2nd.presentation.ui.theme.Primary
-import com.weit2nd.presentation.ui.theme.Typography
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import com.weit2nd.presentation.ui.theme.White
 import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
@@ -160,7 +160,7 @@ fun FoodSpotReportScreen(
                         Column {
                             Text(
                                 text = stringResource(R.string.food_spot_open_title),
-                                style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                                 color = Black,
                             )
                             OperationTimeSetting(
@@ -219,7 +219,7 @@ private fun TopBar(
             modifier = modifier,
             textAlign = TextAlign.Center,
             text = stringResource(R.string.tood_spot_report_toolbar_title),
-            style = Typography.headlineSmall,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Row(
             modifier = modifier,
@@ -253,7 +253,7 @@ private fun NameTextField(
                     userInput = newValue
                     onNameValueChange(newValue.text)
                 },
-                textStyle = Typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 singleLine = true,
@@ -263,7 +263,7 @@ private fun NameTextField(
             if (userInput.text.isEmpty()) {
                 Text(
                     text = stringResource(R.string.food_spot_name_placeholder),
-                    style = Typography.bodyLarge.copy(color = Gray2), // Placeholder 스타일
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Gray2), // Placeholder 스타일
                 )
             }
         }
@@ -277,7 +277,7 @@ private fun NameTextField(
 
         // Supporting text
         Text(
-            style = Typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = Gray2,
             text = stringResource(R.string.food_spot_name_label),
         )
@@ -292,7 +292,7 @@ private fun PlacementBtn(
     Column {
         Text(
             text = stringResource(R.string.food_spot_place_title),
-            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
         Row(
@@ -300,7 +300,7 @@ private fun PlacementBtn(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val address = addressName ?: stringResource(R.string.food_spot_place)
-            Text(text = address, style = Typography.bodyLarge, color = Gray1)
+            Text(text = address, style = MaterialTheme.typography.bodyLarge, color = Gray1)
             IconButton(onClick = { onClickSetPlaceBtn() }) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
@@ -320,12 +320,12 @@ private fun FoodTruckSwitch(
     Column {
         Text(
             text = stringResource(R.string.food_spot_food_truck_title),
-            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
         Text(
             text = stringResource(R.string.food_spot_food_truck_label),
-            style = Typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = Gray2,
         )
         Row(
@@ -334,13 +334,13 @@ private fun FoodTruckSwitch(
             Checkbox(
                 colors =
                     androidx.compose.material3.CheckboxDefaults
-                        .colors(checkedColor = Primary),
+                        .colors(checkedColor = MaterialTheme.colorScheme.primary),
                 checked = isFoodTruck,
                 onCheckedChange = { onSwitchCheckedChange(it) },
             )
             Text(
                 text = stringResource(R.string.food_spot_food_truck),
-                style = Typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge,
                 color = Black,
             )
         }
@@ -355,7 +355,7 @@ private fun OpenCloseSelector(
     Column {
         Text(
             text = stringResource(R.string.food_spot_open_setting_title),
-            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
         Row(
@@ -386,13 +386,17 @@ private fun PrimaryRadioButton(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(
-            colors = RadioButtonDefaults.colors(selectedColor = Primary, unselectedColor = Primary),
+            colors =
+                RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.primary,
+                    unselectedColor = MaterialTheme.colorScheme.primary,
+                ),
             selected = selected,
             onClick = { onClick() },
         )
         Text(
             text = text,
-            style = Typography.bodyLarge,
+            style = MaterialTheme.typography.bodyLarge,
             color = Black,
         )
     }
@@ -445,10 +449,10 @@ private fun DayOfWeekSelector(
                 shape = CircleShape,
                 colors =
                     FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Primary,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
                         selectedLabelColor = White,
                     ),
-                border = BorderStroke(1.dp, Primary),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 selected = operationHourStatus.isSelected,
                 onClick = {
                     onClickDayOfWeekBtn(
@@ -460,7 +464,7 @@ private fun DayOfWeekSelector(
                     Text(
                         textAlign = TextAlign.Center,
                         text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1],
-                        style = Typography.headlineSmall,
+                        style = MaterialTheme.typography.headlineSmall,
                     )
                 },
             )
@@ -484,14 +488,14 @@ private fun TimeSelector(
         Text(
             modifier = Modifier.padding(end = 8.dp),
             text = dayOfWeekTitle[operationHourStatus.operationHour.dayOfWeek.value - 1],
-            style = Typography.headlineSmall,
+            style = MaterialTheme.typography.headlineSmall,
             color = Black,
         )
         Spacer(modifier = Modifier.padding(horizontal = 22.dp))
         OperationTime(onClickEditTimeBtn, operationHourStatus, true)
         Text(
             text = " ~ ",
-            style = Typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = Black,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
@@ -529,7 +533,7 @@ private fun OperationTime(
         Text(
             modifier = Modifier.padding(start = 4.dp),
             text = hours.format(DateTimeFormatter.ofPattern(stringResource(R.string.food_spot_report_time_pattern))),
-            style = Typography.titleMedium,
+            style = MaterialTheme.typography.titleMedium,
             color = Black,
         )
     }
@@ -543,12 +547,12 @@ private fun FoodCategoryContainer(
     Column {
         Text(
             text = stringResource(R.string.food_category),
-            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
         Text(
             text = stringResource(R.string.food_category_label),
-            style = Typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = Gray2,
         )
         FoodCategory(
@@ -577,14 +581,14 @@ private fun FoodCategory(
                 selected = categoryStatus.isChecked,
                 colors =
                     FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = Primary,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary,
                         selectedLabelColor = White,
                     ),
-                border = BorderStroke(1.dp, Primary),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 label = {
                     Text(
                         categoryStatus.category.name,
-                        style = Typography.titleSmall,
+                        style = MaterialTheme.typography.titleSmall,
                     )
                 },
             )
@@ -601,12 +605,12 @@ private fun FoodSpotImageContainer(
     Column {
         Text(
             text = stringResource(R.string.food_spot_image_title),
-            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
             color = Black,
         )
         Text(
             text = stringResource(R.string.food_spot_image_label),
-            style = Typography.bodyMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = Gray2,
         )
         Spacer(modifier = Modifier.padding(vertical = 2.dp))
@@ -653,14 +657,14 @@ private fun ReportButton(
 ) {
     Button(
         modifier = modifier,
-        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         onClick = { onClick() },
         enabled = enabled,
     ) {
         Text(
             modifier = Modifier.padding(vertical = 4.dp),
             text = stringResource(R.string.food_spot_report_btn),
-            style = Typography.headlineSmall,
+            style = MaterialTheme.typography.headlineSmall,
             color = White,
         )
     }
@@ -669,80 +673,96 @@ private fun ReportButton(
 @Preview(showBackground = true)
 @Composable
 private fun SearchTextFieldPreview() {
-    TopBar(
-        modifier = Modifier.fillMaxWidth(),
-    ) {}
+    RoadyFoodyTheme {
+        TopBar(
+            modifier = Modifier.fillMaxWidth(),
+        ) {}
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PlacementPreview() {
-    PlacementBtn(
-        {},
-        "addressName",
-    )
+    RoadyFoodyTheme {
+        PlacementBtn(
+            {},
+            "addressName",
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun FoodTruckPreview() {
-    FoodTruckSwitch(isFoodTruck = false) {}
+    RoadyFoodyTheme {
+        FoodTruckSwitch(isFoodTruck = false) {}
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun OpenClosePreview() {
-    OpenCloseSelector(true) {}
+    RoadyFoodyTheme {
+        OpenCloseSelector(true) {}
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun DayOfWeekPreview() {
-    DayOfWeekSelector(
-        operationHours =
-            DayOfWeek.entries.map { dayOfWeek ->
-                OperationHourStatus(
-                    OperationHour(
-                        dayOfWeek = dayOfWeek,
-                        openingHours = LocalTime.of(9, 0),
-                        closingHours = LocalTime.of(18, 0),
-                    ),
-                )
-            },
-        onClickDayOfWeekBtn = { _, _ -> },
-        dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일"),
-    )
+    RoadyFoodyTheme {
+        DayOfWeekSelector(
+            operationHours =
+                DayOfWeek.entries.map { dayOfWeek ->
+                    OperationHourStatus(
+                        OperationHour(
+                            dayOfWeek = dayOfWeek,
+                            openingHours = LocalTime.of(9, 0),
+                            closingHours = LocalTime.of(18, 0),
+                        ),
+                    )
+                },
+            onClickDayOfWeekBtn = { _, _ -> },
+            dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일"),
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun TimeSelectorPreview() {
-    TimeSelector(
-        dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일"),
-        operationHourStatus =
-            OperationHourStatus(
-                OperationHour(
-                    DayOfWeek.MONDAY,
-                    LocalTime.of(9, 0),
-                    LocalTime.of(12, 0),
+    RoadyFoodyTheme {
+        TimeSelector(
+            dayOfWeekTitle = listOf("월", "화", "수", "목", "금", "토", "일"),
+            operationHourStatus =
+                OperationHourStatus(
+                    OperationHour(
+                        DayOfWeek.MONDAY,
+                        LocalTime.of(9, 0),
+                        LocalTime.of(12, 0),
+                    ),
+                    true,
                 ),
-                true,
-            ),
-        onClickEditTimeBtn = { _, _ -> },
-    )
+            onClickEditTimeBtn = { _, _ -> },
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun FoodCategoryPreview() {
-    FoodCategory(
-        listOf(CategoryStatus(FoodCategory(0L, "포장마차"), true)),
-        onClickCategory = { _ -> },
-    )
+    RoadyFoodyTheme {
+        FoodCategory(
+            listOf(CategoryStatus(FoodCategory(0L, "포장마차"), true)),
+            onClickCategory = { _ -> },
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun ReportButtonPreview() {
-    ReportButton(modifier = Modifier.fillMaxWidth(), onClick = { }, enabled = true)
+    RoadyFoodyTheme {
+        ReportButton(modifier = Modifier.fillMaxWidth(), onClick = { }, enabled = true)
+    }
 }
