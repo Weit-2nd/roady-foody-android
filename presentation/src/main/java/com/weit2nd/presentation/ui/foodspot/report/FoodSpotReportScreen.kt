@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,9 +25,11 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,21 +40,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.weit2nd.domain.model.spot.OperationHour
+import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.SelectPlaceRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
 import com.weit2nd.presentation.navigation.dto.toPlace
 import com.weit2nd.presentation.ui.common.CancelableImage
 import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportViewModel.Companion.IMAGE_MAX_SIZE
+import com.weit2nd.presentation.ui.theme.Black
+import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.Typography
 import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -87,83 +99,101 @@ fun FoodSpotReportScreen(
         vm.onCreate()
     }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .verticalScroll(rememberScrollState())
-                    .weight(1.0f),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.Start,
-        ) {
-            NameTextField(
-                name = state.value.name,
-                onNameValueChange = vm::onNameValueChange,
+    Scaffold(
+        topBar = {
+            TopBar(
+                modifier = Modifier.fillMaxWidth(),
             )
-
-            PlacementBtn(
-                onClickSetPlaceBtn = vm::onClickSetPlaceBtn,
-                longitude = state.value.place?.longitude,
-                latitude = state.value.place?.latitude,
-            )
-
-            FoodTruckSwitch(
-                isFoodTruck = state.value.isFoodTruck,
-                onSwitchCheckedChange = vm::onSwitchCheckedChange,
-            )
-
-            OpenCloseSelector(
-                isOpen = state.value.isOpen,
-                onClickIsOpenBtn = vm::onClickIsOpenBtn,
-            )
-
-            if (state.value.isOpen) {
-                Column {
-                    Text(text = "영업 시간 입력")
-                    OperationTimeSetting(
-                        operationHours = state.value.operationHours,
-                        dialogStatus = state.value.dialogStatus,
-                        onClickDayOfWeekBtn = vm::onClickDayOfWeekBtn,
-                        onSelectTime = vm::onSelectTime,
-                        onCloseDialog = vm::onCloseDialog,
-                        onClickEditTimeBtn = vm::onClickEditTimeBtn,
+        },
+        content = { innerPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    modifier =
+                        Modifier
+                            .verticalScroll(rememberScrollState())
+                            .weight(1.0f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    NameTextField(
+                        name = state.value.name,
+                        onNameValueChange = vm::onNameValueChange,
                     )
+
+                    PlacementBtn(
+                        onClickSetPlaceBtn = vm::onClickSetPlaceBtn,
+                        longitude = state.value.place?.longitude,
+                        latitude = state.value.place?.latitude,
+                    )
+
+                    FoodTruckSwitch(
+                        isFoodTruck = state.value.isFoodTruck,
+                        onSwitchCheckedChange = vm::onSwitchCheckedChange,
+                    )
+
+                    OpenCloseSelector(
+                        isOpen = state.value.isOpen,
+                        onClickIsOpenBtn = vm::onClickIsOpenBtn,
+                    )
+
+                    if (state.value.isOpen) {
+                        Column {
+                            Text(text = "영업 시간 입력")
+                            OperationTimeSetting(
+                                operationHours = state.value.operationHours,
+                                dialogStatus = state.value.dialogStatus,
+                                onClickDayOfWeekBtn = vm::onClickDayOfWeekBtn,
+                                onSelectTime = vm::onSelectTime,
+                                onCloseDialog = vm::onCloseDialog,
+                                onClickEditTimeBtn = vm::onClickEditTimeBtn,
+                            )
+                        }
+                    }
+
+                    Column {
+                        Text(text = "음식 카테고리")
+                        Text(
+                            text = "*최소 1개 이상 선택해야 합니다.",
+                            fontSize = 12.sp,
+                            fontStyle = FontStyle.Italic,
+                        )
+                        FoodCategory(
+                            categories = state.value.categories,
+                            onClickCategory = vm::onClickCategory,
+                        )
+                    }
+
+                    Column {
+                        Text(text = "음식점 사진")
+                        Text(
+                            text = "*최대 3개까지 등록 가능합니다.",
+                            fontSize = 12.sp,
+                            fontStyle = FontStyle.Italic,
+                        )
+                        FoodSpotImage(
+                            reportImages = state.value.reportImages,
+                            onDeleteImage = vm::onDeleteImage,
+                            onClickSelectImagesBtn = vm::onClickSelectImagesBtn,
+                        )
+                    }
+                }
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { vm.onClickReportBtn() },
+                    enabled = state.value.isLoading.not(),
+                ) {
+                    Text(text = "음식점 등록하기")
                 }
             }
-
-            Column {
-                Text(text = "음식 카테고리")
-                Text(text = "*최소 1개 이상 선택해야 합니다.", fontSize = 12.sp, fontStyle = FontStyle.Italic)
-                FoodCategory(
-                    categories = state.value.categories,
-                    onClickCategory = vm::onClickCategory,
-                )
-            }
-
-            Column {
-                Text(text = "음식점 사진")
-                Text(text = "*최대 3개까지 등록 가능합니다.", fontSize = 12.sp, fontStyle = FontStyle.Italic)
-                FoodSpotImage(
-                    reportImages = state.value.reportImages,
-                    onDeleteImage = vm::onDeleteImage,
-                    onClickSelectImagesBtn = vm::onClickSelectImagesBtn,
-                )
-            }
-        }
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { vm.onClickReportBtn() },
-            enabled = state.value.isLoading.not(),
-        ) {
-            Text(text = "음식점 등록하기")
-        }
-    }
+        },
+    )
 
     val lifecycleOwner = LocalLifecycleOwner.current
     navController.ObserveSavedState<PlaceDTO>(
@@ -171,6 +201,32 @@ fun FoodSpotReportScreen(
         key = SelectPlaceRoutes.SELECT_PLACE_KEY,
     ) {
         vm.onSelectPlace(it.toPlace())
+    }
+}
+
+@Composable
+private fun TopBar(modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            modifier = Modifier.padding(start = 4.dp),
+            onClick = {},
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_cancel),
+                contentDescription = "",
+            )
+        }
+        Text(
+            textAlign = TextAlign.Center,
+            modifier =
+                Modifier
+                    .weight(1f),
+            text = "음식점 제보하기",
+            style = Typography.headlineSmall,
+        )
     }
 }
 
@@ -190,7 +246,20 @@ private fun NameTextField(
             userInput = newValue
             onNameValueChange(newValue.text)
         },
+        textStyle = Typography.bodyLarge,
         singleLine = true,
+        colors =
+            TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+            ),
+        supportingText = {
+            Text(
+                style = Typography.bodyMedium,
+                color = Gray1,
+                text = "1자리~20자리 이내로 입력해주세요",
+            )
+        },
     )
 }
 
@@ -200,14 +269,29 @@ private fun PlacementBtn(
     longitude: Double?,
     latitude: Double?,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Button(onClick = { onClickSetPlaceBtn() }) {
-            Text(text = "위치설정")
+    Column {
+        Text(
+            text = "위치 설정",
+            style = Typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = Black,
+        )
+        Row(
+            modifier = Modifier.padding(start = 4.dp, top = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            var address = "$longitude | $latitude"
+            if (longitude == null || latitude == null) {
+                address = "주소 입력"
+            }
+            Text(text = address, style = Typography.bodyLarge, color = Gray1)
+            IconButton(onClick = { onClickSetPlaceBtn() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    contentDescription = "",
+                    tint = Gray2,
+                )
+            }
         }
-        Text(text = "$longitude\n$latitude")
     }
 }
 
@@ -411,4 +495,22 @@ private fun FoodSpotImage(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchTextFieldPreview() {
+    TopBar(
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PlacementPreview() {
+    PlacementBtn(
+        {},
+        null,
+        null,
+    )
 }
