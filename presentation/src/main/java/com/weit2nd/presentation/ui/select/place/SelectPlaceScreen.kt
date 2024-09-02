@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.select.place
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +40,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
@@ -50,6 +51,7 @@ import com.weit2nd.presentation.navigation.dto.toPlace
 import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.Gray4
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
@@ -104,7 +106,15 @@ fun SelectPlaceScreen(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     items(state.value.searchResults) { item ->
-                        SearchPlaceItem(item, vm::onClickPlace)
+                        SearchPlaceItem(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(72.dp),
+                            place = item,
+                            onClickPlace = vm::onClickPlace,
+                        )
+                        HorizontalDivider(color = Gray4)
                     }
                 }
             }
@@ -226,25 +236,28 @@ private fun SearchWithMapButton(
 
 @Composable
 private fun SearchPlaceItem(
+    modifier: Modifier = Modifier,
     place: Place,
     onClickPlace: (Place) -> Unit,
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxWidth()
+            modifier
                 .clickable {
                     onClickPlace(place)
                 },
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = place.placeName,
-            fontSize = 20.sp,
+            style = MaterialTheme.typography.titleSmall,
+            color = Black,
         )
         Text(
+            modifier = Modifier.padding(top = 4.dp),
             text = place.addressName,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            color = Black,
         )
     }
 }
@@ -270,5 +283,27 @@ private fun LocationTextFieldPreview() {
 private fun SearchWithMapButtonPreview() {
     RoadyFoodyTheme {
         SearchWithMapButton {}
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchPlaceItemPreview() {
+    RoadyFoodyTheme {
+        SearchPlaceItem(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(72.dp),
+            place =
+                Place(
+                    "김포국제공항 국내선",
+                    "서울 강서구 공항동 1373",
+                    "",
+                    0.0,
+                    0.0,
+                    "",
+                ),
+        ) {}
     }
 }
