@@ -676,7 +676,7 @@ private fun FoodSpotImage(
         if (reportImages.size < IMAGE_MAX_SIZE) {
             AddImageButton(
                 modifier =
-                    Modifier.clickable {
+                    Modifier.size(80.dp).clickable {
                         onClickSelectImagesBtn()
                     },
             )

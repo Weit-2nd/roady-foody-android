@@ -22,7 +22,6 @@ fun AddImageButton(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
-                .size(80.dp)
                 .border(
                     1.dp,
                     shape = RoundedCornerShape(12.dp),
