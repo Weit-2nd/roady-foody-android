@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -28,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -44,7 +46,9 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -52,11 +56,12 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 fun SelectPlaceMapScreen(
     vm: SelectPlaceMapViewModel = hiltViewModel(),
     onSelectPlace: (Place) -> Unit,
+    navToBack: () -> Unit,
 ) {
     val state = vm.collectAsState()
     val context = LocalContext.current
     vm.collectSideEffect { sideEffect ->
-        handleSideEffects(context, sideEffect, onSelectPlace)
+        handleSideEffects(context, sideEffect, onSelectPlace, navToBack)
     }
     val mapView =
         remember {
@@ -82,64 +87,73 @@ fun SelectPlaceMapScreen(
     DisposableEffectWithLifeCycle(onResume = mapView::resume, onPause = mapView::pause)
 
     var mapRectSize by remember { mutableStateOf(IntSize.Zero) }
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .weight(3f)
-                    .onGloballyPositioned { layoutCoordinates ->
-                        mapRectSize = layoutCoordinates.size
-                    },
-            contentAlignment = Alignment.TopStart,
-        ) {
-            AndroidView(
-                modifier = Modifier,
-                factory = { mapView },
-            )
 
-            CurrentPositionBtn(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = 16.dp, bottom = 24.dp),
-                onClick = vm::onClickCurrentPositionBtn,
-            )
+    Scaffold(
+        topBar = {
+            BackTopBar(title = "지도에서 찾기", onClickBackBtn = vm::onClickBackBtn)
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .weight(3f)
+                            .onGloballyPositioned { layoutCoordinates ->
+                                mapRectSize = layoutCoordinates.size
+                            },
+                    contentAlignment = Alignment.TopStart,
+                ) {
+                    AndroidView(
+                        modifier = Modifier,
+                        factory = { mapView },
+                    )
 
-            var selectMarkerIconSize by remember { mutableStateOf(IntSize.Zero) }
-            PositionSelectMarker(
-                modifier =
-                    Modifier
-                        .onGloballyPositioned { layoutCoordinates ->
-                            selectMarkerIconSize = layoutCoordinates.size
-                            val centerX = mapRectSize.width / 2
-                            val centerY = mapRectSize.height / 2
-                            vm.onGloballyPositioned(IntOffset(centerX, centerY))
-                        }.offset {
-                            IntOffset(
-                                state.value.selectMarkerOffset.x - selectMarkerIconSize.width / 2,
-                                state.value.selectMarkerOffset.y - selectMarkerIconSize.height / 2,
-                            )
-                        },
-            )
-        }
-        PlaceInfoView(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(16.dp),
-            canSelect = state.value.isLoading.not() && state.value.isAvailablePlace,
-            place = state.value.place,
-            onClick = vm::onClickSelectPlaceBtn,
-        )
-    }
+                    CurrentPositionBtn(
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 16.dp, bottom = 24.dp),
+                        onClick = vm::onClickCurrentPositionBtn,
+                    )
+
+                    var selectMarkerIconSize by remember { mutableStateOf(IntSize.Zero) }
+                    PositionSelectMarker(
+                        modifier =
+                            Modifier
+                                .onGloballyPositioned { layoutCoordinates ->
+                                    selectMarkerIconSize = layoutCoordinates.size
+                                    val centerX = mapRectSize.width / 2
+                                    val centerY = mapRectSize.height / 2
+                                    vm.onGloballyPositioned(IntOffset(centerX, centerY))
+                                }.offset {
+                                    IntOffset(
+                                        state.value.selectMarkerOffset.x - selectMarkerIconSize.width / 2,
+                                        state.value.selectMarkerOffset.y - selectMarkerIconSize.height / 2,
+                                    )
+                                },
+                    )
+                }
+                PlaceInfoView(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(16.dp),
+                    canSelect = state.value.isLoading.not() && state.value.isAvailablePlace,
+                    place = state.value.place,
+                    onClick = vm::onClickSelectPlaceBtn,
+                )
+            }
+        },
+    )
 }
 
 private fun handleSideEffects(
     context: Context,
     sideEffect: SelectPlaceMapSideEffect,
     onSelectPlace: (Place) -> Unit,
+    navToBack: () -> Unit,
 ) {
     when (sideEffect) {
         is SelectPlaceMapSideEffect.MoveCamera -> {
@@ -153,6 +167,10 @@ private fun handleSideEffects(
 
         is SelectPlaceMapSideEffect.ShowToast -> {
             Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+        }
+
+        SelectPlaceMapSideEffect.NavToBack -> {
+            navToBack()
         }
     }
 }
@@ -257,6 +275,30 @@ private fun DisposableEffectWithLifeCycle(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PlaceInfoViewPreview() {
+    RoadyFoodyTheme {
+        PlaceInfoView(
+            modifier =
+                Modifier
+                    .padding(16.dp),
+            canSelect = true,
+            place =
+                Place(
+                    "김포국제공항 국내선",
+                    "서울 강서구 공항동 1373",
+                    "서울 강서구 하늘길 77",
+                    0.0,
+                    0.0,
+                    "",
+                ),
+        ) {
+//
         }
     }
 }

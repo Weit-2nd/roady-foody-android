@@ -27,4 +27,6 @@ sealed class SelectPlaceMapIntent {
     data class SelectPlace(
         val place: Place,
     ) : SelectPlaceMapIntent()
+
+    data object NavToBack : SelectPlaceMapIntent()
 }
