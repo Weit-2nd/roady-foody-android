@@ -22,8 +22,12 @@ class SelectPlaceViewModel @Inject constructor(
         SelectPlaceIntent.SearchPlace.post()
     }
 
-    fun onClickPlace(place: Place)  {
+    fun onClickPlace(place: Place) {
         SelectPlaceIntent.SelectPlace(place).post()
+    }
+
+    fun onClickBackBtn() {
+        SelectPlaceIntent.NavToBack.post()
     }
 
     private fun SelectPlaceIntent.post() =
@@ -51,6 +55,10 @@ class SelectPlaceViewModel @Inject constructor(
 
                 is SelectPlaceIntent.SelectPlace -> {
                     postSideEffect(SelectPlaceSideEffect.SelectPlace(place))
+                }
+
+                SelectPlaceIntent.NavToBack -> {
+                    postSideEffect(SelectPlaceSideEffect.NavToBack)
                 }
             }
         }

@@ -1,9 +1,12 @@
 package com.weit2nd.presentation.ui.select.place
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +18,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -24,10 +29,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,9 +43,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
 import com.weit2nd.presentation.navigation.dto.toPlace
+import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
@@ -51,6 +61,7 @@ fun SelectPlaceScreen(
     navToMap: () -> Unit,
     onSelectPlace: (Place) -> Unit,
     navController: NavController,
+    navToBack: () -> Unit,
 ) {
     val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
@@ -58,35 +69,47 @@ fun SelectPlaceScreen(
             is SelectPlaceSideEffect.SelectPlace -> {
                 onSelectPlace(sideEffect.place)
             }
-        }
-    }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-    ) {
-        LocationTextField(
-            modifier = Modifier.fillMaxWidth(),
-            onValueChange = vm::onValueChange,
-            onSearch = vm::onLocationSearch,
-        )
-        SearchWithMapButton(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-            navToMap = navToMap,
-        )
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            items(state.value.searchResults) { item ->
-                SearchPlaceItem(item, vm::onClickPlace)
+            SelectPlaceSideEffect.NavToBack -> {
+                navToBack()
             }
         }
     }
+
+    Scaffold(
+        topBar = {
+            TopBar(modifier = Modifier.fillMaxWidth(), onClickBackBtn = vm::onClickBackBtn)
+        },
+        content = { innerPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+            ) {
+                LocationTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChange = vm::onValueChange,
+                    onSearch = vm::onLocationSearch,
+                )
+                SearchWithMapButton(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                    navToMap = navToMap,
+                )
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    items(state.value.searchResults) { item ->
+                        SearchPlaceItem(item, vm::onClickPlace)
+                    }
+                }
+            }
+        },
+    )
 
     val lifecycleOwner = LocalLifecycleOwner.current
     navController.ObserveSavedState<PlaceDTO>(
@@ -94,6 +117,40 @@ fun SelectPlaceScreen(
         key = SelectPlaceMapRoutes.SELECT_PLACE_KEY,
     ) {
         vm.onClickPlace(it.toPlace())
+    }
+}
+
+@Composable
+private fun TopBar(
+    modifier: Modifier,
+    onClickBackBtn: () -> Unit,
+) {
+    Box(
+        modifier = modifier.height(50.dp),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Text(
+            modifier = modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            text = "음식점 위치 설정",
+            style = MaterialTheme.typography.headlineSmall,
+            color = Black,
+        )
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = { onClickBackBtn() },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_navigate),
+                    contentDescription = "",
+                    tint = Black,
+                )
+            }
+        }
     }
 }
 
@@ -189,6 +246,14 @@ private fun SearchPlaceItem(
             fontSize = 16.sp,
             modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TopBarPreview() {
+    RoadyFoodyTheme {
+        TopBar(modifier = Modifier) {}
     }
 }
 

@@ -6,4 +6,6 @@ sealed class SelectPlaceSideEffect {
     data class SelectPlace(
         val place: Place,
     ) : SelectPlaceSideEffect()
+
+    data object NavToBack : SelectPlaceSideEffect()
 }

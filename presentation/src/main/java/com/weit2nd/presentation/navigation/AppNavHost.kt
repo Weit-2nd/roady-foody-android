@@ -217,6 +217,9 @@ private fun NavGraphBuilder.selectPlaceComposable(navController: NavHostControll
                 navController.popBackStack()
             },
             navController = navController,
+            navToBack = {
+                navController.popBackStack()
+            },
         )
     }
 }
