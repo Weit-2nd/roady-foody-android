@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
-import com.weit2nd.presentation.ui.theme.White
 
 @Composable
 fun BottomButton(
@@ -30,7 +29,7 @@ fun BottomButton(
             modifier = Modifier.padding(vertical = 4.dp),
             text = text,
             style = MaterialTheme.typography.headlineSmall,
-            color = White,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }

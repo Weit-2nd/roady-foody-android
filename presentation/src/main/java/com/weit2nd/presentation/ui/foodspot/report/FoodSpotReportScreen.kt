@@ -75,7 +75,6 @@ import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
-import com.weit2nd.presentation.ui.theme.White
 import com.weit2nd.presentation.util.ObserveSavedState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -482,7 +481,7 @@ private fun DayOfWeekSelector(
                 colors =
                     FilterChipDefaults.filterChipColors(
                         selectedContainerColor = MaterialTheme.colorScheme.primary,
-                        selectedLabelColor = White,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                     ),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 selected = operationHourStatus.isSelected,
@@ -619,7 +618,7 @@ private fun FoodCategory(
                 colors =
                     FilterChipDefaults.filterChipColors(
                         selectedContainerColor = MaterialTheme.colorScheme.primary,
-                        selectedLabelColor = White,
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
                     ),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                 label = {
