@@ -225,6 +225,7 @@ private fun TopBar(
             textAlign = TextAlign.Center,
             text = stringResource(R.string.tood_spot_report_toolbar_title),
             style = MaterialTheme.typography.headlineSmall,
+            color = Black,
         )
         Row(
             modifier = modifier,
@@ -238,6 +239,7 @@ private fun TopBar(
                     modifier = Modifier.size(24.dp),
                     imageVector = Icons.Outlined.Close,
                     contentDescription = "",
+                    tint = Black,
                 )
             }
         }
