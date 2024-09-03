@@ -48,6 +48,10 @@ class HomeViewModel @Inject constructor(
         HomeIntent.NavToFoodSpotDetail(foodSpotId).post()
     }
 
+    fun onProfileClick() {
+        HomeIntent.NavToMyPage.post()
+    }
+
     private fun HomeIntent.post() =
         intent {
             when (this@post) {
@@ -74,6 +78,9 @@ class HomeViewModel @Inject constructor(
 
                 is HomeIntent.NavToFoodSpotDetail -> {
                     postSideEffect(HomeSideEffect.NavToFoodSpotDetail(foodSpotId))
+                }
+                HomeIntent.NavToMyPage -> {
+                    postSideEffect(HomeSideEffect.NavToMyPage)
                 }
             }
         }

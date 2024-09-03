@@ -67,6 +67,9 @@ fun HomeScreen(
             is HomeSideEffect.NavToFoodSpotDetail -> {
                 navToFoodSpotDetail(sideEffect.foodSpotId)
             }
+            HomeSideEffect.NavToMyPage -> {
+                navToMyPage()
+            }
         }
     }
     Scaffold(
@@ -109,7 +112,7 @@ fun HomeScreen(
                     searchWords = state.searchWords,
                     profileImage = state.profileImage,
                     onSearchBarClick = vm::onSearchPlaceClick,
-                    onProfileClick = navToMyPage,
+                    onProfileClick = vm::onProfileClick,
                 )
                 FoodSpotReportButton(
                     modifier = Modifier.align(Alignment.BottomStart),

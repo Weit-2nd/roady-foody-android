@@ -14,4 +14,6 @@ sealed class HomeSideEffect {
     data class NavToFoodSpotDetail(
         val foodSpotId: Long,
     ) : HomeSideEffect()
+
+    data object NavToMyPage : HomeSideEffect()
 }

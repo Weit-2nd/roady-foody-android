@@ -10,4 +10,6 @@ sealed class HomeIntent {
     data class NavToFoodSpotDetail(
         val foodSpotId: Long,
     ) : HomeIntent()
+
+    data object NavToMyPage : HomeIntent()
 }
