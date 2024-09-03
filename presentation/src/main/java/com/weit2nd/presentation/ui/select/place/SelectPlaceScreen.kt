@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
 import com.weit2nd.presentation.navigation.dto.toPlace
@@ -80,7 +82,7 @@ fun SelectPlaceScreen(
         topBar = {
             BackTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = "음식점 위치 설정",
+                title = stringResource(R.string.select_place_screen_toolbar_title),
                 onClickBackBtn = vm::onClickBackBtn,
             )
         },
@@ -104,7 +106,7 @@ fun SelectPlaceScreen(
                             .fillMaxWidth()
                             .padding(vertical = 12.dp),
                     onClick = { navToMap(null) },
-                    text = "지도에서 찾기",
+                    text = stringResource(R.string.select_place_find_with_map),
                     textStyle = MaterialTheme.typography.titleSmall,
                 )
 
@@ -156,7 +158,7 @@ private fun LocationTextField(
             ),
         placeholder = {
             Text(
-                text = "지번, 도로명, 건물명으로 검색",
+                text = stringResource(R.string.select_place_search_placeholder),
                 style = MaterialTheme.typography.bodyLarge,
                 color = Gray2,
             )

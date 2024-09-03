@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -94,7 +95,10 @@ fun SelectPlaceMapScreen(
 
     Scaffold(
         topBar = {
-            BackTopBar(title = "지도에서 찾기", onClickBackBtn = vm::onClickBackBtn)
+            BackTopBar(
+                title = stringResource(R.string.select_place_map_toolbar_title),
+                onClickBackBtn = vm::onClickBackBtn,
+            )
         },
         content = { innerPadding ->
             Column(
@@ -235,7 +239,7 @@ private fun PlaceInfoView(
             modifier = Modifier.fillMaxWidth(),
             onClick = { onClick() },
             enabled = canSelect,
-            text = "이 위치로 등록",
+            text = stringResource(R.string.select_place_map_register_btn),
             textStyle = MaterialTheme.typography.titleSmall,
         )
     }
