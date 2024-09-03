@@ -124,8 +124,8 @@ fun SelectPlaceMapScreen(
                     CurrentPositionBtn(
                         modifier =
                             Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(end = 16.dp, bottom = 24.dp),
+                                .align(Alignment.BottomStart)
+                                .padding(start = 16.dp, bottom = 32.dp),
                         onClick = vm::onClickCurrentPositionBtn,
                     )
 
