@@ -3,7 +3,6 @@ package com.weit2nd.presentation.ui.select.place.map
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,6 +47,7 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.weit2nd.domain.model.search.Place
+import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.BottomButton
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
@@ -127,6 +129,7 @@ fun SelectPlaceMapScreen(
                     PositionSelectMarker(
                         modifier =
                             Modifier
+                                .size(40.dp)
                                 .onGloballyPositioned { layoutCoordinates ->
                                     selectMarkerIconSize = layoutCoordinates.size
                                     val centerX = mapRectSize.width / 2
@@ -195,9 +198,10 @@ private fun handleSideEffects(
 
 @Composable
 private fun PositionSelectMarker(modifier: Modifier = Modifier) {
-    Image(
+    Icon(
         modifier = modifier,
-        painter = painterResource(android.R.drawable.ic_menu_mylocation),
+        painter = painterResource(R.drawable.ic_my_location),
+        tint = MaterialTheme.colorScheme.tertiary,
         contentDescription = "positionSelectMarker",
     )
 }
