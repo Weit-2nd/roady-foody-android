@@ -1,4 +1,4 @@
-package com.weit2nd.presentation.ui.map
+package com.weit2nd.presentation.ui.home
 
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.search.FoodSpot
