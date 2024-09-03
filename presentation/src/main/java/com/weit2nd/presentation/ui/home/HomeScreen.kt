@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -132,9 +133,9 @@ fun HomeScreen(
     Scaffold {
         Surface(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(it),
+            Modifier
+                .fillMaxSize()
+                .padding(it),
         ) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
@@ -142,9 +143,9 @@ fun HomeScreen(
             )
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
             ) {
                 Column(
                     modifier =
@@ -165,14 +166,14 @@ fun HomeScreen(
                         onProfileClick = vm::onProfileClick,
                     )
                     if (state.isMoved) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
+                        Spacer(modifier = Modifier.height(8.dp))
+                        RetryButton(
                             onClick = {
-                                state.map?.let { map -> vm.onClickRefreshFoodSpotBtn(map) }
-                            },
-                        ) {
-                            Text(text = "이 위치에서 검색")
-                        }
+                                state.map?.let { map ->
+                                    vm.onClickRefreshFoodSpotBtn(map)
+                                }
+                            }
+                        )
                     }
                 }
                 CurrentPositionBtn(
@@ -264,8 +265,8 @@ private fun SearchBar(
                     Modifier
                         .weight(1f)
                         .clickable {
-                        onSearchBarClick()
-                    },
+                            onSearchBarClick()
+                        },
                 text = words,
                 maxLines = 1,
                 style = MaterialTheme.typography.bodyMedium,
@@ -284,6 +285,44 @@ private fun SearchBar(
                 contentDescription = "navigate to profile",
                 contentScale = ContentScale.Crop,
                 fallback = painterResource(id = R.drawable.ic_input_delete_filled),
+            )
+        }
+    }
+}
+
+@Composable
+fun RetryButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+        shape = RoundedCornerShape(20.dp),
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors().copy(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.primary
+        ),
+        contentPadding = PaddingValues(
+            start = 4.dp,
+            top = 4.dp,
+            bottom = 4.dp,
+            end = 8.dp,
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_retry),
+                contentDescription = "search",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = stringResource(id = R.string.home_search_retry),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
     }
@@ -403,6 +442,16 @@ private fun SearchBarPreview() {
             profileImage = "",
             onSearchBarClick = {},
             onProfileClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun RetryButtonPreview() {
+    RoadyFoodyTheme {
+        RetryButton(
+            onClick = {},
         )
     }
 }
