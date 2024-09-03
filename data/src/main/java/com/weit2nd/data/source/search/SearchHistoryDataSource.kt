@@ -2,40 +2,66 @@ package com.weit2nd.data.source.search
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringSetPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.catch
+import androidx.datastore.dataStore
+import com.weit2nd.data.SearchHistoriesPreferences
+import com.weit2nd.data.SearchHistoryPreferences
+import com.weit2nd.domain.model.Coordinate
+import com.weit2nd.domain.model.search.SearchHistory
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class SearchHistoryDataSource @Inject constructor(
     private val context: Context,
 ) {
-    private val Context.placeSearchHistoryDataStore: DataStore<Preferences> by preferencesDataStore(
-        name = "searchHistory",
+    private val Context.dataStore: DataStore<SearchHistoriesPreferences> by dataStore(
+        fileName = SEARCH_HISTORIES_FILE_NAME,
+        serializer = SearchHistoriesSerializer,
     )
 
-    suspend fun getSearchHistories(): List<String> {
-        return context.placeSearchHistoryDataStore.data
-            .catch {
-                emit(emptyPreferences())
-            }.map { preference ->
-                preference[KEY_SEARCH_HISTORY] ?: emptyList()
-            }.first()
-            .toList()
+    suspend fun getSearchHistories(): List<SearchHistory> {
+        return context.dataStore.data
+            .first()
+            .toSearchHistories()
     }
 
-    suspend fun setSearchHistory(searchWords: List<String>) {
-        context.placeSearchHistoryDataStore.edit { preference ->
-            preference[KEY_SEARCH_HISTORY] = searchWords.toSet()
+    suspend fun setSearchHistory(searchHistories: List<SearchHistory>) {
+        context.dataStore.updateData { preferences ->
+            val histories =
+                searchHistories.map {
+                    it.toSearchHistoryPreferences()
+                }
+            preferences
+                .toBuilder()
+                .clear()
+                .addAllHistories(histories)
+                .build()
         }
     }
 
+    private fun SearchHistoryPreferences.toSearchHistory() =
+        SearchHistory(
+            words = words,
+            coordinate = Coordinate(latitude, longitude),
+            isPlace = isPlace,
+        )
+
+    private fun SearchHistoriesPreferences.toSearchHistories() =
+        buildList {
+            repeat(this@toSearchHistories.historiesCount) { position ->
+                add(getHistories(position).toSearchHistory())
+            }
+        }
+
+    private fun SearchHistory.toSearchHistoryPreferences() =
+        SearchHistoryPreferences
+            .newBuilder()
+            .setWords(words)
+            .setLatitude(coordinate.latitude)
+            .setLongitude(coordinate.longitude)
+            .setIsPlace(isPlace)
+            .build()
+
     private companion object {
-        val KEY_SEARCH_HISTORY = stringSetPreferencesKey(name = "search_history")
+        private const val SEARCH_HISTORIES_FILE_NAME = "search_histories.pb"
     }
 }

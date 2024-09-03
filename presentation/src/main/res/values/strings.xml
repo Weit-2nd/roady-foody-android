@@ -42,4 +42,13 @@
     <string name="food_spot_report_btn">음식점 등록하기</string>
     <string name="food_spot_report_time_pattern">HH:mm</string>
 
+    <!-- SearchTopBar -->
+    <string name="search_top_bar_hint">지번, 도로명, 건물명으로 검색</string>
+
+    <!-- SearchPlace -->
+    <string name="search_place_history">최근검색</string>
+
+    <string name="distance_km">%.1fkm</string>
+    <string name="distance_m">%dm</string>
+
 </resources>
