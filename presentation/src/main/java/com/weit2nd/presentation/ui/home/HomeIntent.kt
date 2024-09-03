@@ -34,4 +34,6 @@ sealed class HomeIntent {
     data object NavToMyPage : HomeIntent()
 
     data object ShowRetryButton : HomeIntent()
+
+    data object SetProfileImage : HomeIntent()
 }

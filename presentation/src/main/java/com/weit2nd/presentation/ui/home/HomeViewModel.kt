@@ -6,6 +6,7 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.usecase.search.SearchFoodSpotsUseCase
+import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.HomeNavRoutes
 import com.weit2nd.presentation.navigation.dto.CoordinateDTO
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val getMyUserInfoUseCase: GetMyUserInfoUseCase,
     private val searchFoodSpotsUseCase: SearchFoodSpotsUseCase,
 ) : BaseViewModel<HomeState, HomeSideEffect>() {
     private val placeSearch = savedStateHandle.get<PlaceSearchDTO>(HomeNavRoutes.PLACE_SEARCH_KEY)
@@ -35,12 +37,12 @@ class HomeViewModel @Inject constructor(
     private var currentCameraPosition: LatLng = container.stateFlow.value.initialLatLng
     private var searchFoodSpotsJob: Job = Job().apply { complete() }
 
-    fun onClickReportBtn() {
-        HomeIntent.NavToFoodSpotReport.post()
+    fun onCreate() {
+        HomeIntent.SetProfileImage.post()
     }
 
-    fun onNavigateButtonClick() {
-        HomeIntent.NavToBack.post()
+    fun onClickReportBtn() {
+        HomeIntent.NavToFoodSpotReport.post()
     }
 
     fun onSearchPlaceClick() {
@@ -171,6 +173,20 @@ class HomeViewModel @Inject constructor(
                         state.copy(
                             isMoved = true,
                         )
+                    }
+                }
+
+                HomeIntent.SetProfileImage -> {
+                    runCatching {
+                        getMyUserInfoUseCase().profileImage.orEmpty()
+                    }.onSuccess { image ->
+                        reduce {
+                            state.copy(
+                                profileImage = image,
+                            )
+                        }
+                    }.onFailure {
+                        Log.d("MainTest", "$it")
                     }
                 }
             }

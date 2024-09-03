@@ -114,6 +114,10 @@ fun HomeScreen(
             }
         }
 
+    LaunchedEffect(Unit) {
+        vm.onCreate()
+    }
+
     LaunchedEffect(state.foodSpots) {
         state.map?.let {
             drawMarkers(it, state.foodSpots)
@@ -257,7 +261,9 @@ private fun SearchBar(
                 }
             Text(
                 modifier =
-                    Modifier.clickable {
+                    Modifier
+                        .weight(1f)
+                        .clickable {
                         onSearchBarClick()
                     },
                 text = words,
