@@ -64,4 +64,6 @@
     <string name="time_picker_dialog_cancel">취소</string>
     <string name="time_picker_dialog_confirm">확인</string>
 
+    <!-- HomeScreen -->
+    <string name="home_post_food_spot">음식점 제보</string>
 </resources>
