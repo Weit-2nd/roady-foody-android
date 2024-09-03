@@ -7,5 +7,7 @@ sealed class FoodSpotReportSideEffect {
         val message: String,
     ) : FoodSpotReportSideEffect()
 
+    data object NavToBack : FoodSpotReportSideEffect()
+
     data object ReportSuccess : FoodSpotReportSideEffect()
 }
