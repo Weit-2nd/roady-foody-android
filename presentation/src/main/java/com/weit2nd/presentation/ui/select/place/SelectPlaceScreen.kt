@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
@@ -53,7 +54,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun SelectPlaceScreen(
     vm: SelectPlaceViewModel = hiltViewModel(),
-    navToMap: () -> Unit,
+    navToMap: (Coordinate?) -> Unit,
     onSelectPlace: (Place) -> Unit,
     navController: NavController,
     navToBack: () -> Unit,
@@ -67,6 +68,10 @@ fun SelectPlaceScreen(
 
             SelectPlaceSideEffect.NavToBack -> {
                 navToBack()
+            }
+
+            is SelectPlaceSideEffect.NavToMap -> {
+                navToMap(sideEffect.coordinate)
             }
         }
     }
@@ -98,7 +103,7 @@ fun SelectPlaceScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(vertical = 12.dp),
-                    onClick = { navToMap() },
+                    onClick = { navToMap(null) },
                     text = "지도에서 찾기",
                     textStyle = MaterialTheme.typography.titleSmall,
                 )
@@ -127,7 +132,7 @@ fun SelectPlaceScreen(
         lifecycleOwner = lifecycleOwner,
         key = SelectPlaceMapRoutes.SELECT_PLACE_KEY,
     ) {
-        vm.onClickPlace(it.toPlace())
+        vm.onSelectPlace(it.toPlace())
     }
 }
 

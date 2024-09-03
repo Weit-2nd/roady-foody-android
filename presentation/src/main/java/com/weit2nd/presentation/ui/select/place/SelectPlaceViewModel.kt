@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.select.place
 
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.domain.usecase.search.SearchPlacesWithWordUseCase
 import com.weit2nd.presentation.base.BaseViewModel
@@ -23,6 +24,16 @@ class SelectPlaceViewModel @Inject constructor(
     }
 
     fun onClickPlace(place: Place) {
+        SelectPlaceIntent
+            .NavToMap(
+                Coordinate(
+                    latitude = place.latitude,
+                    longitude = place.longitude,
+                ),
+            ).post()
+    }
+
+    fun onSelectPlace(place: Place) {
         SelectPlaceIntent.SelectPlace(place).post()
     }
 
@@ -59,6 +70,10 @@ class SelectPlaceViewModel @Inject constructor(
 
                 SelectPlaceIntent.NavToBack -> {
                     postSideEffect(SelectPlaceSideEffect.NavToBack)
+                }
+
+                is SelectPlaceIntent.NavToMap -> {
+                    postSideEffect(SelectPlaceSideEffect.NavToMap(coordinate))
                 }
             }
         }
