@@ -1,11 +1,13 @@
 package com.weit2nd.presentation.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,17 +23,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.SearchTopBar
 import com.weit2nd.presentation.ui.map.MapScreen
+import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
@@ -93,13 +99,18 @@ fun HomeScreen(
                         .fillMaxSize()
                         .padding(16.dp),
             ) {
-                Button(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = navToMyPage,
-                    shape = RoundedCornerShape(100),
-                ) {
-                    Text(text = "마페")
-                }
+                SearchBar(
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopCenter)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(MaterialTheme.colorScheme.surface),
+                    searchWords = state.searchWords,
+                    profileImage = state.profileImage,
+                    onSearchBarClick = vm::onSearchPlaceClick,
+                    onProfileClick = navToMyPage,
+                )
                 FoodSpotReportButton(
                     modifier = Modifier.align(Alignment.BottomStart),
                     onClick = vm::onClickReportBtn,
@@ -146,12 +157,89 @@ fun FoodSpotReportButton(
     }
 }
 
+@Composable
+private fun SearchBar(
+    modifier: Modifier = Modifier,
+    searchWords: String,
+    profileImage: String,
+    onSearchBarClick: () -> Unit,
+    onProfileClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        Row(
+            modifier =
+                Modifier.padding(
+                    start = 16.dp,
+                    top = 8.dp,
+                    bottom = 8.dp,
+                    end = 8.dp,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val words =
+                searchWords.ifBlank {
+                    stringResource(id = R.string.home_search_bar_placeholder)
+                }
+            val textColor =
+                if (searchWords.isNotBlank()) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    Gray1
+                }
+            Text(
+                modifier =
+                    Modifier.clickable {
+                        onSearchBarClick()
+                    },
+                text = words,
+                maxLines = 1,
+                style = MaterialTheme.typography.bodyMedium,
+                color = textColor,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AsyncImage(
+                modifier =
+                    Modifier
+                        .size(24.dp)
+                        .clip(RoundedCornerShape(100))
+                        .clickable {
+                            onProfileClick()
+                        },
+                model = profileImage,
+                contentDescription = "navigate to profile",
+                contentScale = ContentScale.Crop,
+                fallback = painterResource(id = R.drawable.ic_input_delete_filled),
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun FoodSpotReportButtonPreview() {
     RoadyFoodyTheme {
         FoodSpotReportButton(
             onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SearchBarPreview() {
+    RoadyFoodyTheme {
+        SearchBar(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.surface),
+            searchWords = "",
+            profileImage = "",
+            onSearchBarClick = {},
+            onProfileClick = {},
         )
     }
 }
