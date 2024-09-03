@@ -1,12 +1,22 @@
 package com.weit2nd.presentation.ui.common.currentposition
 
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kakao.vectormap.LatLng
-import org.orbitmvi.orbit.compose.collectAsState
+import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.theme.DarkGray
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
@@ -16,16 +26,36 @@ fun CurrentPositionBtn(
     onClick: ((LatLng) -> Unit) = {},
     onError: (Throwable) -> Unit = {},
 ) {
-    val state = vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         handleSideEffects(sideEffect, onClick, onError)
     }
-    Button(
+    CurrentPositionButton(
         modifier = modifier,
-        enabled = state.value.isLoading.not(),
         onClick = vm::onButtonClick,
+    )
+}
+
+@Composable
+private fun CurrentPositionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    FloatingActionButton(
+        modifier = modifier,
+        onClick = onClick,
+        shape = RoundedCornerShape(100),
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = DarkGray,
     ) {
-        Text(text = "현재 위치")
+        Icon(
+            modifier =
+                Modifier
+                    .padding(8.dp)
+                    .fillMaxSize(),
+            painter = painterResource(id = R.drawable.ic_aim),
+            contentDescription = "",
+            tint = DarkGray,
+        )
     }
 }
 
@@ -42,5 +72,16 @@ private fun handleSideEffects(
         is CurrentPositionSideEffect.PositionRequestFailed -> {
             onError(sideEffect.error)
         }
+    }
+}
+
+@Preview
+@Composable
+private fun CurrentPositionButtonPreview() {
+    RoadyFoodyTheme {
+        CurrentPositionButton(
+            modifier = Modifier.size(40.dp),
+            onClick = {},
+        )
     }
 }
