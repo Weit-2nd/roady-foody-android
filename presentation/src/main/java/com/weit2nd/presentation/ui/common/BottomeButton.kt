@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
@@ -16,8 +17,9 @@ import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 fun BottomButton(
     modifier: Modifier,
     onClick: () -> Unit,
-    enabled: Boolean,
+    enabled: Boolean = true,
     text: String,
+    textStyle: TextStyle,
 ) {
     Button(
         modifier = modifier,
@@ -28,7 +30,7 @@ fun BottomButton(
         Text(
             modifier = Modifier.padding(vertical = 4.dp),
             text = text,
-            style = MaterialTheme.typography.headlineSmall,
+            style = textStyle,
             color = MaterialTheme.colorScheme.onPrimary,
         )
     }
@@ -43,6 +45,7 @@ private fun ReportButtonPreview() {
             onClick = { },
             enabled = true,
             text = "음식점 등록하기",
+            textStyle = MaterialTheme.typography.headlineSmall
         )
     }
 }

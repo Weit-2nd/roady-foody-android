@@ -14,8 +14,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +40,7 @@ import com.weit2nd.presentation.navigation.SelectPlaceMapRoutes
 import com.weit2nd.presentation.navigation.dto.PlaceDTO
 import com.weit2nd.presentation.navigation.dto.toPlace
 import com.weit2nd.presentation.ui.common.BackTopBar
+import com.weit2nd.presentation.ui.common.BottomButton
 import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray2
@@ -93,13 +92,17 @@ fun SelectPlaceScreen(
                     onValueChange = vm::onValueChange,
                     onSearch = vm::onLocationSearch,
                 )
-                SearchWithMapButton(
+
+                BottomButton(
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .padding(vertical = 12.dp),
-                    navToMap = navToMap,
+                    onClick = { navToMap() },
+                    text = "지도에서 찾기",
+                    textStyle = MaterialTheme.typography.titleSmall,
                 )
+
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -178,27 +181,6 @@ private fun LocationTextField(
 }
 
 @Composable
-private fun SearchWithMapButton(
-    modifier: Modifier = Modifier,
-    navToMap: () -> Unit,
-) {
-    Button(
-        modifier = modifier,
-        onClick = { navToMap() },
-        colors =
-            ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-            ),
-    ) {
-        Text(
-            text = "지도에서 찾기",
-            style = MaterialTheme.typography.titleSmall,
-        )
-    }
-}
-
-@Composable
 private fun SearchPlaceItem(
     modifier: Modifier = Modifier,
     place: Place,
@@ -231,14 +213,6 @@ private fun SearchPlaceItem(
 private fun LocationTextFieldPreview() {
     RoadyFoodyTheme {
         LocationTextField(modifier = Modifier, onValueChange = { _ -> }, onSearch = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SearchWithMapButtonPreview() {
-    RoadyFoodyTheme {
-        SearchWithMapButton {}
     }
 }
 

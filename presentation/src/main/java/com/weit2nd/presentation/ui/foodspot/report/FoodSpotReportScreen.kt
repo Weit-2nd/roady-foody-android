@@ -194,6 +194,7 @@ fun FoodSpotReportScreen(
                     onClick = { vm.onClickReportBtn() },
                     enabled = state.value.isLoading.not(),
                     text = stringResource(R.string.food_spot_report_btn),
+                    textStyle = MaterialTheme.typography.headlineSmall,
                 )
             }
         },

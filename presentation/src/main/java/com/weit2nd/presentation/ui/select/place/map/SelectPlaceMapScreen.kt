@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,6 +47,7 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.presentation.ui.common.BackTopBar
+import com.weit2nd.presentation.ui.common.BottomButton
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
@@ -226,17 +226,14 @@ private fun PlaceInfoView(
             style = MaterialTheme.typography.titleMedium,
             color = Black,
         )
-        Button(
+
+        BottomButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = { onClick() },
             enabled = canSelect,
-        ) {
-            Text(
-                text = "이 위치로 등록",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-        }
+            text = "이 위치로 등록",
+            textStyle = MaterialTheme.typography.titleSmall,
+        )
     }
 }
 
