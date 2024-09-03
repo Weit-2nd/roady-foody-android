@@ -4,14 +4,19 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,17 +28,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -48,6 +49,7 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.weit2nd.domain.model.search.Place
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
+import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -94,12 +96,15 @@ fun SelectPlaceMapScreen(
         },
         content = { innerPadding ->
             Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
             ) {
                 Box(
                     modifier =
                         Modifier
-                            .weight(3f)
+                            .weight(1f)
                             .onGloballyPositioned { layoutCoordinates ->
                                 mapRectSize = layoutCoordinates.size
                             },
@@ -134,12 +139,25 @@ fun SelectPlaceMapScreen(
                                     )
                                 },
                     )
+                    Spacer(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .align(Alignment.BottomCenter)
+                                .background(
+                                    MaterialTheme.colorScheme.background,
+                                    RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                                ),
+                    )
                 }
+
                 PlaceInfoView(
                     modifier =
                         Modifier
-                            .weight(1f)
-                            .padding(16.dp),
+                            .fillMaxWidth()
+                            .height(128.dp)
+                            .padding(horizontal = 16.dp),
                     canSelect = state.value.isLoading.not() && state.value.isAvailablePlace,
                     place = state.value.place,
                     onClick = vm::onClickSelectPlaceBtn,
@@ -192,30 +210,32 @@ private fun PlaceInfoView(
     onClick: () -> Unit,
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.SpaceBetween,
+        modifier =
+        modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = place.addressName,
-            style =
-                TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                ),
+            style = MaterialTheme.typography.headlineSmall,
+            color = Black,
         )
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = place.roadAddressName,
-            style = TextStyle(fontSize = 16.sp),
+            style = MaterialTheme.typography.titleMedium,
+            color = Black,
         )
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = { onClick() },
             enabled = canSelect,
         ) {
-            Text(text = "이 위치로 등록")
+            Text(
+                text = "이 위치로 등록",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
         }
     }
 }
@@ -286,7 +306,9 @@ private fun PlaceInfoViewPreview() {
         PlaceInfoView(
             modifier =
                 Modifier
-                    .padding(16.dp),
+                    .fillMaxWidth()
+                    .height(128.dp)
+                    .padding(horizontal = 16.dp),
             canSelect = true,
             place =
                 Place(
