@@ -19,7 +19,7 @@ fun BottomButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
     text: String,
-    textStyle: TextStyle,
+    textStyle: TextStyle = MaterialTheme.typography.headlineSmall,
 ) {
     Button(
         modifier = modifier,
@@ -45,7 +45,7 @@ private fun ReportButtonPreview() {
             onClick = { },
             enabled = true,
             text = "음식점 등록하기",
-            textStyle = MaterialTheme.typography.headlineSmall
+            textStyle = MaterialTheme.typography.headlineSmall,
         )
     }
 }
