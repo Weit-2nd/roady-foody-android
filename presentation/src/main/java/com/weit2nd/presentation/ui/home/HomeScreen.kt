@@ -63,6 +63,7 @@ import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
+import com.weit2nd.presentation.util.MarkerUtil
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -342,8 +343,8 @@ private fun drawMarkers(
     if (isRefresh) {
         map.labelManager?.layer?.removeAll()
     }
-    val unSelectedMarker = getBitmap(context, R.drawable.ic_marker)
-    val selectedMarker = getBitmap(context, R.drawable.ic_marker_selected)
+    val unSelectedMarker = MarkerUtil.getUnSelectedMarker(context)
+    val selectedMarker = MarkerUtil.getSelectedMarker(context)
     foodSpots.forEach { marker ->
         val markerIcon =
             if (marker.isSelected) {
