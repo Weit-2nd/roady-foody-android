@@ -237,7 +237,7 @@ private fun PlaceInfoView(
         )
 
         BottomButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
             onClick = { onClick() },
             enabled = canSelect,
             text = stringResource(R.string.select_place_map_register_btn),

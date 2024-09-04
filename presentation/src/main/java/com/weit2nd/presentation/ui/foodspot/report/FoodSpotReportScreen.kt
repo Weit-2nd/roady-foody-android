@@ -190,7 +190,7 @@ fun FoodSpotReportScreen(
                     )
                 }
                 BottomButton(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
                     onClick = { vm.onClickReportBtn() },
                     enabled = state.value.isLoading.not(),
                     text = stringResource(R.string.food_spot_report_btn),
