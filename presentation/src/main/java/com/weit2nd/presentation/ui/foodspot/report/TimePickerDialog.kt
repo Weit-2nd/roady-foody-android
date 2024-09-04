@@ -20,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import com.weit2nd.presentation.ui.theme.White
@@ -77,7 +79,7 @@ fun TimePickerDialog(
                     border = BorderStroke(1.dp, Gray2),
                 ) {
                     Text(
-                        text = "취소",
+                        text = stringResource(R.string.time_picker_dialog_cancel),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -93,7 +95,7 @@ fun TimePickerDialog(
                     },
                 ) {
                     Text(
-                        text = "확인",
+                        text = stringResource(R.string.time_picker_dialog_confirm),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimary,
                     )
