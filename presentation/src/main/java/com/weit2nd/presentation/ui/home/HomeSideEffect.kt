@@ -7,7 +7,7 @@ import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 sealed class HomeSideEffect {
     data class RefreshMarkers(
         val map: KakaoMap,
-        val foodSpotMarkers: List<FoodSpotState>,
+        val foodSpotMarkers: List<FoodSpotMarker>,
     ) : HomeSideEffect()
 
     data object NavToFoodSpotReport : HomeSideEffect()

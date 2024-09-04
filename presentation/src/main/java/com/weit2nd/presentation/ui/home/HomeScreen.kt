@@ -1,6 +1,10 @@
 package com.weit2nd.presentation.ui.home
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -40,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -52,8 +57,6 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
-import com.kakao.vectormap.label.LabelStyle
-import com.kakao.vectormap.label.LabelStyles
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
@@ -72,6 +75,7 @@ fun HomeScreen(
     navToBack: () -> Unit,
     navToFoodSpotDetail: (Long) -> Unit,
 ) {
+    val context = LocalContext.current
     val state by vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -91,7 +95,7 @@ fun HomeScreen(
                 navToMyPage()
             }
             is HomeSideEffect.RefreshMarkers -> {
-                drawMarkers(sideEffect.map, sideEffect.foodSpotMarkers)
+                drawMarkers(context, sideEffect.map, sideEffect.foodSpotMarkers)
             }
             is HomeSideEffect.MoveCamera -> {
                 moveCamera(sideEffect.map, sideEffect.position)
@@ -99,7 +103,6 @@ fun HomeScreen(
         }
     }
 
-    val context = LocalContext.current
     val mapView =
         remember {
             MapView(context).apply {
@@ -121,7 +124,7 @@ fun HomeScreen(
 
     LaunchedEffect(state.foodSpots) {
         state.map?.let {
-            drawMarkers(it, state.foodSpots)
+            drawMarkers(context, it, state.foodSpots)
         }
     }
 
@@ -133,9 +136,9 @@ fun HomeScreen(
     Scaffold {
         Surface(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(it),
+                Modifier
+                    .fillMaxSize()
+                    .padding(it),
         ) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
@@ -143,9 +146,9 @@ fun HomeScreen(
             )
             Box(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
             ) {
                 Column(
                     modifier =
@@ -172,7 +175,7 @@ fun HomeScreen(
                                 state.map?.let { map ->
                                     vm.onClickRefreshFoodSpotBtn(map)
                                 }
-                            }
+                            },
                         )
                     }
                 }
@@ -299,16 +302,18 @@ fun RetryButton(
         modifier = modifier.defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
         shape = RoundedCornerShape(20.dp),
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors().copy(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary
-        ),
-        contentPadding = PaddingValues(
-            start = 4.dp,
-            top = 4.dp,
-            bottom = 4.dp,
-            end = 8.dp,
-        )
+        colors =
+            ButtonDefaults.buttonColors().copy(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
+            ),
+        contentPadding =
+            PaddingValues(
+                start = 4.dp,
+                top = 4.dp,
+                bottom = 4.dp,
+                end = 8.dp,
+            ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -316,7 +321,7 @@ fun RetryButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_retry),
                 contentDescription = "search",
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
@@ -329,27 +334,49 @@ fun RetryButton(
 }
 
 private fun drawMarkers(
+    context: Context,
     map: KakaoMap,
-    foodSpots: List<FoodSpotState>,
+    foodSpots: List<FoodSpotMarker>,
     isRefresh: Boolean = true,
 ) {
     if (isRefresh) {
         map.labelManager?.layer?.removeAll()
     }
-    foodSpots.forEach {
-        val styles =
-            map.labelManager
-                ?.addLabelStyles(LabelStyles.from(LabelStyle.from(android.R.drawable.star_on)))
+    val unSelectedMarker = getBitmap(context, R.drawable.ic_marker)
+    val selectedMarker = getBitmap(context, R.drawable.ic_marker_selected)
+    foodSpots.forEach { marker ->
+        val markerIcon =
+            if (marker.isSelected) {
+                selectedMarker
+            } else {
+                unSelectedMarker
+            }
         val options =
             LabelOptions
-                .from(it.position)
-                .setStyles(styles)
+                .from(marker.position)
+                .setStyles(markerIcon)
                 .apply {
-                    labelId = it.id.toString()
+                    labelId = marker.id.toString()
                 }
-        options.labelId = it.id.toString()
         map.labelManager?.layer?.addLabel(options)
     }
+}
+
+private fun getBitmap(
+    context: Context,
+    @DrawableRes drawableRes: Int,
+): Bitmap {
+    val drawable = ContextCompat.getDrawable(context, drawableRes)!!
+    val bitmap =
+        Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888,
+        )
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
 }
 
 private fun mapLifeCycleCallback() =

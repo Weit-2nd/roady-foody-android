@@ -5,7 +5,7 @@ import com.kakao.vectormap.LatLng
 
 data class HomeState(
     val map: KakaoMap? = null,
-    val foodSpots: List<FoodSpotState> = emptyList(),
+    val foodSpots: List<FoodSpotMarker> = emptyList(),
     val isMoved: Boolean = false,
     val searchWords: String = "",
     val profileImage: String = "",

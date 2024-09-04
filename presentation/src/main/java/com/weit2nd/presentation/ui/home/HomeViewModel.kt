@@ -156,7 +156,7 @@ class HomeViewModel @Inject constructor(
                                     name = null,
                                     categoryIds = emptyList(),
                                 ).map {
-                                    it.toFoodSpotState()
+                                    it.toFoodSpotMarker()
                                 }
                         reduce {
                             state.copy(
