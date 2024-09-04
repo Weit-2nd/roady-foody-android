@@ -81,7 +81,7 @@ fun SelectPlaceScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier,
                 title = stringResource(R.string.select_place_screen_toolbar_title),
                 onClickBackBtn = vm::onClickBackBtn,
             )

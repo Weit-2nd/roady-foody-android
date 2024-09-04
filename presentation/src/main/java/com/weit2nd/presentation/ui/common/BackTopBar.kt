@@ -3,7 +3,6 @@ package com.weit2nd.presentation.ui.common
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +26,7 @@ fun BackTopBar(
     onClickBackBtn: () -> Unit,
 ) {
     Box(
-        modifier = modifier.height(50.dp),
+        modifier = modifier,
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
