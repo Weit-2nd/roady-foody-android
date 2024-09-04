@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.foodspot.report
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
@@ -17,8 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
+import com.weit2nd.presentation.ui.theme.White
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,10 +65,23 @@ fun TimePickerDialog(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Button(onClick = { onDismissRequest() }) {
-                    Text(text = "취소")
+                Button(
+                    onClick = { onDismissRequest() },
+                    colors =
+                        ButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
+                        ),
+                    border = BorderStroke(1.dp, Gray2),
+                ) {
+                    Text(
+                        text = stringResource(R.string.time_picker_dialog_cancel),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                 }
 
                 Button(
@@ -72,9 +94,22 @@ fun TimePickerDialog(
                         )
                     },
                 ) {
-                    Text(text = "확인")
+                    Text(
+                        text = stringResource(R.string.time_picker_dialog_confirm),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                    )
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TimePickerDialogPreview() {
+    RoadyFoodyTheme {
+        TimePickerDialog(selectedTime = LocalTime.of(9, 0), onDismissRequest = { /*TODO*/ }) {
         }
     }
 }

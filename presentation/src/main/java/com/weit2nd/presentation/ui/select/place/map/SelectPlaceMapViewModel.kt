@@ -68,6 +68,10 @@ class SelectPlaceMapViewModel @Inject constructor(
         SelectPlaceMapIntent.SelectPlace(container.stateFlow.value.place).post()
     }
 
+    fun onClickBackBtn() {
+        SelectPlaceMapIntent.NavToBack.post()
+    }
+
     private fun SelectPlaceMapIntent.post() =
         intent {
             when (this@post) {
@@ -158,6 +162,10 @@ class SelectPlaceMapViewModel @Inject constructor(
 
                 is SelectPlaceMapIntent.SelectPlace -> {
                     postSideEffect(SelectPlaceMapSideEffect.SelectPlace(place))
+                }
+
+                SelectPlaceMapIntent.NavToBack -> {
+                    postSideEffect(SelectPlaceMapSideEffect.NavToBack)
                 }
             }
         }

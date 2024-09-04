@@ -17,4 +17,6 @@ sealed class SelectPlaceMapSideEffect {
     data class ShowToast(
         val message: String,
     ) : SelectPlaceMapSideEffect()
+
+    data object NavToBack : SelectPlaceMapSideEffect()
 }

@@ -202,8 +202,8 @@ private fun NavGraphBuilder.selectPictureComposable(navController: NavHostContro
 private fun NavGraphBuilder.selectPlaceComposable(navController: NavHostController) {
     composable(SelectPlaceRoutes.GRAPH) {
         SelectPlaceScreen(
-            navToMap = {
-                navController.navigateToSelectLocationMap {
+            navToMap = { coordinate ->
+                navController.navigateToSelectLocationMap(coordinate) {
                     popUpTo(SelectPlaceMapRoutes.GRAPH) {
                         inclusive = true
                     }
@@ -217,6 +217,9 @@ private fun NavGraphBuilder.selectPlaceComposable(navController: NavHostControll
                 navController.popBackStack()
             },
             navController = navController,
+            navToBack = {
+                navController.popBackStack()
+            },
         )
     }
 }
@@ -237,6 +240,9 @@ private fun NavGraphBuilder.selectPlaceMapComposable(navController: NavHostContr
                     SelectPlaceMapRoutes.SELECT_PLACE_KEY,
                     place.toPlaceDTO(),
                 )
+                navController.popBackStack()
+            },
+            navToBack = {
                 navController.popBackStack()
             },
         )
@@ -360,10 +366,11 @@ private fun NavHostController.navigateToHome(
 }
 
 private fun NavHostController.navigateToSelectLocationMap(
-    coordinate: Coordinate = Coordinate(37.56, 126.94),
+    coordinate: Coordinate,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val coordinateJson = Uri.encode(Gson().toJson(coordinate.toCoordinateDTO()))
+    val coordinateJson =
+        Uri.encode(Gson().toJson(coordinate.toCoordinateDTO()))
     navigate("${SelectPlaceMapRoutes.GRAPH}/$coordinateJson", builder)
 }
 
