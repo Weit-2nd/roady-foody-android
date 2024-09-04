@@ -1,7 +1,6 @@
 package com.weit2nd.presentation.ui.common
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -36,20 +35,15 @@ fun BackTopBar(
             style = MaterialTheme.typography.headlineSmall,
             color = Black,
         )
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
+        IconButton(
+            modifier = Modifier.padding(start = 4.dp),
+            onClick = { onClickBackBtn() },
         ) {
-            IconButton(
-                modifier = Modifier.padding(start = 4.dp),
-                onClick = { onClickBackBtn() },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_navigate),
-                    contentDescription = "",
-                    tint = Black,
-                )
-            }
+            Icon(
+                painter = painterResource(id = R.drawable.ic_navigate),
+                contentDescription = "",
+                tint = Black,
+            )
         }
     }
 }
