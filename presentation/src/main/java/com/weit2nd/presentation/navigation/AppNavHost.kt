@@ -366,11 +366,11 @@ private fun NavHostController.navigateToHome(
 }
 
 private fun NavHostController.navigateToSelectLocationMap(
-    coordinate: Coordinate?,
+    coordinate: Coordinate,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
     val coordinateJson =
-        Uri.encode(Gson().toJson(coordinate ?: Coordinate(37.56, 126.94).toCoordinateDTO()))
+        Uri.encode(Gson().toJson(coordinate.toCoordinateDTO()))
     navigate("${SelectPlaceMapRoutes.GRAPH}/$coordinateJson", builder)
 }
 

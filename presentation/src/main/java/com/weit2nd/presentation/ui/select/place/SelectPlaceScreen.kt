@@ -56,7 +56,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun SelectPlaceScreen(
     vm: SelectPlaceViewModel = hiltViewModel(),
-    navToMap: (Coordinate?) -> Unit,
+    navToMap: (Coordinate) -> Unit,
     onSelectPlace: (Place) -> Unit,
     navController: NavController,
     navToBack: () -> Unit,
@@ -105,7 +105,7 @@ fun SelectPlaceScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(vertical = 12.dp),
-                    onClick = { navToMap(null) },
+                    onClick = vm::onClickSearchWithMapBtn,
                     text = stringResource(R.string.select_place_find_with_map),
                     textStyle = MaterialTheme.typography.titleSmall,
                 )

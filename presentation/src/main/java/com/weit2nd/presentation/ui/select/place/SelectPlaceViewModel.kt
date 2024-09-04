@@ -33,6 +33,10 @@ class SelectPlaceViewModel @Inject constructor(
             ).post()
     }
 
+    fun onClickSearchWithMapBtn() {
+        SelectPlaceIntent.NavToMap(Coordinate(37.56, 126.94)).post()
+    }
+
     fun onSelectPlace(place: Place) {
         SelectPlaceIntent.SelectPlace(place).post()
     }
