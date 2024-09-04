@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.select.place
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -81,7 +82,7 @@ fun SelectPlaceScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                modifier = Modifier,
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                 title = stringResource(R.string.select_place_screen_toolbar_title),
                 onClickBackBtn = vm::onClickBackBtn,
             )

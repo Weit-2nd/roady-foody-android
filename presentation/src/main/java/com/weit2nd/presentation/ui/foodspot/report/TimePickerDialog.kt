@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.weit2nd.presentation.ui.theme.Black
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import com.weit2nd.presentation.ui.theme.White
@@ -70,17 +69,16 @@ fun TimePickerDialog(
                     onClick = { onDismissRequest() },
                     colors =
                         ButtonColors(
-                            containerColor = White,
-                            contentColor = Black,
-                            disabledContentColor = Black,
-                            disabledContainerColor = White,
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                            disabledContainerColor = MaterialTheme.colorScheme.surface,
                         ),
                     border = BorderStroke(1.dp, Gray2),
                 ) {
                     Text(
                         text = "취소",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Black,
                     )
                 }
 

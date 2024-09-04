@@ -96,7 +96,7 @@ fun SelectPlaceMapScreen(
     Scaffold(
         topBar = {
             BackTopBar(
-                modifier = Modifier,
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                 title = stringResource(R.string.select_place_map_toolbar_title),
                 onClickBackBtn = vm::onClickBackBtn,
             )
