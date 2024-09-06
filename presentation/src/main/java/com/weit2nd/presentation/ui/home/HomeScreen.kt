@@ -1,10 +1,8 @@
 package com.weit2nd.presentation.ui.home
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
+import android.graphics.PointF
 import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -44,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -57,6 +54,10 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
+import com.kakao.vectormap.label.LabelTransition
+import com.kakao.vectormap.label.Transition
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
@@ -338,46 +339,41 @@ private fun drawMarkers(
     context: Context,
     map: KakaoMap,
     foodSpots: List<FoodSpotMarker>,
-    isRefresh: Boolean = true,
 ) {
-    if (isRefresh) {
-        map.labelManager?.layer?.removeAll()
-    }
-    val unSelectedMarker = MarkerUtil.getUnSelectedMarker(context)
-    val selectedMarker = MarkerUtil.getSelectedMarker(context)
+    map.labelManager?.layer?.removeAll()
     foodSpots.forEach { marker ->
-        val markerIcon =
-            if (marker.isSelected) {
-                selectedMarker
-            } else {
-                unSelectedMarker
-            }
-        val options =
-            LabelOptions
-                .from(marker.position)
-                .setStyles(markerIcon)
-                .apply {
-                    labelId = marker.id.toString()
-                }
-        map.labelManager?.layer?.addLabel(options)
+        drawMarker(
+            context = context,
+            map = map,
+            foodSpotMarker = marker,
+        )
     }
 }
 
-private fun getBitmap(
+private fun drawMarker(
     context: Context,
-    @DrawableRes drawableRes: Int,
-): Bitmap {
-    val drawable = ContextCompat.getDrawable(context, drawableRes)!!
-    val bitmap =
-        Bitmap.createBitmap(
-            drawable.intrinsicWidth,
-            drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888,
-        )
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-    return bitmap
+    map: KakaoMap,
+    foodSpotMarker: FoodSpotMarker,
+) {
+    val markerIcon =
+        if (foodSpotMarker.isSelected) {
+            MarkerUtil.getSelectedMarker(context)
+        } else {
+            MarkerUtil.getUnSelectedMarker(context)
+        }
+    val markerStyle =
+        LabelStyle.from(markerIcon).apply {
+            iconTransition = LabelTransition.from(Transition.None, Transition.None)
+            anchorPoint = PointF(0.5f, 1.0f)
+        }
+    val options =
+        LabelOptions
+            .from(foodSpotMarker.position)
+            .setStyles(LabelStyles.from(markerStyle))
+            .apply {
+                labelId = foodSpotMarker.id.toString()
+            }
+    map.labelManager?.layer?.addLabel(options)
 }
 
 private fun mapLifeCycleCallback() =

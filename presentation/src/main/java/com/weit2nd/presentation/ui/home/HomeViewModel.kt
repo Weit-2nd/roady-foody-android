@@ -167,7 +167,24 @@ class HomeViewModel @Inject constructor(
                         Log.e("RequestFoodSpotsFail", "${exception.message}")
                     }
                 }
-                is HomeIntent.ShowFoodSpotSummary -> TODO()
+                is HomeIntent.ShowFoodSpotSummary -> {
+                    val updatedMarkers =
+                        state.foodSpots
+                            .toMutableList()
+                            .apply {
+                                replaceAll {
+                                    val isSelected = it.id == foodSpotId
+                                    it.copy(
+                                        isSelected = isSelected,
+                                    )
+                                }
+                            }.toList()
+                    reduce {
+                        state.copy(
+                            foodSpots = updatedMarkers,
+                        )
+                    }
+                }
                 HomeIntent.ShowRetryButton -> {
                     reduce {
                         state.copy(
