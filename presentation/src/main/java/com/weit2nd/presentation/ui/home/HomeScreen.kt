@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.home
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.PointF
 import android.util.Log
 import androidx.compose.foundation.background
@@ -102,6 +103,14 @@ fun HomeScreen(
             is HomeSideEffect.MoveCamera -> {
                 moveCamera(sideEffect.map, sideEffect.position)
             }
+            is HomeSideEffect.DeselectFoodSpot -> {
+                removeMarker(sideEffect.map, sideEffect.foodSpotMarker.id)
+                drawMarker(
+                    markerIcon = MarkerUtil.getUnSelectedMarker(context),
+                    map = sideEffect.map,
+                    foodSpotMarker = sideEffect.foodSpotMarker,
+                )
+            }
         }
     }
 
@@ -124,9 +133,21 @@ fun HomeScreen(
         vm.onCreate()
     }
 
-    LaunchedEffect(state.foodSpots) {
+    LaunchedEffect(state.foodSpotMarkers) {
         state.map?.let {
-            drawMarkers(context, it, state.foodSpots)
+            drawMarkers(context, it, state.foodSpotMarkers)
+        }
+    }
+
+    LaunchedEffect(state.selectedFoodSpotMarker) {
+        state.map?.let {
+            val marker = state.selectedFoodSpotMarker ?: return@let
+            removeMarker(it, marker.id)
+            drawMarker(
+                markerIcon = MarkerUtil.getSelectedMarker(context),
+                map = it,
+                foodSpotMarker = marker,
+            )
         }
     }
 
@@ -343,7 +364,7 @@ private fun drawMarkers(
     map.labelManager?.layer?.removeAll()
     foodSpots.forEach { marker ->
         drawMarker(
-            context = context,
+            markerIcon = MarkerUtil.getUnSelectedMarker(context),
             map = map,
             foodSpotMarker = marker,
         )
@@ -351,16 +372,10 @@ private fun drawMarkers(
 }
 
 private fun drawMarker(
-    context: Context,
+    markerIcon: Bitmap,
     map: KakaoMap,
     foodSpotMarker: FoodSpotMarker,
 ) {
-    val markerIcon =
-        if (foodSpotMarker.isSelected) {
-            MarkerUtil.getSelectedMarker(context)
-        } else {
-            MarkerUtil.getUnSelectedMarker(context)
-        }
     val markerStyle =
         LabelStyle.from(markerIcon).apply {
             iconTransition = LabelTransition.from(Transition.None, Transition.None)
@@ -374,6 +389,16 @@ private fun drawMarker(
                 labelId = foodSpotMarker.id.toString()
             }
     map.labelManager?.layer?.addLabel(options)
+}
+
+private fun removeMarker(
+    map: KakaoMap,
+    foodSpotId: Long,
+) {
+    val layer = map.labelManager?.layer ?: return
+    layer.getLabel(foodSpotId.toString())?.let { label ->
+        layer.remove(label)
+    }
 }
 
 private fun mapLifeCycleCallback() =

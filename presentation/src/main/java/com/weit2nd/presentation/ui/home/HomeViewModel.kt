@@ -126,7 +126,7 @@ class HomeViewModel @Inject constructor(
                     postSideEffect(
                         HomeSideEffect.RefreshMarkers(
                             map,
-                            state.foodSpots,
+                            state.foodSpotMarkers,
                         ),
                     )
                 }
@@ -160,7 +160,7 @@ class HomeViewModel @Inject constructor(
                                 }
                         reduce {
                             state.copy(
-                                foodSpots = foodSpots,
+                                foodSpotMarkers = foodSpots,
                             )
                         }
                     }.onFailure { exception ->
@@ -168,20 +168,22 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 is HomeIntent.ShowFoodSpotSummary -> {
-                    val updatedMarkers =
-                        state.foodSpots
-                            .toMutableList()
-                            .apply {
-                                replaceAll {
-                                    val isSelected = it.id == foodSpotId
-                                    it.copy(
-                                        isSelected = isSelected,
-                                    )
-                                }
-                            }.toList()
+                    state.selectedFoodSpotMarker?.let { marker ->
+                        val map = state.map ?: return@let
+                        postSideEffect(
+                            HomeSideEffect.DeselectFoodSpot(
+                                map = map,
+                                foodSpotMarker = marker,
+                            ),
+                        )
+                    }
+
                     reduce {
                         state.copy(
-                            foodSpots = updatedMarkers,
+                            selectedFoodSpotMarker =
+                                state.foodSpotMarkers.first {
+                                    it.id == foodSpotId
+                                },
                         )
                     }
                 }

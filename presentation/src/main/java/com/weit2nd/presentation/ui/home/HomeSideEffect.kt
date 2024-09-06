@@ -28,4 +28,9 @@ sealed class HomeSideEffect {
         val map: KakaoMap,
         val position: LatLng,
     ) : HomeSideEffect()
+
+    data class DeselectFoodSpot(
+        val map: KakaoMap,
+        val foodSpotMarker: FoodSpotMarker,
+    ) : HomeSideEffect()
 }
