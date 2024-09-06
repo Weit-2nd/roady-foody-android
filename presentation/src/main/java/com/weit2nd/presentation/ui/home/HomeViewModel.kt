@@ -86,6 +86,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onClickFoodSpotBottomSheet(
+        foodSpotId: Long,
+    ) {
+        HomeIntent.NavToFoodSpotDetail(foodSpotId).post()
+    }
+
     private fun HomeIntent.post() =
         intent {
             when (this@post) {
@@ -156,7 +162,9 @@ class HomeViewModel @Inject constructor(
                                     name = null,
                                     categoryIds = emptyList(),
                                 ).map {
-                                    it.toFoodSpotMarker()
+                                    it.toFoodSpotMarker(
+                                        Coordinate(centerLat, centerLng),
+                                    )
                                 }
                         reduce {
                             state.copy(

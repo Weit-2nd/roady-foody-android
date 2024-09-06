@@ -6,6 +6,7 @@ import android.graphics.PointF
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,13 +20,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetDefaults
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -59,6 +65,7 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTransition
 import com.kakao.vectormap.label.Transition
+import com.weit2nd.domain.model.search.BusinessState
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
 import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
@@ -66,9 +73,11 @@ import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import com.weit2nd.presentation.util.MarkerUtil
+import com.weit2nd.presentation.util.getDistanceString
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     vm: HomeViewModel = hiltViewModel(),
@@ -79,6 +88,7 @@ fun HomeScreen(
     navToFoodSpotDetail: (Long) -> Unit,
 ) {
     val context = LocalContext.current
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val state by vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -156,64 +166,303 @@ fun HomeScreen(
         onPause = mapView::pause,
     )
 
-    Scaffold {
-        Surface(
+    BottomSheetScaffold(
+        scaffoldState = bottomSheetScaffoldState,
+        sheetContent = {
+            state.selectedFoodSpotMarker?.let {
+                FoodSpotBottomSheetContent(
+                    modifier =
+                        Modifier
+                            .padding(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 4.dp,
+                                bottom = 16.dp,
+                            ).fillMaxWidth()
+                            .clickable {
+                                vm.onClickFoodSpotBottomSheet(it.id)
+                            },
+                    foodSpot = it,
+                )
+            }
+        },
+        sheetShape =
+            RoundedCornerShape(
+                topStart = 12.dp,
+                topEnd = 12.dp,
+            ),
+        sheetContainerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surface,
+    ) {
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { mapView },
+        )
+        Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(it),
+                    .padding(16.dp),
         ) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { mapView },
-            )
-            Box(
+            Column(
                 modifier =
                     Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Column(
+                SearchBar(
                     modifier =
                         Modifier
-                            .align(Alignment.TopCenter)
-                            .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    SearchBar(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(MaterialTheme.colorScheme.surface),
-                        searchWords = state.searchWords,
-                        profileImage = state.profileImage,
-                        onSearchBarClick = vm::onSearchPlaceClick,
-                        onProfileClick = vm::onProfileClick,
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(MaterialTheme.colorScheme.surface),
+                    searchWords = state.searchWords,
+                    profileImage = state.profileImage,
+                    onSearchBarClick = vm::onSearchPlaceClick,
+                    onProfileClick = vm::onProfileClick,
+                )
+                if (state.isMoved) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    RetryButton(
+                        onClick = {
+                            state.map?.let { map ->
+                                vm.onClickRefreshFoodSpotBtn(map)
+                            }
+                        },
                     )
-                    if (state.isMoved) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        RetryButton(
-                            onClick = {
-                                state.map?.let { map ->
-                                    vm.onClickRefreshFoodSpotBtn(map)
-                                }
-                            },
-                        )
-                    }
                 }
+            }
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
                 CurrentPositionBtn(
-                    modifier =
-                        Modifier
-                            .size(40.dp)
-                            .align(Alignment.BottomStart),
+                    modifier = Modifier.size(40.dp),
                     onClick = vm::onClickCurrentPositionBtn,
                 )
                 FoodSpotReportButton(
-                    modifier = Modifier.align(Alignment.BottomEnd),
                     onClick = vm::onClickReportBtn,
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FoodSpotBottomSheet(
+    modifier: Modifier = Modifier,
+    sheetState: SheetState,
+    foodSpot: FoodSpotMarker,
+    onDismissRequest: () -> Unit,
+    onClick: () -> Unit,
+) {
+    ModalBottomSheet(
+        modifier = modifier,
+        sheetState = sheetState,
+        onDismissRequest = onDismissRequest,
+        containerColor = MaterialTheme.colorScheme.surface,
+        properties =
+            ModalBottomSheetDefaults.properties(
+                isFocusable = false,
+                shouldDismissOnBackPress = false,
+            ),
+    ) {
+        FoodSpotBottomSheetContent(
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        onClick()
+                    },
+            foodSpot = foodSpot,
+        )
+    }
+}
+
+@Composable
+private fun FoodSpotBottomSheetContent(
+    modifier: Modifier = Modifier,
+    foodSpot: FoodSpotMarker,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            FoodSpotName(
+                name = foodSpot.name,
+                isFoodTruck = foodSpot.isFoodTruck,
+                category = foodSpot.category,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            FoodSpotReview(
+                averageRate = foodSpot.averageRate,
+                reviewCount = foodSpot.reviewCount,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            FoodSpotOperationHour(
+                businessState = foodSpot.businessState,
+                closeTime = foodSpot.closeTime,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text =
+                    getDistanceString(
+                        context = LocalContext.current,
+                        distanceMeter = foodSpot.distance,
+                    ),
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        AsyncImage(
+            modifier =
+                Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+            model = foodSpot.image,
+            contentScale = ContentScale.Crop,
+            contentDescription = "foodspot image",
+            fallback = painterResource(id = R.drawable.ic_input_delete_filled),
+        )
+    }
+}
+
+@Composable
+private fun FoodSpotName(
+    modifier: Modifier = Modifier,
+    name: String,
+    isFoodTruck: Boolean,
+    category: String,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        if (isFoodTruck) {
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_truck),
+                contentDescription = "food truck",
+                tint = MaterialTheme.colorScheme.secondary,
+            )
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = category,
+            style = MaterialTheme.typography.labelMedium,
+            color = Gray1,
+        )
+    }
+}
+
+@Composable
+private fun FoodSpotReview(
+    modifier: Modifier = Modifier,
+    averageRate: Float,
+    reviewCount: Int,
+) {
+    val averageRateText =
+        if (reviewCount == 0) {
+            stringResource(id = R.string.home_food_spot_no_review)
+        } else {
+            averageRate.toString()
+        }
+    val reviewCountText =
+        if (reviewCount > 100) {
+            stringResource(id = R.string.home_food_spot_review_count_over_100)
+        } else {
+            reviewCount.toString()
+        }
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.size(12.dp),
+            painter =
+                painterResource(
+                    id = R.drawable.ic_star,
+                ),
+            contentDescription = "average rate",
+            tint = MaterialTheme.colorScheme.tertiary,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = averageRateText,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text =
+                stringResource(
+                    id = R.string.home_food_spot_review_count,
+                    reviewCountText,
+                ),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+@Composable
+private fun FoodSpotOperationHour(
+    modifier: Modifier = Modifier,
+    businessState: BusinessState,
+    closeTime: String,
+) {
+    val businessStateTextRes =
+        when (businessState) {
+            BusinessState.OPEN -> {
+                R.string.home_food_spot_open
+            }
+            BusinessState.CLOSED -> {
+                R.string.home_food_spot_closed
+            }
+            BusinessState.TEMPORARILY_CLOSED -> {
+                R.string.home_food_spot_temporarily_closed
+            }
+            BusinessState.UNKNOWN -> {
+                throw IllegalStateException()
+            }
+        }
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(id = businessStateTextRes),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        if (businessState == BusinessState.OPEN) {
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text =
+                    stringResource(
+                        id = R.string.home_food_spot_close_time,
+                        closeTime,
+                    ),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         }
     }
 }
@@ -501,6 +750,48 @@ private fun RetryButtonPreview() {
     RoadyFoodyTheme {
         RetryButton(
             onClick = {},
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun FoodSpotBottomSheetPreview() {
+    RoadyFoodyTheme {
+        FoodSpotBottomSheet(
+            modifier = Modifier.fillMaxWidth(),
+            sheetState = rememberModalBottomSheetState(),
+            foodSpot =
+                FoodSpotMarker(
+                    id = 0,
+                    name = "고양이 붕어빵",
+                    image = "",
+                    position = LatLng.from(0.0, 0.0),
+                    distance = 100,
+                    businessState = BusinessState.OPEN,
+                ),
+            onDismissRequest = {},
+            onClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FoodSpotBottomSheetContentPreview() {
+    RoadyFoodyTheme {
+        FoodSpotBottomSheetContent(
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
+            foodSpot =
+                FoodSpotMarker(
+                    id = 0,
+                    name = "고양이 붕어빵",
+                    image = "",
+                    position = LatLng.from(0.0, 0.0),
+                    distance = 100,
+                    businessState = BusinessState.OPEN,
+                ),
         )
     }
 }
