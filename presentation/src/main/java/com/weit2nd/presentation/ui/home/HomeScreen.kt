@@ -26,13 +26,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -204,9 +200,10 @@ fun HomeScreen(
     )
 
     BottomSheetScaffold(
-        modifier = Modifier.onGloballyPositioned {
-            screenHeight = it.size.height
-        },
+        modifier =
+            Modifier.onGloballyPositioned {
+                screenHeight = it.size.height
+            },
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             state.selectedFoodSpotMarker?.let {
@@ -290,39 +287,6 @@ fun HomeScreen(
                 )
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun FoodSpotBottomSheet(
-    modifier: Modifier = Modifier,
-    sheetState: SheetState,
-    foodSpot: FoodSpotMarker,
-    onDismissRequest: () -> Unit,
-    onClick: () -> Unit,
-) {
-    ModalBottomSheet(
-        modifier = modifier,
-        sheetState = sheetState,
-        onDismissRequest = onDismissRequest,
-        containerColor = MaterialTheme.colorScheme.surface,
-        properties =
-            ModalBottomSheetDefaults.properties(
-                isFocusable = false,
-                shouldDismissOnBackPress = false,
-            ),
-    ) {
-        FoodSpotBottomSheetContent(
-            modifier =
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .clickable {
-                        onClick()
-                    },
-            foodSpot = foodSpot,
-        )
     }
 }
 
@@ -795,34 +759,6 @@ private fun SearchBarPreview() {
 private fun RetryButtonPreview() {
     RoadyFoodyTheme {
         RetryButton(
-            onClick = {},
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-private fun FoodSpotBottomSheetPreview() {
-    RoadyFoodyTheme {
-        FoodSpotBottomSheet(
-            modifier = Modifier.fillMaxWidth(),
-            sheetState = rememberModalBottomSheetState(),
-            foodSpot =
-                FoodSpotMarker(
-                    id = 0,
-                    name = "고양이 붕어빵",
-                    image = "",
-                    category = "붕어빵",
-                    position = LatLng.from(0.0, 0.0),
-                    distance = 100,
-                    businessState = BusinessState.OPEN,
-                    isFoodTruck = false,
-                    averageRating = 4.8f,
-                    reviewCount = 10,
-                    closeTime = LocalTime.of(23, 0),
-                ),
-            onDismissRequest = {},
             onClick = {},
         )
     }
