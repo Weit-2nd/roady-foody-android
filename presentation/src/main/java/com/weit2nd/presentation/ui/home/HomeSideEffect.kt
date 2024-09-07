@@ -34,5 +34,7 @@ sealed class HomeSideEffect {
         val foodSpotMarker: FoodSpotMarker,
     ) : HomeSideEffect()
 
-    data object ExpandBottomSheet : HomeSideEffect()
+    data object ExpandFoodSpotSummary : HomeSideEffect()
+
+    data object HideFoodSpotSummary : HomeSideEffect()
 }

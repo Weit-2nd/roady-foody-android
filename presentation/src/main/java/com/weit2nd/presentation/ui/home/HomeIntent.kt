@@ -21,6 +21,8 @@ sealed class HomeIntent {
         val foodSpotId: Long,
     ) : HomeIntent()
 
+    data object HideFoodSpotSummary : HomeIntent()
+
     data object NavToFoodSpotReport : HomeIntent()
 
     data object NavToBack : HomeIntent()

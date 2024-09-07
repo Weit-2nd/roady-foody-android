@@ -29,9 +29,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -89,7 +91,12 @@ fun HomeScreen(
     navToFoodSpotDetail: (Long) -> Unit,
 ) {
     val context = LocalContext.current
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberStandardBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            skipHiddenState = false,
+        ),
+    )
     val state by vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -122,8 +129,11 @@ fun HomeScreen(
                     foodSpotMarker = sideEffect.foodSpotMarker,
                 )
             }
-            HomeSideEffect.ExpandBottomSheet -> {
+            HomeSideEffect.ExpandFoodSpotSummary -> {
                 bottomSheetScaffoldState.bottomSheetState.expand()
+            }
+            HomeSideEffect.HideFoodSpotSummary -> {
+                bottomSheetScaffoldState.bottomSheetState.hide()
             }
         }
     }
@@ -137,6 +147,7 @@ fun HomeScreen(
                         onMapReady = vm::onMapReady,
                         onCameraMoveEnd = vm::onCameraMoveEnd,
                         onMarkerClick = vm::onMarkerClick,
+                        onMapClick = vm::onClickMap,
                         position = state.initialLatLng,
                     ),
                 )
@@ -698,6 +709,7 @@ private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
     onCameraMoveEnd: (LatLng) -> Unit,
     onMarkerClick: (Long) -> Unit,
+    onMapClick: () -> Unit,
     position: LatLng,
 ) = object : KakaoMapReadyCallback() {
     override fun onMapReady(map: KakaoMap) {
@@ -707,6 +719,9 @@ private fun kakaoMapReadyCallback(
         }
         map.setOnLabelClickListener { _, _, label ->
             onMarkerClick(label.labelId.toLong())
+        }
+        map.setOnMapClickListener { _, _, _, _, ->
+            onMapClick()
         }
     }
 

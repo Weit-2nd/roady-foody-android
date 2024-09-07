@@ -90,6 +90,10 @@ class HomeViewModel @Inject constructor(
         HomeIntent.NavToFoodSpotDetail(foodSpotId).post()
     }
 
+    fun onClickMap() {
+        HomeIntent.HideFoodSpotSummary.post()
+    }
+
     private fun HomeIntent.post() =
         intent {
             when (this@post) {
@@ -192,7 +196,7 @@ class HomeViewModel @Inject constructor(
                                 },
                         )
                     }
-                    postSideEffect(HomeSideEffect.ExpandBottomSheet)
+                    postSideEffect(HomeSideEffect.ExpandFoodSpotSummary)
                 }
                 HomeIntent.ShowRetryButton -> {
                     reduce {
@@ -214,6 +218,9 @@ class HomeViewModel @Inject constructor(
                     }.onFailure {
                         Log.d("MainTest", "$it")
                     }
+                }
+                HomeIntent.HideFoodSpotSummary -> {
+                    postSideEffect(HomeSideEffect.HideFoodSpotSummary)
                 }
             }
         }
