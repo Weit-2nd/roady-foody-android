@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.FloatingActionButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -38,6 +40,12 @@ fun CurrentPositionBtn(
 @Composable
 private fun CurrentPositionButton(
     modifier: Modifier = Modifier,
+    elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(
+        defaultElevation = 2.dp,
+        pressedElevation = 2.dp,
+        focusedElevation = 2.dp,
+        hoveredElevation = 2.dp,
+    ),
     onClick: () -> Unit,
 ) {
     FloatingActionButton(
@@ -45,6 +53,7 @@ private fun CurrentPositionButton(
         onClick = onClick,
         shape = RoundedCornerShape(100),
         containerColor = MaterialTheme.colorScheme.surface,
+        elevation = elevation,
         contentColor = DarkGray,
     ) {
         Icon(

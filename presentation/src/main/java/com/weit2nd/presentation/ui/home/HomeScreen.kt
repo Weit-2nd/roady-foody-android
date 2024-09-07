@@ -51,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -255,6 +256,7 @@ fun HomeScreen(
             ),
         sheetPeekHeight = BottomSheetDefaults.SheetPeekHeight + statusBarPadding.calculateBottomPadding(),
         sheetContainerColor = MaterialTheme.colorScheme.surface,
+        sheetShadowElevation = 4.dp,
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         AndroidView(
@@ -280,7 +282,10 @@ fun HomeScreen(
                         Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(20.dp))
-                            .background(MaterialTheme.colorScheme.surface),
+                            .shadow(
+                                elevation = 4.dp,
+                                shape = RoundedCornerShape(20.dp),
+                            ).background(MaterialTheme.colorScheme.surface),
                     searchWords = state.searchWords,
                     profileImage = state.profileImage,
                     onSearchBarClick = vm::onSearchPlaceClick,
@@ -516,6 +521,14 @@ fun FoodSpotReportButton(
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 disabledContainerColor = Gray2,
             ),
+        elevation =
+            ButtonDefaults.buttonElevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 2.dp,
+                focusedElevation = 2.dp,
+                hoveredElevation = 2.dp,
+                disabledElevation = 2.dp,
+            ),
         contentPadding = PaddingValues(8.dp),
     ) {
         Row {
@@ -619,6 +632,14 @@ fun RetryButton(
                 top = 4.dp,
                 bottom = 4.dp,
                 end = 8.dp,
+            ),
+        elevation =
+            ButtonDefaults.buttonElevation(
+                defaultElevation = 2.dp,
+                pressedElevation = 2.dp,
+                focusedElevation = 2.dp,
+                hoveredElevation = 2.dp,
+                disabledElevation = 2.dp,
             ),
     ) {
         Row(
