@@ -3,9 +3,12 @@ package com.weit2nd.presentation.ui.splash
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -13,7 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
@@ -45,15 +53,36 @@ fun SplashScreen(
         vm.onCreate()
     }
 
-    Box(
+    SplashIconScreen(
         modifier =
             Modifier
                 .fillMaxSize()
                 .alpha(alpha.value),
+    )
+}
+
+@Composable
+private fun SplashIconScreen(modifier: Modifier) {
+    Box(
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = "Splash",
+        Image(
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.6f)
+                    .aspectRatio(1f)
+                    .offset(y = (-24).dp),
+            painter = painterResource(id = R.drawable.ic_logo),
+            contentDescription = "",
         )
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun SplashIconScreenPreview() {
+    RoadyFoodyTheme {
+        SplashIconScreen(modifier = Modifier.fillMaxSize())
     }
 }
