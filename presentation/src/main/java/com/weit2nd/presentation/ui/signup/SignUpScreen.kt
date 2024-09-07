@@ -2,15 +2,19 @@ package com.weit2nd.presentation.ui.signup
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -20,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -31,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.EditableProfileImage
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
-import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -55,44 +58,65 @@ fun SignUpScreen(
         LoadingDialogScreen()
     }
 
-    Column(
-        modifier = Modifier.fillMaxHeight(),
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(modifier = Modifier.padding(24.dp))
-            ProfileImage(
-                modifier =
-                    Modifier
-                        .clip(CircleShape)
-                        .size(200.dp),
-                imgUri = state.value.profileImageUri,
-                onProfileImageClick = vm::onProfileImageClick,
-            )
-            Spacer(modifier = Modifier.padding(16.dp))
-            NicknameSetting(
+    Scaffold(
+        topBar = {
+            TopBar(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(24.dp),
-                nickname = state.value.nickname,
-                nicknameState = state.value.nicknameState,
-                isLoading = state.value.isNicknameCheckingLoading,
-                onInputValueChange = vm::onNicknameInputValueChange,
-                onDuplicationBtnClick = vm::onDuplicationBtnClick,
+                        .height(48.dp),
             )
-        }
+        },
+        content = { innerPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 36.dp),
+                        text = "프로필 사진",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                    EditableProfileImage(
+                        modifier =
+                            Modifier
+                                .size(100.dp)
+                                .align(Alignment.CenterHorizontally),
+                        imgUri = state.value.profileImageUri,
+                        onProfileImageClick = vm::onProfileImageClick,
+                    )
+                    Spacer(modifier = Modifier.padding(16.dp))
+                    NicknameSetting(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
+                        nickname = state.value.nickname,
+                        nicknameState = state.value.nicknameState,
+                        isLoading = state.value.isNicknameCheckingLoading,
+                        onInputValueChange = vm::onNicknameInputValueChange,
+                        onDuplicationBtnClick = vm::onDuplicationBtnClick,
+                    )
+                }
 
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = vm::onSignUpButtonClick,
-            enabled = (state.value.nicknameState == NicknameState.CAN_SIGN_UP) && state.value.isSignUpLoading.not(),
-        ) {
-            Text(text = stringResource(R.string.sign_up))
-        }
-    }
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = vm::onSignUpButtonClick,
+                    enabled = (state.value.nicknameState == NicknameState.CAN_SIGN_UP) && state.value.isSignUpLoading.not(),
+                ) {
+                    Text(text = stringResource(R.string.sign_up))
+                }
+            }
+        },
+    )
 }
 
 private fun handleSideEffects(
@@ -108,6 +132,21 @@ private fun handleSideEffects(
         is SignUpSideEffect.ShowToast -> {
             Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
         }
+    }
+}
+
+@Composable
+private fun TopBar(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = "프로필 생성",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
