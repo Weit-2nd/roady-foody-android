@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">RoadyFoody</string>
     <string name="login_btn">카카오 로그인</string>
+    <string name="retry">다시 시도</string>
 
     <!-- TermScreen -->
     <string name="term_screen_bottom_btn">다음</string>
@@ -10,6 +11,9 @@
     <string name="term_screen_agree_all">모두 동의합니다.</string>
     <string name="term_required">필수</string>
     <string name="term_optional">선택</string>
+
+    <!-- TermDetailScreen -->
+    <string name="term_detail_topbar_title">약관 상세</string>
 
     <!--  SignUpScreen  -->
     <string name="sign_up">회원가입</string>
