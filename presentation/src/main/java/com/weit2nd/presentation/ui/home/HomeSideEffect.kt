@@ -33,4 +33,6 @@ sealed class HomeSideEffect {
         val map: KakaoMap,
         val foodSpotMarker: FoodSpotMarker,
     ) : HomeSideEffect()
+
+    data object ExpandBottomSheet : HomeSideEffect()
 }

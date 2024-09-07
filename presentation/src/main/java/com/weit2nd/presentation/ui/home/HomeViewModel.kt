@@ -86,9 +86,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onClickFoodSpotBottomSheet(
-        foodSpotId: Long,
-    ) {
+    fun onClickFoodSpotBottomSheet(foodSpotId: Long) {
         HomeIntent.NavToFoodSpotDetail(foodSpotId).post()
     }
 
@@ -194,6 +192,7 @@ class HomeViewModel @Inject constructor(
                                 },
                         )
                     }
+                    postSideEffect(HomeSideEffect.ExpandBottomSheet)
                 }
                 HomeIntent.ShowRetryButton -> {
                     reduce {

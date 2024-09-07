@@ -122,6 +122,9 @@ fun HomeScreen(
                     foodSpotMarker = sideEffect.foodSpotMarker,
                 )
             }
+            HomeSideEffect.ExpandBottomSheet -> {
+                bottomSheetScaffoldState.bottomSheetState.expand()
+            }
         }
     }
 
