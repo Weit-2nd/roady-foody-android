@@ -237,6 +237,7 @@ fun HomeScreen(
                         Modifier
                             .padding(
                                 start = 16.dp,
+                                top = 4.dp,
                                 end = 16.dp,
                                 bottom = 16.dp + statusBarPadding.calculateBottomPadding(),
                             ).fillMaxWidth()
