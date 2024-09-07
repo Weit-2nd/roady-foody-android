@@ -76,6 +76,7 @@ import com.weit2nd.presentation.util.MarkerUtil
 import com.weit2nd.presentation.util.getDistanceString
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -304,7 +305,7 @@ private fun FoodSpotBottomSheetContent(
             )
             Spacer(modifier = Modifier.height(4.dp))
             FoodSpotReview(
-                averageRate = foodSpot.averageRate,
+                averageRate = foodSpot.averageRating,
                 reviewCount = foodSpot.reviewCount,
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -426,7 +427,7 @@ private fun FoodSpotReview(
 private fun FoodSpotOperationHour(
     modifier: Modifier = Modifier,
     businessState: BusinessState,
-    closeTime: String,
+    closeTime: LocalTime,
 ) {
     val businessStateTextRes =
         when (businessState) {
@@ -458,7 +459,8 @@ private fun FoodSpotOperationHour(
                 text =
                     stringResource(
                         id = R.string.home_food_spot_close_time,
-                        closeTime,
+                        closeTime.hour,
+                        closeTime.minute,
                     ),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -767,9 +769,14 @@ private fun FoodSpotBottomSheetPreview() {
                     id = 0,
                     name = "고양이 붕어빵",
                     image = "",
+                    category = "붕어빵",
                     position = LatLng.from(0.0, 0.0),
                     distance = 100,
                     businessState = BusinessState.OPEN,
+                    isFoodTruck = false,
+                    averageRating = 4.8f,
+                    reviewCount = 10,
+                    closeTime = LocalTime.of(23, 0),
                 ),
             onDismissRequest = {},
             onClick = {},
@@ -788,9 +795,14 @@ private fun FoodSpotBottomSheetContentPreview() {
                     id = 0,
                     name = "고양이 붕어빵",
                     image = "",
+                    category = "붕어빵",
                     position = LatLng.from(0.0, 0.0),
                     distance = 100,
                     businessState = BusinessState.OPEN,
+                    isFoodTruck = false,
+                    averageRating = 4.8f,
+                    reviewCount = 10,
+                    closeTime = LocalTime.of(23, 0),
                 ),
         )
     }

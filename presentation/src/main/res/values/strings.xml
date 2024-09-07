@@ -68,11 +68,11 @@
     <string name="home_post_food_spot">음식점 제보</string>
     <string name="home_search_bar_placeholder">원하는 장소를 검색 해 보세요.</string>
     <string name="home_search_retry">현 지도에서 검색</string>
-    <string name="home_food_spot_close_time">%s 까지</string>
     <string name="home_food_spot_open">영업 중</string>
     <string name="home_food_spot_closed">영업 종료</string>
     <string name="home_food_spot_temporarily_closed">이젠 안해</string>
     <string name="home_food_spot_no_review">-.-</string>
     <string name="home_food_spot_review_count">리뷰 %s</string>
     <string name="home_food_spot_review_count_over_100">100+</string>
+    <string name="home_food_spot_close_time">%02d:%02d 까지</string>
 </resources>

@@ -5,34 +5,40 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.search.BusinessState
 import com.weit2nd.domain.model.search.FoodSpot
 import com.weit2nd.presentation.util.getDistanceMeter
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import kotlin.random.Random
 
 data class FoodSpotMarker(
     val id: Long,
     val name: String,
-    val image: String = "",
-    val category: String = "붕어빵",
+    val image: String,
+    val category: String,
     val position: LatLng,
     val distance: Int,
-    val isFoodTruck: Boolean = true,
-    val averageRate: Float = 4.8f,
-    val reviewCount: Int = Random(System.currentTimeMillis()).nextInt(150),
+    val isFoodTruck: Boolean,
+    val averageRating: Float,
+    val reviewCount: Int,
     val businessState: BusinessState,
-    val closeTime: String = "22:00",
+    val closeTime: LocalTime,
 )
 
 fun FoodSpot.toFoodSpotMarker(currentCoordinate: Coordinate): FoodSpotMarker =
     FoodSpotMarker(
         id = id,
         name = name,
+        image = image,
+        category = categories.firstOrNull().orEmpty(),
         position = LatLng.from(latitude, longitude),
         distance =
             getDistanceMeter(
                 currentCoordinate,
                 Coordinate(latitude, longitude),
             ),
+        isFoodTruck = isFoodTruck,
+        averageRating = averageRating,
+        reviewCount = reviewCount,
         businessState = businessState,
+        closeTime = operationHour.closingHours,
     )
 
 private val operationHourFormat = DateTimeFormatter.ofPattern("HH:mm")
