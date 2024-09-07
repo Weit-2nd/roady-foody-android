@@ -179,13 +179,15 @@ class HomeViewModel @Inject constructor(
                 }
                 is HomeIntent.ShowFoodSpotSummary -> {
                     state.selectedFoodSpotMarker?.let { marker ->
-                        val map = state.map ?: return@let
-                        postSideEffect(
-                            HomeSideEffect.DeselectFoodSpot(
-                                map = map,
-                                foodSpotMarker = marker,
-                            ),
-                        )
+                        if (marker.id != foodSpotId) {
+                            val map = state.map ?: return@let
+                            postSideEffect(
+                                HomeSideEffect.DeselectFoodSpot(
+                                    map = map,
+                                    foodSpotMarker = marker,
+                                ),
+                            )
+                        }
                     }
 
                     reduce {
