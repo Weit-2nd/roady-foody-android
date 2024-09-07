@@ -2,24 +2,33 @@ package com.weit2nd.presentation.ui.home
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.PointF
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -42,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +63,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -82,7 +93,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
     vm: HomeViewModel = hiltViewModel(),
@@ -105,16 +116,29 @@ fun HomeScreen(
     var screenHeight by remember {
         mutableIntStateOf(0)
     }
+    val statusBarPadding = WindowInsets.systemBars.asPaddingValues()
     val bottomSheetHeight by remember {
         derivedStateOf {
             with(localDensity) {
                 runCatching {
                     val offset = screenHeight - bottomSheetScaffoldState.bottomSheetState.requireOffset()
-                    (offset.toDp() + 4.dp).coerceAtLeast(0.dp)
+                    (offset.toDp() - statusBarPadding.calculateBottomPadding()).coerceAtLeast(0.dp)
                 }.getOrDefault(0.dp)
             }
         }
     }
+    // 상태바 처리
+    val colorScheme = MaterialTheme.colorScheme
+    DisposableEffect(Unit) {
+        val activity = context as ComponentActivity
+        WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+        activity.window.statusBarColor = Color.TRANSPARENT // 상태바 투명화
+        onDispose {
+            WindowCompat.setDecorFitsSystemWindows(activity.window, true)
+            activity.window.statusBarColor = colorScheme.surface.toArgb()
+        }
+    }
+
     val state by vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -201,9 +225,10 @@ fun HomeScreen(
 
     BottomSheetScaffold(
         modifier =
-            Modifier.onGloballyPositioned {
-                screenHeight = it.size.height
-            },
+            Modifier
+                .onGloballyPositioned {
+                    screenHeight = it.size.height
+                },
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             state.selectedFoodSpotMarker?.let {
@@ -213,8 +238,7 @@ fun HomeScreen(
                             .padding(
                                 start = 16.dp,
                                 end = 16.dp,
-                                top = 4.dp,
-                                bottom = 16.dp,
+                                bottom = 16.dp + statusBarPadding.calculateBottomPadding(),
                             ).fillMaxWidth()
                             .clickable {
                                 vm.onClickFoodSpotBottomSheet(it.id)
@@ -228,6 +252,7 @@ fun HomeScreen(
                 topStart = 12.dp,
                 topEnd = 12.dp,
             ),
+        sheetPeekHeight = BottomSheetDefaults.SheetPeekHeight + statusBarPadding.calculateBottomPadding(),
         sheetContainerColor = MaterialTheme.colorScheme.surface,
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
@@ -239,6 +264,7 @@ fun HomeScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .systemBarsPadding()
                     .padding(16.dp),
         ) {
             Column(
@@ -274,6 +300,7 @@ fun HomeScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        .statusBarsPadding()
                         .padding(bottom = bottomSheetHeight)
                         .align(Alignment.BottomCenter),
                 horizontalArrangement = Arrangement.SpaceBetween,
