@@ -37,18 +37,24 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -91,12 +97,28 @@ fun HomeScreen(
     navToFoodSpotDetail: (Long) -> Unit,
 ) {
     val context = LocalContext.current
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberStandardBottomSheetState(
-            initialValue = SheetValue.Hidden,
-            skipHiddenState = false,
-        ),
-    )
+    val localDensity = LocalDensity.current
+    val bottomSheetScaffoldState =
+        rememberBottomSheetScaffoldState(
+            bottomSheetState =
+                rememberStandardBottomSheetState(
+                    initialValue = SheetValue.Hidden,
+                    skipHiddenState = false,
+                ),
+        )
+    var screenHeight by remember {
+        mutableIntStateOf(0)
+    }
+    val bottomSheetHeight by remember {
+        derivedStateOf {
+            with(localDensity) {
+                runCatching {
+                    val offset = screenHeight - bottomSheetScaffoldState.bottomSheetState.requireOffset()
+                    (offset.toDp() + 4.dp).coerceAtLeast(0.dp)
+                }.getOrDefault(0.dp)
+            }
+        }
+    }
     val state by vm.collectAsState()
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
@@ -182,6 +204,9 @@ fun HomeScreen(
     )
 
     BottomSheetScaffold(
+        modifier = Modifier.onGloballyPositioned {
+            screenHeight = it.size.height
+        },
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             state.selectedFoodSpotMarker?.let {
@@ -252,6 +277,7 @@ fun HomeScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        .padding(bottom = bottomSheetHeight)
                         .align(Alignment.BottomCenter),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -720,7 +746,7 @@ private fun kakaoMapReadyCallback(
         map.setOnLabelClickListener { _, _, label ->
             onMarkerClick(label.labelId.toLong())
         }
-        map.setOnMapClickListener { _, _, _, _, ->
+        map.setOnMapClickListener { _, _, _, _ ->
             onMapClick()
         }
     }
