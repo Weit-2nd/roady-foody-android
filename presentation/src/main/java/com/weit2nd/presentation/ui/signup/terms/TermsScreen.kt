@@ -1,32 +1,46 @@
 package com.weit2nd.presentation.ui.signup.terms
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.terms.Term
+import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.BottomButton
+import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.Gray3
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -49,79 +63,127 @@ fun TermsScreen(
         }
     }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Column {
-            Text(
-                text = "약관을 확인해주세요.",
-                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
-            )
-            HorizontalDivider(
-                color = Color.DarkGray,
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-            AgreeAllCheckbox(
-                modifier = Modifier.fillMaxWidth(),
-                isChecked = state.value.agreeAll,
-                onCheckedChange = vm::onCheckedAllAgreeChange,
-            )
-            HorizontalDivider(
-                color = Color.DarkGray,
-                thickness = 1.dp,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
+    Scaffold(topBar = {
+        TitleTopBar(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface),
+        )
+    }, content = { innerPadding ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column {
+                DescriptionText(modifier = Modifier.fillMaxWidth())
 
-            LazyColumn {
-                items(state.value.termStatuses) { termStatus ->
-                    TermCheckbox(
-                        modifier = Modifier.fillMaxWidth(),
-                        term = termStatus.term,
-                        isChecked = termStatus.isChecked,
-                        onCheckedChange = vm::onCheckedBoxChange,
-                        onDetailBtnClicked = vm::onDetailBtnClicked,
-                    )
+                Spacer(modifier = Modifier.padding(vertical = 16.dp))
+
+                AgreeAllCheckbox(
+                    modifier = Modifier.fillMaxWidth(),
+                    isChecked = state.value.agreeAll,
+                    onCheckedChange = vm::onCheckedAllAgreeChange,
+                )
+
+                HorizontalDivider(
+                    color = Gray3,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(vertical = 16.dp),
+                )
+
+                LazyColumn {
+                    items(state.value.termStatuses) { termStatus ->
+                        TermCheckbox(
+                            modifier = Modifier.fillMaxWidth(),
+                            term = termStatus.term,
+                            isChecked = termStatus.isChecked,
+                            onCheckedChange = vm::onCheckedBoxChange,
+                            onDetailBtnClicked = vm::onDetailBtnClicked,
+                        )
+                    }
                 }
             }
+
+            BottomButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = vm::onSignUpBtnClicked,
+                enabled = state.value.canProceed,
+                text = stringResource(R.string.term_screen_bottom_btn),
+            )
         }
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            enabled = state.value.canProceed,
-            onClick = vm::onSignUpBtnClicked,
-        ) {
-            Text(text = "다음")
-        }
+    })
+}
+
+@Composable
+private fun TitleTopBar(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.height(48.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.term_screen_topbar_title),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
 @Composable
-fun AgreeAllCheckbox(
+private fun DescriptionText(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(R.string.term_screen_description),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(R.string.term_screen_sub_description),
+            style = MaterialTheme.typography.titleSmall,
+            color = Gray1,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AgreeAllCheckbox(
     modifier: Modifier = Modifier,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(
-            checked = isChecked,
-            onCheckedChange = { onCheckedChange(it) },
-        )
+        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = { onCheckedChange(it) },
+                colors = CheckboxDefaults.colors(uncheckedColor = Gray3),
+            )
+        }
+        Spacer(modifier = Modifier.padding(horizontal = 4.dp))
         Text(
-            text = "전체동의",
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+            text = stringResource(R.string.term_screen_agree_all),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TermCheckbox(
+private fun TermCheckbox(
     modifier: Modifier = Modifier,
     term: Term,
     isChecked: Boolean,
@@ -136,20 +198,91 @@ fun TermCheckbox(
             modifier = modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(
-                checked = isChecked,
-                onCheckedChange = { onCheckedChange(term, it) },
+            CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                Checkbox(
+                    checked = isChecked,
+                    onCheckedChange = { onCheckedChange(term, it) },
+                    colors =
+                        CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.secondary,
+                            uncheckedColor = Gray3,
+                        ),
+                )
+            }
+            IsRequired(modifier = Modifier.padding(horizontal = 8.dp), isRequired = term.isRequired)
+            Text(
+                text = term.title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-            val termPrefix = if (term.isRequired) "[필수]" else "[선택]"
-            Text(text = termPrefix)
-            Spacer(modifier = Modifier.padding(4.dp))
-            Text(text = term.title)
         }
         IconButton(onClick = { onDetailBtnClicked(term.id) }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                tint = Gray1,
                 contentDescription = "NavigateToTermDetailButton",
             )
         }
+    }
+}
+
+@Composable
+private fun IsRequired(
+    modifier: Modifier = Modifier,
+    isRequired: Boolean,
+) {
+    Text(
+        modifier =
+            modifier
+                .border(BorderStroke(1.dp, Gray2), RoundedCornerShape(4.dp))
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+        text = if (isRequired) stringResource(R.string.term_required) else stringResource(R.string.term_optional),
+        style = MaterialTheme.typography.bodyMedium,
+        color = Gray1,
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun TopBarPreview() {
+    RoadyFoodyTheme {
+        TitleTopBar(modifier = Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun DescriptionPreview() {
+    RoadyFoodyTheme {
+        DescriptionText(modifier = Modifier.fillMaxWidth())
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun AgreeAllPreview() {
+    RoadyFoodyTheme {
+        AgreeAllCheckbox(modifier = Modifier.fillMaxWidth(), isChecked = true) {}
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun IsRequiredPreview() {
+    RoadyFoodyTheme {
+        IsRequired(modifier = Modifier, isRequired = false)
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun TermCheckBoxPreview() {
+    RoadyFoodyTheme {
+        TermCheckbox(
+            modifier = Modifier.fillMaxWidth(),
+            term = Term(0, "약관 제목입니다", true),
+            isChecked = true,
+            onCheckedChange = { _, _ -> },
+        ) { _ -> }
     }
 }
