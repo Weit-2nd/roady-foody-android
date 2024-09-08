@@ -32,6 +32,7 @@ private val DarkColorScheme =
         onSurface = Black,
         surfaceVariant = Gray5,
         onSurfaceVariant = Black,
+        surfaceTint = White,
         error = Error,
         onError = White,
         errorContainer = Gray5,
@@ -62,6 +63,7 @@ private val LightColorScheme =
         onSurface = Black,
         surfaceVariant = Gray5,
         onSurfaceVariant = Black,
+        surfaceTint = White,
         error = Error,
         onError = White,
         errorContainer = Gray5,
@@ -87,8 +89,8 @@ fun RoadyFoodyTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.surface.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 

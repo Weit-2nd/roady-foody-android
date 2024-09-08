@@ -9,7 +9,10 @@ import com.weit2nd.data.interceptor.AuthAuthenticator
 import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.ErrorResponseInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
+import com.weit2nd.data.util.BusinessStateConverter
+import com.weit2nd.data.util.DayOfWeekConverter
 import com.weit2nd.data.util.LocalDateTimeConverter
+import com.weit2nd.data.util.LocalTimeConverter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -152,6 +155,9 @@ object NetworkModule {
         Moshi
             .Builder()
             .add(LocalDateTimeConverter())
+            .add(LocalTimeConverter())
+            .add(DayOfWeekConverter())
+            .add(BusinessStateConverter())
             .add(KotlinJsonAdapterFactory())
             .build()
 }
