@@ -102,7 +102,7 @@ fun TermsScreen(
                             modifier = Modifier.fillMaxWidth(),
                             term = termStatus.term,
                             isChecked = termStatus.isChecked,
-                            onCheckedChange = vm::onCheckedBoxChange,
+                            onTermAgreementChange = vm::onTermAgreementCheckBoxChange,
                             onDetailBtnClicked = vm::onDetailBtnClicked,
                         )
                     }
@@ -187,7 +187,7 @@ private fun TermCheckbox(
     modifier: Modifier = Modifier,
     term: Term,
     isChecked: Boolean,
-    onCheckedChange: (term: Term, isChecked: Boolean) -> Unit,
+    onTermAgreementChange: (term: Term, isChecked: Boolean) -> Unit,
     onDetailBtnClicked: (Long) -> Unit,
 ) {
     Row(
@@ -201,7 +201,7 @@ private fun TermCheckbox(
             CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
                 Checkbox(
                     checked = isChecked,
-                    onCheckedChange = { onCheckedChange(term, it) },
+                    onCheckedChange = { onTermAgreementChange(term, it) },
                     colors =
                         CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.secondary,
@@ -282,7 +282,7 @@ private fun TermCheckBoxPreview() {
             modifier = Modifier.fillMaxWidth(),
             term = Term(0, "약관 제목입니다", true),
             isChecked = true,
-            onCheckedChange = { _, _ -> },
+            onTermAgreementChange = { _, _ -> },
         ) { _ -> }
     }
 }
