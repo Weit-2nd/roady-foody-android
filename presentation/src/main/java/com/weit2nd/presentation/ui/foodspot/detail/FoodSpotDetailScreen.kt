@@ -269,16 +269,20 @@ private fun FoodSpotDetailContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
         item {
-            ReviewTotal(
-                modifier =
+            if (state.reviewCount > 0) {
+                ReviewTotal(
+                    modifier =
                     Modifier.padding(
                         horizontal = 16.dp,
                     ),
-                averageRating = 4.8f,
-                reviewCount = 256,
-                onClick = {},
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+                    averageRating = state.averageRating,
+                    reviewCount = state.reviewCount,
+                    onClick = {
+                        // TODO 리뷰 더보기 이동
+                    },
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             ReviewRequest(
                 modifier = Modifier.fillMaxWidth(),
                 onPostReviewClick = onPostReviewClick,

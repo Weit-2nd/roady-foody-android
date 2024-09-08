@@ -7,6 +7,7 @@ import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
 
+// TODO 리뷰 카운트랑 평균 별점 가져와야됨
 data class FoodSpotDetailState(
     val name: String = "",
     val position: LatLng = LatLng.from(37.5597706, 126.9423666),
@@ -18,6 +19,8 @@ data class FoodSpotDetailState(
     val foodCategoryList: List<FoodCategory> = emptyList(),
     val foodSpotsPhotos: List<String> = emptyList(),
     val reviews: List<Review> = emptyList(),
+    val reviewCount: Int = 256,
+    val averageRating: Float = 4.8f,
     val hasMoreReviews: Boolean = false,
     val isOperationHoursOpen: Boolean = false,
     val isLoading: Boolean = true,
