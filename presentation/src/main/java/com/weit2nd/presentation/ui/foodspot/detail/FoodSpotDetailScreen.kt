@@ -65,6 +65,7 @@ import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.theme.Gray1
@@ -82,6 +83,7 @@ import java.time.LocalTime
 fun FoodSpotDetailScreen(
     vm: FoodSpotDetailViewModel = hiltViewModel(),
     navToBack: () -> Unit,
+    navToPostReview: (FoodSpotForReviewDTO) -> Unit,
 ) {
     val state by vm.collectAsState()
 
@@ -106,6 +108,10 @@ fun FoodSpotDetailScreen(
                     map = sideEffect.map,
                     position = sideEffect.position,
                 )
+            }
+
+            is FoodSpotDetailSideEffect.NavToPostReview -> {
+                navToPostReview(sideEffect.foodSpotForReviewDTO)
             }
         }
     }
@@ -282,6 +288,7 @@ private fun FoodSpotDetailContent(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
+            // TODO 내가 쓴 리뷰가 없을 때만 뜨게 하고 싶음....
             ReviewRequest(
                 modifier = Modifier.fillMaxWidth(),
                 onPostReviewClick = onPostReviewClick,

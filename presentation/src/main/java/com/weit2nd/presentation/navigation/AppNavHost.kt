@@ -350,6 +350,9 @@ private fun NavGraphBuilder.foodSpotDetailComposable(navController: NavHostContr
             navToBack = {
                 navController.popBackStack()
             },
+            navToPostReview = {
+                navController.navigateToPostReview(it)
+            },
         )
     }
 }

@@ -14,6 +14,7 @@ import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -54,7 +55,7 @@ class FoodSpotDetailViewModel @Inject constructor(
     }
 
     fun onPostReviewClick() {
-        // TODO PostReviewScreen 연결
+        FoodSpotDetailIntent.NavToPostReview.post()
     }
 
     fun onMapReady(map: KakaoMap) {
@@ -153,6 +154,20 @@ class FoodSpotDetailViewModel @Inject constructor(
                         FoodSpotDetailSideEffect.MoveAndDrawMarker(
                             map = map,
                             position = state.position,
+                        ),
+                    )
+                }
+
+                FoodSpotDetailIntent.NavToPostReview -> {
+                    val id = foodSpotId ?: return@intent
+                    val foodSpotForReviewDTO =
+                        FoodSpotForReviewDTO(
+                            id = id,
+                            name = state.name,
+                        )
+                    postSideEffect(
+                        FoodSpotDetailSideEffect.NavToPostReview(
+                            foodSpotForReviewDTO = foodSpotForReviewDTO,
                         ),
                     )
                 }

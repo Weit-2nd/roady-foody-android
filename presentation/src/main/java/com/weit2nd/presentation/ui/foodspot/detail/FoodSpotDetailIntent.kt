@@ -16,4 +16,6 @@ sealed interface FoodSpotDetailIntent {
     data class OnMapReady(
         val map: KakaoMap,
     ) : FoodSpotDetailIntent
+
+    data object NavToPostReview : FoodSpotDetailIntent
 }
