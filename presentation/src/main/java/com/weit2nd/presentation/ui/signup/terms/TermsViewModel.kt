@@ -22,7 +22,7 @@ class TermsViewModel @Inject constructor(
         TermsIntent.VerifyTermAgreements.post()
     }
 
-    fun onCheckedBoxChange(
+    fun onTermAgreementCheckBoxChange(
         term: Term,
         isChecked: Boolean,
     ) {

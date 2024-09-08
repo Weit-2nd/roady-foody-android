@@ -1,6 +1,19 @@
 <resources>
     <string name="app_name">RoadyFoody</string>
     <string name="login_btn">카카오 로그인</string>
+    <string name="retry">다시 시도</string>
+
+    <!-- TermScreen -->
+    <string name="term_screen_bottom_btn">다음</string>
+    <string name="term_screen_topbar_title">약관 동의</string>
+    <string name="term_screen_description">약관에 동의해주세요.</string>
+    <string name="term_screen_sub_description">필수 및 선택 항목에 대해 동의해주세요.</string>
+    <string name="term_screen_agree_all">모두 동의합니다.</string>
+    <string name="term_required">필수</string>
+    <string name="term_optional">선택</string>
+
+    <!-- TermDetailScreen -->
+    <string name="term_detail_topbar_title">약관 상세</string>
 
     <!--  SignUpScreen  -->
     <string name="sign_up">회원가입</string>
@@ -15,7 +28,7 @@
     <!-- TermDetail -->
     <string name="term_detail_network_error">인터넷 연결 상태를 확인 후 다시 시도해주세요</string>
     <string name="term_detail_id_not_found">없는 약관 이야!</string>
-    
+
     <!-- FoodSpotDetail -->
     <string name="food_spot_detail_open">영업 중</string>
     <string name="food_spot_detail_closed">영업 종료</string>
