@@ -132,14 +132,6 @@ private fun EditButton(modifier: Modifier = Modifier) {
 
 @Composable
 @Preview(showBackground = true)
-private fun ProfileImagePreview() {
-//    RoadyFoodyTheme {
-//        ProfileImage()
-//    }
-}
-
-@Composable
-@Preview(showBackground = true)
 private fun DefaultProfileImagePreview() {
     RoadyFoodyTheme {
         DefaultProfileImage(
