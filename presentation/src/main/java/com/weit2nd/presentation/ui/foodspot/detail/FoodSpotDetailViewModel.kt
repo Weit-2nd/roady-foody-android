@@ -56,10 +56,6 @@ class FoodSpotDetailViewModel @Inject constructor(
         // TODO PostReviewScreen 연결
     }
 
-    fun onNavigationButtonClick() {
-        FoodSpotDetailIntent.NavToBack.post()
-    }
-
     private fun FoodSpotDetailIntent.post() =
         intent {
             when (this@post) {
