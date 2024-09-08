@@ -2,9 +2,11 @@ package com.weit2nd.presentation.ui.foodspot.detail
 
 import androidx.lifecycle.SavedStateHandle
 import com.kakao.vectormap.LatLng
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.spot.FoodSpotDetailOperationHours
 import com.weit2nd.domain.model.spot.FoodSpotReview
 import com.weit2nd.domain.model.spot.ReviewSortType
+import com.weit2nd.domain.usecase.search.SearchPlaceWithCoordinateUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotDetailUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
@@ -24,6 +26,7 @@ class FoodSpotDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getFoodSpotDetailUseCase: GetFoodSpotDetailUseCase,
     private val getFoodSpotReviewsUseCase: GetFoodSpotReviewsUseCase,
+    private val searchPlaceWithCoordinateUseCase: SearchPlaceWithCoordinateUseCase,
 ) : BaseViewModel<FoodSpotDetailState, FoodSpotDetailSideEffect>() {
     override val container: Container<FoodSpotDetailState, FoodSpotDetailSideEffect> =
         container(FoodSpotDetailState())
@@ -76,6 +79,16 @@ class FoodSpotDetailViewModel @Inject constructor(
                                 sortType = ReviewSortType.LATEST,
                             )
                         val detail = getFoodSpotDetailUseCase(id)
+                        val address =
+                            searchPlaceWithCoordinateUseCase(
+                                coordinate =
+                                    Coordinate(
+                                        latitude = detail.latitude,
+                                        longitude = detail.longitude,
+                                    ),
+                            ).let { place ->
+                                place.roadAddressName.takeIf { it.isNotBlank() } ?: place.addressName
+                            }
                         reduce {
                             state.copy(
                                 name = detail.name,
@@ -86,6 +99,7 @@ class FoodSpotDetailViewModel @Inject constructor(
                                     ),
                                 movableFoodSpots = detail.movableFoodSpots,
                                 openState = detail.openState,
+                                address = address,
                                 storeClosure = detail.storeClosure,
                                 operationHours = detail.operationHoursList.map { it.toOperationHour() },
                                 foodCategoryList = detail.foodCategoryList,

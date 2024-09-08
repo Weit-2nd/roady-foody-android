@@ -11,6 +11,7 @@ data class FoodSpotDetailState(
     val position: LatLng? = null,
     val movableFoodSpots: Boolean = false,
     val openState: FoodSpotOpenState = FoodSpotOpenState.UNKNOWN,
+    val address: String = "",
     val storeClosure: Boolean = false,
     val operationHours: List<OperationHour> = emptyList(),
     val foodCategoryList: List<FoodCategory> = emptyList(),
