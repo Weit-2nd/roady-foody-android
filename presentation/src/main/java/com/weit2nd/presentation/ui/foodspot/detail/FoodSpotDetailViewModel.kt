@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.foodspot.detail
 
 import androidx.lifecycle.SavedStateHandle
+import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.spot.FoodSpotDetailOperationHours
@@ -56,6 +57,10 @@ class FoodSpotDetailViewModel @Inject constructor(
         // TODO PostReviewScreen 연결
     }
 
+    fun onMapReady(map: KakaoMap) {
+        FoodSpotDetailIntent.OnMapReady(map).post()
+    }
+
     private fun FoodSpotDetailIntent.post() =
         intent {
             when (this@post) {
@@ -104,6 +109,14 @@ class FoodSpotDetailViewModel @Inject constructor(
                                 hasMoreReviews = foodSpotReviews.hasNext,
                             )
                         }
+                        state.map?.let { map ->
+                            postSideEffect(
+                                FoodSpotDetailSideEffect.MoveAndDrawMarker(
+                                    map = map,
+                                    position = state.position,
+                                ),
+                            )
+                        }
                     }.onFailure {
                         reduce {
                             state.copy(
@@ -128,6 +141,20 @@ class FoodSpotDetailViewModel @Inject constructor(
 
                 FoodSpotDetailIntent.NavToBack -> {
                     postSideEffect(FoodSpotDetailSideEffect.NavToBack)
+                }
+
+                is FoodSpotDetailIntent.OnMapReady -> {
+                    reduce {
+                        state.copy(
+                            map = map,
+                        )
+                    }
+                    postSideEffect(
+                        FoodSpotDetailSideEffect.MoveAndDrawMarker(
+                            map = map,
+                            position = state.position,
+                        ),
+                    )
                 }
             }
         }

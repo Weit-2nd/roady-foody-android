@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.foodspot.detail
 
+import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotOpenState
@@ -8,7 +9,7 @@ import com.weit2nd.presentation.model.foodspot.Review
 
 data class FoodSpotDetailState(
     val name: String = "",
-    val position: LatLng? = null,
+    val position: LatLng = LatLng.from(37.5597706, 126.9423666),
     val movableFoodSpots: Boolean = false,
     val openState: FoodSpotOpenState = FoodSpotOpenState.UNKNOWN,
     val address: String = "",
@@ -22,4 +23,5 @@ data class FoodSpotDetailState(
     val isLoading: Boolean = true,
     val shouldRetry: Boolean = false,
     val isViewMoreReviewVisible: Boolean = false,
+    val map: KakaoMap? = null,
 )
