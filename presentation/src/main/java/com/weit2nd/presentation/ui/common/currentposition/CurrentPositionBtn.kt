@@ -3,7 +3,7 @@ package com.weit2nd.presentation.ui.common.currentposition
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.FloatingActionButtonElevation
@@ -51,7 +51,7 @@ private fun CurrentPositionButton(
     FloatingActionButton(
         modifier = modifier,
         onClick = onClick,
-        shape = RoundedCornerShape(100),
+        shape = CircleShape,
         containerColor = MaterialTheme.colorScheme.surface,
         elevation = elevation,
         contentColor = DarkGray,

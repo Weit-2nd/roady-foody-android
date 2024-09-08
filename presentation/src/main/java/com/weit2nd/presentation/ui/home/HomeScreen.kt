@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
@@ -599,7 +600,7 @@ private fun SearchBar(
                 modifier =
                     Modifier
                         .size(24.dp)
-                        .clip(RoundedCornerShape(100))
+                        .clip(CircleShape)
                         .clickable {
                             onProfileClick()
                         },
