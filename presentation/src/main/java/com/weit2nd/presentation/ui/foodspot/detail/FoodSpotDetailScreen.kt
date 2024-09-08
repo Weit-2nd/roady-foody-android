@@ -321,7 +321,7 @@ private fun FoodSpotDetailContent(
                 )
             }
         }
-        if (state.isViewMoreReviewVisible) {
+        if (state.hasMoreReviews) {
             item {
                 BorderButton(
                     text = stringResource(id = R.string.food_spot_detail_view_more_review),

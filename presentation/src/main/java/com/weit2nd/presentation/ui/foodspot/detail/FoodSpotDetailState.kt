@@ -24,6 +24,5 @@ data class FoodSpotDetailState(
     val isOperationHoursOpen: Boolean = false,
     val isLoading: Boolean = true,
     val shouldRetry: Boolean = false,
-    val isViewMoreReviewVisible: Boolean = false,
     val map: KakaoMap? = null,
 )
