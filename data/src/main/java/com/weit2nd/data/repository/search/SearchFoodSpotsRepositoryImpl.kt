@@ -1,10 +1,11 @@
 package com.weit2nd.data.repository.search
 
 import com.weit2nd.data.model.search.FoodSpotsDTO
+import com.weit2nd.data.model.search.OperationHourDTO
 import com.weit2nd.data.source.search.SearchFoodSpotsDataSource
 import com.weit2nd.domain.model.Coordinate
-import com.weit2nd.domain.model.search.BusinessState
 import com.weit2nd.domain.model.search.FoodSpot
+import com.weit2nd.domain.model.spot.OperationHour
 import com.weit2nd.domain.repository.search.SearchFoodSpotsRepository
 import javax.inject.Inject
 
@@ -33,12 +34,22 @@ class SearchFoodSpotsRepositoryImpl @Inject constructor(
                 name = foodSpotDTO.name,
                 longitude = foodSpotDTO.longitude,
                 latitude = foodSpotDTO.latitude,
-                businessState = getBusinessState(foodSpotDTO.open),
+                businessState = foodSpotDTO.open,
+                operationHour = foodSpotDTO.operationHour.toOperationHour(),
                 categories = foodSpotDTO.categories,
+                image = foodSpotDTO.image.orEmpty(),
+                isFoodTruck = foodSpotDTO.isFoodTruck,
+                averageRating = foodSpotDTO.averageRating,
+                reviewCount = foodSpotDTO.reviewCount,
                 createAt = foodSpotDTO.createAt,
             )
         }
     }
 
-    private fun getBusinessState(open: String) = BusinessState.entries.find { it.name == open } ?: BusinessState.UNKNOWN
+    private fun OperationHourDTO.toOperationHour() =
+        OperationHour(
+            dayOfWeek,
+            openingHours,
+            closingHours,
+        )
 }
