@@ -75,4 +75,7 @@
     <string name="home_food_spot_review_count">리뷰 %s</string>
     <string name="home_food_spot_review_count_over_100">100+</string>
     <string name="home_food_spot_close_time">%02d:%02d 까지</string>
+
+    <!-- review -->
+    <string name="review_read_more">더보기</string>
 </resources>
