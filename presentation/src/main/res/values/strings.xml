@@ -23,7 +23,11 @@
     <string name="nickname_duplicate">중복된 닉네임입니다.</string>
     <string name="nickname_can_sign_up">사용 가능한 닉네임입니다.</string>
     <string name="nickname_input_placeholder">닉네임을 입력해주세요</string>
+    <string name="nickname_description">6자리~16자리 이내,  특수문자/ 기호 입력불가</string>
     <string name="nickname_duplicate_check">중복 체크</string>
+    <string name="sign_up_profile_image">프로필 사진</string>
+    <string name="sign_up_nickname">닉네임</string>
+    <string name="sign_up_topbar_title">프로필 생성</string>
 
     <!-- TermDetail -->
     <string name="term_detail_network_error">인터넷 연결 상태를 확인 후 다시 시도해주세요</string>

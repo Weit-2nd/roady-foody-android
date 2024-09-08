@@ -70,40 +70,40 @@ fun SignUpScreen(
         topBar = {
             TopBar(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
             )
         },
         content = { innerPadding ->
             Column(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp),
             ) {
                 Column(
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 20.dp),
-                        text = "프로필 사진",
+                        text = stringResource(R.string.sign_up_profile_image),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     EditableProfileImage(
                         modifier =
-                            Modifier
-                                .size(100.dp)
-                                .align(Alignment.CenterHorizontally),
+                        Modifier
+                            .size(100.dp)
+                            .align(Alignment.CenterHorizontally),
                         imgUri = state.value.profileImageUri,
                         onProfileImageClick = vm::onProfileImageClick,
                     )
                     Text(
                         modifier = Modifier.padding(top = 24.dp),
-                        text = "닉네임",
+                        text = stringResource(R.string.sign_up_nickname),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
@@ -154,7 +154,7 @@ private fun TopBar(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "프로필 생성",
+            text = stringResource(R.string.sign_up_topbar_title),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -184,9 +184,9 @@ private fun NicknameSetting(
 
         Text(
             modifier =
-                Modifier
-                    .padding(top = 8.dp)
-                    .fillMaxWidth(),
+            Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth(),
             color =
                 when (nicknameState) {
                     NicknameState.CAN_SIGN_UP -> Blue
@@ -207,7 +207,7 @@ private fun getNicknameStateMessage(nicknameState: NicknameState) =
         NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
         NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
         NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
-        else -> "6자리~16자리 이내,  특수문자/ 기호 입력불가"
+        else -> stringResource(R.string.nickname_description)
     }
 
 @Composable
@@ -252,9 +252,9 @@ fun NicknameTextField(
         )
         DuplicationCheckButton(
             modifier =
-                Modifier
-                    .height(48.dp)
-                    .padding(start = 12.dp),
+            Modifier
+                .height(48.dp)
+                .padding(start = 12.dp),
             onClick = onDuplicationBtnClick,
             enable = isNicknameValid,
         )
