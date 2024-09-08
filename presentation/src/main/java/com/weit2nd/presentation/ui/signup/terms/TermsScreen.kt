@@ -209,7 +209,7 @@ private fun TermCheckbox(
                         ),
                 )
             }
-            IsRequired(modifier = Modifier.padding(horizontal = 8.dp), isRequired = term.isRequired)
+            RequiredTermLabel(modifier = Modifier.padding(horizontal = 8.dp), isRequired = term.isRequired)
             Text(
                 text = term.title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -227,7 +227,7 @@ private fun TermCheckbox(
 }
 
 @Composable
-private fun IsRequired(
+private fun RequiredTermLabel(
     modifier: Modifier = Modifier,
     isRequired: Boolean,
 ) {
@@ -268,9 +268,9 @@ private fun AgreeAllPreview() {
 
 @Composable
 @Preview(showBackground = true)
-private fun IsRequiredPreview() {
+private fun RequiredTermLabelPreview() {
     RoadyFoodyTheme {
-        IsRequired(modifier = Modifier, isRequired = false)
+        RequiredTermLabel(modifier = Modifier, isRequired = false)
     }
 }
 
