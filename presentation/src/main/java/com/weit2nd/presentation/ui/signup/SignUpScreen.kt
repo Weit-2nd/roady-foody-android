@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.signup
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.BottomButton
 import com.weit2nd.presentation.ui.common.EditableProfileImage
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
+import com.weit2nd.presentation.ui.common.TitleTopBar
 import com.weit2nd.presentation.ui.theme.Blue
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray3
@@ -68,11 +70,12 @@ fun SignUpScreen(
 
     Scaffold(
         topBar = {
-            TopBar(
+            TitleTopBar(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface),
+                title = stringResource(R.string.term_screen_topbar_title),
             )
         },
         content = { innerPadding ->

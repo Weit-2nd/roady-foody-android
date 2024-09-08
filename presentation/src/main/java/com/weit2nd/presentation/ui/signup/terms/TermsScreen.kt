@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.terms.Term
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.BottomButton
+import com.weit2nd.presentation.ui.common.TitleTopBar
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray3
@@ -69,6 +69,7 @@ fun TermsScreen(
                 Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surface),
+            title = stringResource(R.string.term_screen_topbar_title),
         )
     }, content = { innerPadding ->
         Column(
@@ -117,21 +118,6 @@ fun TermsScreen(
             )
         }
     })
-}
-
-@Composable
-private fun TitleTopBar(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.height(48.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = stringResource(R.string.term_screen_topbar_title),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
 }
 
 @Composable
@@ -209,7 +195,10 @@ private fun TermCheckbox(
                         ),
                 )
             }
-            RequiredTermLabel(modifier = Modifier.padding(horizontal = 8.dp), isRequired = term.isRequired)
+            RequiredTermLabel(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                isRequired = term.isRequired,
+            )
             Text(
                 text = term.title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -240,14 +229,6 @@ private fun RequiredTermLabel(
         style = MaterialTheme.typography.bodyMedium,
         color = Gray1,
     )
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun TopBarPreview() {
-    RoadyFoodyTheme {
-        TitleTopBar(modifier = Modifier.fillMaxWidth())
-    }
 }
 
 @Composable
