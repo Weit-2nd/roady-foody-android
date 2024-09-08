@@ -3,7 +3,6 @@ package com.weit2nd.presentation.ui.foodspot.detail
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,9 +22,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,8 +51,13 @@ import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.CommonTopBar
 import com.weit2nd.presentation.ui.common.ReviewItem
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.Gray4
+import com.weit2nd.presentation.ui.theme.Gray5
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
@@ -78,8 +82,10 @@ fun FoodSpotDetailScreen(
 
     val isViewMoreOperationHoursEnabled by remember {
         derivedStateOf {
-            (state.openState == FoodSpotOpenState.CLOSED ||
-            state.openState == FoodSpotOpenState.OPEN) &&
+            (
+                state.openState == FoodSpotOpenState.CLOSED ||
+                    state.openState == FoodSpotOpenState.OPEN
+            ) &&
                 state.operationHours.isNotEmpty() &&
                 state.isOperationHoursOpen.not()
         }
@@ -197,14 +203,53 @@ private fun FoodSpotDetailContent(
             }
         }
         item {
-            Spacer(modifier = Modifier.height(8.dp))
-            FoodSpotReviews(
+            HorizontalDivider(
+                thickness = 8.dp,
+                color = Gray5,
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            ReviewTotal(
+                modifier =
+                    Modifier.padding(
+                        horizontal = 16.dp,
+                    ),
+                averageRating = 4.8f,
+                reviewCount = 256,
+                onClick = {},
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ReviewRequest(
                 modifier = Modifier.fillMaxWidth(),
-                reviews = state.reviews,
-                contentPadding = PaddingValues(horizontal = horizontalPadding),
-                onImageClick = onImageClick,
                 onPostReviewClick = onPostReviewClick,
             )
+        }
+        itemsIndexed(state.reviews) { idx, review ->
+            ReviewItem(
+                review = review,
+                onImageClick = onImageClick,
+            )
+            if (idx < state.reviews.lastIndex) {
+                HorizontalDivider(
+                    modifier =
+                        Modifier.padding(
+                            horizontal = 16.dp,
+                        ),
+                    thickness = 1.dp,
+                    color = Gray4,
+                )
+            }
+        }
+        if (state.isViewMoreReviewVisible) {
+            item {
+                BorderButton(
+                    text = stringResource(id = R.string.food_spot_detail_view_more_review),
+                    onClick = {
+                        // TODO 리뷰 더보기 화면으로 이동
+                    },
+                )
+            }
         }
     }
 }
@@ -277,63 +322,100 @@ private fun FoodSpotReviews(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            modifier = Modifier.padding(contentPadding),
-            text = "방문자 리뷰",
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontSize = 21.sp,
+        ReviewTotal(
+            averageRating = 4.8f,
+            reviewCount = 256,
+            onClick = {},
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        if (reviews.isNotEmpty()) {
-            LazyRow(
-                contentPadding = contentPadding,
-            ) {
-                itemsIndexed(reviews) { idx, review ->
-                    ReviewItem(
-                        review = review,
-                        onImageClick = onImageClick,
-                    )
-                    if (idx < reviews.lastIndex) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
+        Spacer(modifier = Modifier.height(16.dp))
+        ReviewRequest(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            onPostReviewClick = onPostReviewClick,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyRow(
+            contentPadding = contentPadding,
+        ) {
+            itemsIndexed(reviews) { idx, review ->
+                ReviewItem(
+                    review = review,
+                    onImageClick = onImageClick,
+                )
+                if (idx < reviews.lastIndex) {
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
-        } else {
-            EmptyReview(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                onPostReviewClick = onPostReviewClick,
-            )
         }
     }
 }
 
 @Composable
-fun EmptyReview(
+private fun ReviewTotal(
+    modifier: Modifier = Modifier,
+    averageRating: Float,
+    reviewCount: Int,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            modifier.clickable {
+                onClick()
+            },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = R.drawable.ic_star),
+            contentDescription = "review rating",
+            tint = MaterialTheme.colorScheme.tertiary,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = averageRating.toString(),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text =
+                stringResource(
+                    id = R.string.food_spot_detail_review_count,
+                    reviewCount,
+                ),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = R.drawable.ic_arrow_right),
+            contentDescription = "navigate to review detail",
+            tint = Gray2,
+        )
+    }
+}
+
+@Composable
+private fun ReviewRequest(
     modifier: Modifier = Modifier,
     onPostReviewClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "리뷰가 옵소요..",
-            color = Color.Black,
-            fontSize = 18.sp,
+            text = stringResource(id = R.string.food_spot_detail_post_review_description),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Button(
+        BorderButton(
+            text = stringResource(id = R.string.food_spot_detail_post_review_button),
             onClick = onPostReviewClick,
-        ) {
-            Text(
-                text = "리뷰 작성하러 가기",
-            )
-        }
+        )
     }
 }
 
@@ -426,32 +508,34 @@ fun OperationHour(
 @Preview
 @Composable
 private fun FoodSpotDetailPreview() {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        FoodSpotDetailContent(
-            state =
-                FoodSpotDetailState(
-                    name = "빵빵하게",
-                    foodCategoryList =
-                        listOf(
-                            FoodCategory(
-                                0,
-                                "붕어빵",
+    RoadyFoodyTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            FoodSpotDetailContent(
+                state =
+                    FoodSpotDetailState(
+                        name = "빵빵하게",
+                        foodCategoryList =
+                            listOf(
+                                FoodCategory(
+                                    0,
+                                    "붕어빵",
+                                ),
+                                FoodCategory(
+                                    1,
+                                    "광어빵",
+                                ),
                             ),
-                            FoodCategory(
-                                1,
-                                "광어빵",
-                            ),
-                        ),
-                    foodSpotsPhotos = listOf("a"),
-                ),
-            isViewMoreOperationHoursEnabled = true,
-            isBusinessInformationShow = false,
-            onImageClick = { _, _ -> },
-            onOperationHourClick = {},
-            onPostReviewClick = {},
-        )
+                        foodSpotsPhotos = listOf("a"),
+                    ),
+                isViewMoreOperationHoursEnabled = true,
+                isBusinessInformationShow = false,
+                onImageClick = { _, _ -> },
+                onOperationHourClick = {},
+                onPostReviewClick = {},
+            )
+        }
     }
 }
 
