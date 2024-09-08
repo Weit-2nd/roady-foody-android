@@ -18,4 +18,9 @@ sealed interface FoodSpotDetailIntent {
     ) : FoodSpotDetailIntent
 
     data object NavToPostReview : FoodSpotDetailIntent
+
+    data class ChangeReviewContentExpendState(
+        val position: Int,
+        val expandState: Boolean,
+    ) : FoodSpotDetailIntent
 }

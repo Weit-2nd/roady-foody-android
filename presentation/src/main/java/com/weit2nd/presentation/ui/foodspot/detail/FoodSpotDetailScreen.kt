@@ -156,6 +156,8 @@ fun FoodSpotDetailScreen(
         onImageClick = vm::onImageClick,
         onOperationHourClick = vm::onOperationHourClick,
         onPostReviewClick = vm::onPostReviewClick,
+        onReviewContentClick = vm::onReviewContentsClick,
+        onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
     )
 }
 
@@ -170,6 +172,8 @@ private fun FoodSpotDetailContent(
     onImageClick: (images: List<String>, position: Int) -> Unit,
     onOperationHourClick: (Boolean) -> Unit,
     onPostReviewClick: () -> Unit,
+    onReviewContentClick: (position: Int) -> Unit,
+    onReviewContentReadMoreClick: (position: Int) -> Unit,
 ) {
     val imagePagerState =
         rememberPagerState(
@@ -296,8 +300,15 @@ private fun FoodSpotDetailContent(
         }
         itemsIndexed(state.reviews) { idx, review ->
             ReviewItem(
-                review = review,
+                review = review.review,
                 onImageClick = onImageClick,
+                isContentExpended = review.isExpended,
+                onContentClick = {
+                    onReviewContentClick(idx)
+                },
+                onReadMoreClick = {
+                    onReviewContentReadMoreClick(idx)
+                },
             )
             if (idx < state.reviews.lastIndex) {
                 HorizontalDivider(
@@ -647,6 +658,8 @@ private fun FoodSpotDetailPreview() {
                 onImageClick = { _, _ -> },
                 onOperationHourClick = {},
                 onPostReviewClick = {},
+                onReviewContentClick = {},
+                onReviewContentReadMoreClick = {},
             )
         }
     }

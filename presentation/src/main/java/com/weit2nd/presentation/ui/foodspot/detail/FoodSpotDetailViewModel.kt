@@ -62,6 +62,22 @@ class FoodSpotDetailViewModel @Inject constructor(
         FoodSpotDetailIntent.OnMapReady(map).post()
     }
 
+    fun onReviewContentsClick(position: Int) {
+        FoodSpotDetailIntent
+            .ChangeReviewContentExpendState(
+                position = position,
+                expandState = false,
+            ).post()
+    }
+
+    fun onReviewContentsReadMoreClick(position: Int) {
+        FoodSpotDetailIntent
+            .ChangeReviewContentExpendState(
+                position = position,
+                expandState = true,
+            ).post()
+    }
+
     private fun FoodSpotDetailIntent.post() =
         intent {
             when (this@post) {
@@ -171,6 +187,25 @@ class FoodSpotDetailViewModel @Inject constructor(
                         ),
                     )
                 }
+
+                is FoodSpotDetailIntent.ChangeReviewContentExpendState -> {
+                    val updatedReviews =
+                        state.reviews
+                            .mapIndexed { index, review ->
+                                if (index == position) {
+                                    review.copy(
+                                        isExpended = expandState,
+                                    )
+                                } else {
+                                    review
+                                }
+                            }
+                    reduce {
+                        state.copy(
+                            reviews = updatedReviews,
+                        )
+                    }
+                }
             }
         }
 
@@ -186,14 +221,18 @@ class FoodSpotDetailViewModel @Inject constructor(
             close = closingHours.format(operationHourFormat),
         )
 
-    private fun FoodSpotReview.toReview(): Review =
-        Review(
-            userId = id,
-            nickname = userInfo.nickname,
-            profileImage = userInfo.profileImage,
-            date = createdAt,
-            rating = rate / 2f,
-            reviewImages = photos.map { it.image },
-            contents = contents,
+    private fun FoodSpotReview.toReview(): FoodSpotDetailReview =
+        FoodSpotDetailReview(
+            review =
+                Review(
+                    userId = id,
+                    nickname = userInfo.nickname,
+                    profileImage = userInfo.profileImage,
+                    date = createdAt,
+                    rating = rate / 2f,
+                    reviewImages = photos.map { it.image },
+                    contents = contents,
+                ),
+            isExpended = false,
         )
 }
