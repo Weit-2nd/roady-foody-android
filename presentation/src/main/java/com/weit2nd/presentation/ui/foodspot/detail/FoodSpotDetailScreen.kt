@@ -47,7 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -272,9 +271,9 @@ private fun FoodSpotDetailContent(
             if (state.reviewCount > 0) {
                 ReviewTotal(
                     modifier =
-                    Modifier.padding(
-                        horizontal = 16.dp,
-                    ),
+                        Modifier.padding(
+                            horizontal = 16.dp,
+                        ),
                     averageRating = state.averageRating,
                     reviewCount = state.reviewCount,
                     onClick = {
@@ -539,30 +538,6 @@ private fun FoodSpotOpenState.getStringRes() =
         FoodSpotOpenState.TEMPORARILY_CLOSED -> R.string.food_spot_detail_temporarily_closed
         FoodSpotOpenState.UNKNOWN -> throw IllegalArgumentException()
     }
-
-@Composable
-private fun OperationHours(
-    modifier: Modifier = Modifier,
-    operationHours: List<OperationHour>,
-) {
-    Column(
-        modifier = modifier,
-    ) {
-        operationHours.forEach {
-            Text(
-                text =
-                    stringResource(
-                        id = R.string.food_spot_detail_operation_hours,
-                        it.dayOfWeek,
-                        it.open,
-                        it.close,
-                    ),
-                color = Color.Black,
-                fontSize = 18.sp,
-            )
-        }
-    }
-}
 
 @Composable
 private fun OperationHour(
