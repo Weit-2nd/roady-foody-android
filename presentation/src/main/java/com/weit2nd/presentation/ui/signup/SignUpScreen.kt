@@ -108,7 +108,7 @@ fun SignUpScreen(
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
-                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     EditableProfileImage(
                         modifier =
                             Modifier
