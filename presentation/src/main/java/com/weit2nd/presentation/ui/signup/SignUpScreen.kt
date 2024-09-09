@@ -3,7 +3,6 @@ package com.weit2nd.presentation.ui.signup
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,13 +68,26 @@ fun SignUpScreen(
         LoadingDialogScreen()
     }
 
+    val canSignUp by remember {
+        derivedStateOf {
+            state.value.nicknameState == NicknameState.CAN_SIGN_UP &&
+                state.value.isSignUpLoading.not()
+        }
+    }
+
+    val isNicknameValid by remember {
+        derivedStateOf {
+            (state.value.nicknameState == NicknameState.VALID) && !state.value.isNicknameCheckingLoading
+        }
+    }
+
     Scaffold(
         topBar = {
             TitleTopBar(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface),
+                    Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surface),
                 title = stringResource(R.string.term_screen_topbar_title),
             )
         },
@@ -116,16 +129,16 @@ fun SignUpScreen(
                                 .fillMaxWidth(),
                         nickname = state.value.nickname,
                         nicknameState = state.value.nicknameState,
-                        isLoading = state.value.isNicknameCheckingLoading,
                         onInputValueChange = vm::onNicknameInputValueChange,
                         onDuplicationBtnClick = vm::onDuplicationBtnClick,
+                        isNicknameValid = isNicknameValid,
                     )
                 }
 
                 BottomButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = vm::onSignUpButtonClick,
-                    enabled = (state.value.nicknameState == NicknameState.CAN_SIGN_UP) && state.value.isSignUpLoading.not(),
+                    enabled = canSignUp,
                     text = stringResource(R.string.sign_up),
                 )
             }
@@ -154,9 +167,9 @@ private fun NicknameSetting(
     modifier: Modifier = Modifier,
     nickname: String,
     nicknameState: NicknameState,
-    isLoading: Boolean,
     onInputValueChange: (String) -> Unit,
     onDuplicationBtnClick: () -> Unit,
+    isNicknameValid: Boolean,
 ) {
     Column(
         modifier = modifier,
@@ -166,7 +179,7 @@ private fun NicknameSetting(
             modifier = Modifier.fillMaxWidth(),
             nickname = nickname,
             onInputValueChange = onInputValueChange,
-            isNicknameValid = (nicknameState == NicknameState.VALID) && !isLoading,
+            isNicknameValid = isNicknameValid,
             onDuplicationBtnClick = onDuplicationBtnClick,
         )
 
