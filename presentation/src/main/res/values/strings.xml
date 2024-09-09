@@ -88,4 +88,14 @@
     <string name="home_food_spot_review_count">리뷰 %s</string>
     <string name="home_food_spot_review_count_over_100">100+</string>
     <string name="home_food_spot_close_time">%02d:%02d 까지</string>
+
+    <!-- review -->
+    <string name="review_read_more">더보기</string>
+
+    <!-- foodSpotDetail -->
+    <string name="food_spot_detail_post_review_description">방문한 경험을 공유해주세요!</string>
+    <string name="food_spot_detail_post_review_button">리뷰 작성하기</string>
+    <string name="food_spot_detail_review_count">리뷰 %d</string>
+    <string name="food_spot_detail_view_more_review">리뷰 더보기</string>
+    <string name="food_spot_detail_operation_hour_close_time">%d:%.2d 까지</string>
 </resources>

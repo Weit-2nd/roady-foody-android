@@ -1,12 +1,13 @@
 package com.weit2nd.presentation.ui.foodspot.detail
 
+import android.content.Context
+import android.graphics.PointF
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,15 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,31 +36,54 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
+import com.kakao.vectormap.label.LabelTransition
+import com.kakao.vectormap.label.Transition
 import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
-import com.weit2nd.presentation.model.foodspot.Review
-import com.weit2nd.presentation.ui.common.CommonTopBar
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
+import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.ReviewItem
+import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.Gray4
+import com.weit2nd.presentation.ui.theme.Gray5
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
+import com.weit2nd.presentation.util.DisposableEffectWithLifeCycle
+import com.weit2nd.presentation.util.MarkerUtil
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import java.time.LocalTime
 
 @Composable
 fun FoodSpotDetailScreen(
     vm: FoodSpotDetailViewModel = hiltViewModel(),
     navToBack: () -> Unit,
+    navToPostReview: (FoodSpotForReviewDTO) -> Unit,
 ) {
     val state by vm.collectAsState()
 
@@ -68,18 +91,54 @@ fun FoodSpotDetailScreen(
         vm.onCreate()
     }
 
+    val context = LocalContext.current
     vm.collectSideEffect { sideEffect ->
         when (sideEffect) {
             FoodSpotDetailSideEffect.NavToBack -> {
                 navToBack()
             }
+
+            is FoodSpotDetailSideEffect.MoveAndDrawMarker -> {
+                moveCamera(
+                    map = sideEffect.map,
+                    position = sideEffect.position,
+                )
+                drawMarker(
+                    context = context,
+                    map = sideEffect.map,
+                    position = sideEffect.position,
+                )
+            }
+
+            is FoodSpotDetailSideEffect.NavToPostReview -> {
+                navToPostReview(sideEffect.foodSpotForReviewDTO)
+            }
         }
     }
+    val mapView =
+        remember {
+            MapView(context).apply {
+                start(
+                    mapLifeCycleCallback(),
+                    kakaoMapReadyCallback(
+                        onMapReady = vm::onMapReady,
+                        position = state.position,
+                    ),
+                )
+            }
+        }
+
+    DisposableEffectWithLifeCycle(
+        onResume = mapView::resume,
+        onPause = mapView::pause,
+    )
 
     val isViewMoreOperationHoursEnabled by remember {
         derivedStateOf {
-            (state.openState == FoodSpotOpenState.CLOSED ||
-            state.openState == FoodSpotOpenState.OPEN) &&
+            (
+                state.openState == FoodSpotOpenState.CLOSED ||
+                    state.openState == FoodSpotOpenState.OPEN
+            ) &&
                 state.operationHours.isNotEmpty() &&
                 state.isOperationHoursOpen.not()
         }
@@ -89,25 +148,17 @@ fun FoodSpotDetailScreen(
             state.openState != FoodSpotOpenState.UNKNOWN
         }
     }
-
-    Scaffold(
-        topBar = {
-            CommonTopBar(
-                modifier = Modifier.fillMaxWidth(),
-                onNavigationButtonClick = vm::onNavigationButtonClick,
-            )
-        },
-    ) {
-        FoodSpotDetailContent(
-            modifier = Modifier.padding(it),
-            state = state,
-            isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
-            isBusinessInformationShow = isBusinessInformationShow,
-            onImageClick = vm::onImageClick,
-            onOperationHourClick = vm::onOperationHourClick,
-            onPostReviewClick = vm::onPostReviewClick,
-        )
-    }
+    FoodSpotDetailContent(
+        state = state,
+        mapView = mapView,
+        isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
+        isBusinessInformationShow = isBusinessInformationShow,
+        onImageClick = vm::onImageClick,
+        onOperationHourClick = vm::onOperationHourClick,
+        onPostReviewClick = vm::onPostReviewClick,
+        onReviewContentClick = vm::onReviewContentsClick,
+        onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -115,11 +166,14 @@ fun FoodSpotDetailScreen(
 private fun FoodSpotDetailContent(
     modifier: Modifier = Modifier,
     state: FoodSpotDetailState,
+    mapView: MapView,
     isViewMoreOperationHoursEnabled: Boolean,
     isBusinessInformationShow: Boolean,
     onImageClick: (images: List<String>, position: Int) -> Unit,
     onOperationHourClick: (Boolean) -> Unit,
     onPostReviewClick: () -> Unit,
+    onReviewContentClick: (position: Int) -> Unit,
+    onReviewContentReadMoreClick: (position: Int) -> Unit,
 ) {
     val imagePagerState =
         rememberPagerState(
@@ -130,9 +184,6 @@ private fun FoodSpotDetailContent(
         modifier = modifier,
     ) {
         item {
-            HorizontalDivider(
-                thickness = 1.dp,
-            )
             FoodSpotImagePager(
                 modifier =
                     Modifier
@@ -147,13 +198,15 @@ private fun FoodSpotDetailContent(
             )
             HorizontalDivider(
                 thickness = 1.dp,
+                color = Gray4,
             )
         }
         item {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             TitleAndCategory(
                 modifier = Modifier.padding(horizontal = horizontalPadding),
                 title = state.name,
+                isFoodTruck = state.movableFoodSpots,
                 categories = state.foodCategoryList,
             )
         }
@@ -169,6 +222,7 @@ private fun FoodSpotDetailContent(
                                 onOperationHourClick(state.isOperationHoursOpen)
                             },
                     openState = state.openState,
+                    closedTime = state.todayCloseTime,
                     isViewMoreEnabled = isViewMoreOperationHoursEnabled,
                 )
             }
@@ -196,20 +250,91 @@ private fun FoodSpotDetailContent(
                 }
             }
         }
+        if (state.address.isNotBlank()) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                FoodSpotAddress(
+                    modifier = Modifier.padding(horizontal = horizontalPadding),
+                    address = state.address,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                AndroidView(
+                    modifier =
+                        Modifier
+                            .padding(horizontal = horizontalPadding)
+                            .clip(RoundedCornerShape(12.dp))
+                            .aspectRatio(4f / 3f)
+                            .fillMaxWidth(),
+                    factory = { mapView },
+                )
+            }
+        }
         item {
-            Spacer(modifier = Modifier.height(8.dp))
-            FoodSpotReviews(
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider(
+                thickness = 8.dp,
+                color = Gray5,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            if (state.reviewCount > 0) {
+                ReviewTotal(
+                    modifier =
+                        Modifier.padding(
+                            horizontal = 16.dp,
+                        ),
+                    averageRating = state.averageRating,
+                    reviewCount = state.reviewCount,
+                    onClick = {
+                        // TODO 리뷰 더보기 이동
+                    },
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            // TODO 내가 쓴 리뷰가 없을 때만 뜨게 하고 싶음....
+            ReviewRequest(
                 modifier = Modifier.fillMaxWidth(),
-                reviews = state.reviews,
-                contentPadding = PaddingValues(horizontal = horizontalPadding),
-                onImageClick = onImageClick,
                 onPostReviewClick = onPostReviewClick,
             )
+        }
+        itemsIndexed(state.reviews) { idx, review ->
+            ReviewItem(
+                review = review.review,
+                onImageClick = onImageClick,
+                isContentExpended = review.isExpended,
+                onContentClick = {
+                    onReviewContentClick(idx)
+                },
+                onReadMoreClick = {
+                    onReviewContentReadMoreClick(idx)
+                },
+            )
+            if (idx < state.reviews.lastIndex) {
+                HorizontalDivider(
+                    modifier =
+                        Modifier.padding(
+                            horizontal = 16.dp,
+                        ),
+                    thickness = 1.dp,
+                    color = Gray4,
+                )
+            }
+        }
+        if (state.hasMoreReviews) {
+            item {
+                BorderButton(
+                    text = stringResource(id = R.string.food_spot_detail_view_more_review),
+                    onClick = {
+                        // TODO 리뷰 더보기 화면으로 이동
+                    },
+                )
+            }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun FoodSpotImagePager(
     modifier: Modifier = Modifier,
@@ -230,8 +355,9 @@ private fun FoodSpotImagePager(
                     },
             model = images[page],
             contentDescription = "foodSpotImage$page",
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.Crop,
             fallback = painterResource(id = R.drawable.ic_input_delete_filled),
+            placeholder = ColorPainter(Gray4),
         )
     }
 }
@@ -240,100 +366,111 @@ private fun FoodSpotImagePager(
 private fun TitleAndCategory(
     modifier: Modifier = Modifier,
     title: String,
+    isFoodTruck: Boolean,
     categories: List<FoodCategory>,
 ) {
     val categoriseText =
         categories.joinToString(", ") {
             it.name
         }
-    Column(
+    Row(
         modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontSize = 21.sp,
         )
+        if (isFoodTruck) {
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_truck),
+                contentDescription = "food truck",
+                tint = MaterialTheme.colorScheme.secondary,
+            )
+        }
         if (categories.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.width(4.dp))
             Text(
+                modifier = Modifier.weight(1f),
                 text = categoriseText,
-                color = Color.Gray,
-                fontSize = 18.sp,
+                style = MaterialTheme.typography.labelLarge,
+                color = Gray1,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
 
 @Composable
-private fun FoodSpotReviews(
+private fun ReviewTotal(
     modifier: Modifier = Modifier,
-    reviews: List<Review>,
-    contentPadding: PaddingValues,
-    onImageClick: (images: List<String>, position: Int) -> Unit,
-    onPostReviewClick: () -> Unit,
+    averageRating: Float,
+    reviewCount: Int,
+    onClick: () -> Unit,
 ) {
-    Column(
-        modifier = modifier,
+    Row(
+        modifier =
+            modifier.clickable {
+                onClick()
+            },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            modifier = Modifier.padding(contentPadding),
-            text = "방문자 리뷰",
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontSize = 21.sp,
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = R.drawable.ic_star),
+            contentDescription = "review rating",
+            tint = MaterialTheme.colorScheme.tertiary,
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        if (reviews.isNotEmpty()) {
-            LazyRow(
-                contentPadding = contentPadding,
-            ) {
-                itemsIndexed(reviews) { idx, review ->
-                    ReviewItem(
-                        review = review,
-                        onImageClick = onImageClick,
-                    )
-                    if (idx < reviews.lastIndex) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                }
-            }
-        } else {
-            EmptyReview(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                onPostReviewClick = onPostReviewClick,
-            )
-        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = averageRating.toString(),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.tertiary,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text =
+                stringResource(
+                    id = R.string.food_spot_detail_review_count,
+                    reviewCount,
+                ),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(id = R.drawable.ic_arrow_right),
+            contentDescription = "navigate to review detail",
+            tint = Gray2,
+        )
     }
 }
 
 @Composable
-fun EmptyReview(
+private fun ReviewRequest(
     modifier: Modifier = Modifier,
     onPostReviewClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "리뷰가 옵소요..",
-            color = Color.Black,
-            fontSize = 18.sp,
+            text = stringResource(id = R.string.food_spot_detail_post_review_description),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Button(
+        BorderButton(
+            text = stringResource(id = R.string.food_spot_detail_post_review_button),
             onClick = onPostReviewClick,
-        ) {
-            Text(
-                text = "리뷰 작성하러 가기",
-            )
-        }
+        )
     }
 }
 
@@ -341,6 +478,7 @@ fun EmptyReview(
 private fun FoodSpotBusinessInformation(
     modifier: Modifier = Modifier,
     openState: FoodSpotOpenState,
+    closedTime: LocalTime?,
     isViewMoreEnabled: Boolean,
 ) {
     val openStateTextRes = openState.getStringRes()
@@ -349,26 +487,65 @@ private fun FoodSpotBusinessInformation(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(20.dp),
+            modifier = Modifier.size(16.dp),
             painter = painterResource(id = R.drawable.ic_clock),
-            contentDescription = "",
-            tint = Color.Unspecified,
+            contentDescription = null,
+            tint = Gray2,
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = stringResource(id = openStateTextRes),
-            fontSize = 18.sp,
-            color = Color.Black,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
         )
-        if (isViewMoreEnabled) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = R.drawable.ic_arrow_bottom),
-                contentDescription = "",
-                tint = Color.Unspecified,
+        if (openState == FoodSpotOpenState.OPEN && closedTime != null) {
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text =
+                    stringResource(
+                        id = R.string.food_spot_detail_operation_hour_close_time,
+                        closedTime.hour,
+                        closedTime.minute,
+                    ),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
+        if (isViewMoreEnabled) {
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = R.drawable.ic_arrow_bottom),
+                contentDescription = "view more",
+                tint = Gray2,
+            )
+        }
+    }
+}
+
+@Composable
+fun FoodSpotAddress(
+    modifier: Modifier = Modifier,
+    address: String,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.size(16.dp),
+            painter = painterResource(id = R.drawable.ic_marker_address),
+            contentDescription = null,
+            tint = Gray2,
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = address,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -381,31 +558,7 @@ private fun FoodSpotOpenState.getStringRes() =
     }
 
 @Composable
-private fun OperationHours(
-    modifier: Modifier = Modifier,
-    operationHours: List<OperationHour>,
-) {
-    Column(
-        modifier = modifier,
-    ) {
-        operationHours.forEach {
-            Text(
-                text =
-                    stringResource(
-                        id = R.string.food_spot_detail_operation_hours,
-                        it.dayOfWeek,
-                        it.open,
-                        it.close,
-                    ),
-                color = Color.Black,
-                fontSize = 18.sp,
-            )
-        }
-    }
-}
-
-@Composable
-fun OperationHour(
+private fun OperationHour(
     modifier: Modifier = Modifier,
     operationHour: OperationHour,
 ) {
@@ -418,62 +571,135 @@ fun OperationHour(
                 operationHour.open,
                 operationHour.close,
             ),
-        color = Color.Black,
-        fontSize = 18.sp,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurface,
     )
+}
+
+private fun mapLifeCycleCallback() =
+    object : MapLifeCycleCallback() {
+        override fun onMapDestroy() {
+            Log.d("KakaoMap", "onMapDestroy")
+        }
+
+        override fun onMapError(error: Exception) {
+            Log.e("KakaoMap", "onMapError: ", error)
+        }
+    }
+
+private fun kakaoMapReadyCallback(
+    onMapReady: (KakaoMap) -> Unit,
+    position: LatLng,
+) = object : KakaoMapReadyCallback() {
+    override fun onMapReady(map: KakaoMap) {
+        onMapReady(map)
+    }
+
+    override fun getPosition(): LatLng = position
+}
+
+private fun moveCamera(
+    map: KakaoMap,
+    position: LatLng,
+) {
+    val cameraUpdate = CameraUpdateFactory.newCenterPosition(position)
+    map.moveCamera(cameraUpdate)
+}
+
+private fun drawMarker(
+    context: Context,
+    map: KakaoMap,
+    position: LatLng,
+) {
+    val markerStyle =
+        LabelStyle.from(MarkerUtil.getSelectedMarker(context)).apply {
+            iconTransition = LabelTransition.from(Transition.None, Transition.None)
+            anchorPoint = PointF(0.5f, 1.0f)
+        }
+    val options =
+        LabelOptions
+            .from(position)
+            .setStyles(LabelStyles.from(markerStyle))
+            .apply {
+                labelId = position.toString()
+            }
+    map.labelManager?.layer?.addLabel(options)
 }
 
 @Preview
 @Composable
 private fun FoodSpotDetailPreview() {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        FoodSpotDetailContent(
-            state =
-                FoodSpotDetailState(
-                    name = "빵빵하게",
-                    foodCategoryList =
-                        listOf(
-                            FoodCategory(
-                                0,
-                                "붕어빵",
+    RoadyFoodyTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            FoodSpotDetailContent(
+                state =
+                    FoodSpotDetailState(
+                        name = "빵빵하게",
+                        foodCategoryList =
+                            listOf(
+                                FoodCategory(
+                                    0,
+                                    "붕어빵",
+                                ),
+                                FoodCategory(
+                                    1,
+                                    "광어빵",
+                                ),
                             ),
-                            FoodCategory(
-                                1,
-                                "광어빵",
-                            ),
-                        ),
-                    foodSpotsPhotos = listOf("a"),
-                ),
-            isViewMoreOperationHoursEnabled = true,
-            isBusinessInformationShow = false,
-            onImageClick = { _, _ -> },
-            onOperationHourClick = {},
-            onPostReviewClick = {},
-        )
+                        openState = FoodSpotOpenState.OPEN,
+                        movableFoodSpots = true,
+                        foodSpotsPhotos = listOf("a"),
+                    ),
+                mapView = MapView(LocalContext.current),
+                isViewMoreOperationHoursEnabled = true,
+                isBusinessInformationShow = false,
+                onImageClick = { _, _ -> },
+                onOperationHourClick = {},
+                onPostReviewClick = {},
+                onReviewContentClick = {},
+                onReviewContentReadMoreClick = {},
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 private fun TitleAndCategoryPreview() {
-    Surface(
-        modifier = Modifier.background(Color.White),
-    ) {
-        TitleAndCategory(
-            title = "빵빵하게",
-            categories =
-                listOf(
-                    FoodCategory(
-                        0,
-                        "붕어빵",
+    RoadyFoodyTheme {
+        Surface(
+            modifier = Modifier.background(Color.White),
+        ) {
+            TitleAndCategory(
+                title = "빵빵하게",
+                isFoodTruck = true,
+                categories =
+                    listOf(
+                        FoodCategory(
+                            0,
+                            "붕어빵",
+                        ),
+                        FoodCategory(
+                            1,
+                            "광어빵",
+                        ),
                     ),
-                    FoodCategory(
-                        1,
-                        "광어빵",
-                    ),
-                ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun FoodSpotBusinessInformationPreview() {
+    RoadyFoodyTheme {
+        FoodSpotBusinessInformation(
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+            openState = FoodSpotOpenState.OPEN,
+            closedTime = LocalTime.of(22, 0),
+            isViewMoreEnabled = true,
         )
     }
 }

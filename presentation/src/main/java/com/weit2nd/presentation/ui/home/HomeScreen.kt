@@ -47,7 +47,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,9 +66,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
 import coil.compose.AsyncImage
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -89,6 +85,7 @@ import com.weit2nd.presentation.ui.common.currentposition.CurrentPositionBtn
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
+import com.weit2nd.presentation.util.DisposableEffectWithLifeCycle
 import com.weit2nd.presentation.util.MarkerUtil
 import com.weit2nd.presentation.util.getDistanceString
 import org.orbitmvi.orbit.compose.collectAsState
@@ -716,34 +713,6 @@ private fun mapLifeCycleCallback() =
             Log.e("KakaoMap", "onMapError: ", error)
         }
     }
-
-@Composable
-private fun DisposableEffectWithLifeCycle(
-    // 오류로 compose.ui의 LocalLifecycleOwner 사용
-    lifecycleOwner: LifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
-    onResume: () -> Unit,
-    onPause: () -> Unit,
-) {
-    val currentOnResume by rememberUpdatedState(onResume)
-    val currentOnPause by rememberUpdatedState(onPause)
-
-    DisposableEffect(lifecycleOwner) {
-        val observer =
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME) {
-                    currentOnResume()
-                } else if (event == Lifecycle.Event.ON_PAUSE) {
-                    currentOnPause()
-                }
-            }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-}
 
 private fun kakaoMapReadyCallback(
     onMapReady: (KakaoMap) -> Unit,
