@@ -18,6 +18,8 @@ import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -120,6 +122,7 @@ class FoodSpotDetailViewModel @Inject constructor(
                                 address = address,
                                 storeClosure = detail.storeClosure,
                                 operationHours = detail.operationHoursList.map { it.toOperationHour() },
+                                todayCloseTime = getTodayCloseTime(detail.operationHoursList),
                                 foodCategoryList = detail.foodCategoryList,
                                 foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
                                 reviews = foodSpotReviews.reviews.map { it.toReview() },
@@ -208,6 +211,14 @@ class FoodSpotDetailViewModel @Inject constructor(
                 }
             }
         }
+
+    private fun getTodayCloseTime(operationHours: List<FoodSpotDetailOperationHours>): LocalTime? {
+        val todayDayOfWeek = LocalDate.now().dayOfWeek
+        return operationHours
+            .find {
+                it.dayOfWeek.dayOfWeek == todayDayOfWeek
+            }?.closingHours
+    }
 
     companion object {
         private const val DEFAULT_REVIEW_COUNT = 3

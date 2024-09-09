@@ -222,7 +222,7 @@ private fun FoodSpotDetailContent(
                                 onOperationHourClick(state.isOperationHoursOpen)
                             },
                     openState = state.openState,
-                    closedTime = LocalTime.now(),
+                    closedTime = state.todayCloseTime,
                     isViewMoreEnabled = isViewMoreOperationHoursEnabled,
                 )
             }
@@ -478,7 +478,7 @@ private fun ReviewRequest(
 private fun FoodSpotBusinessInformation(
     modifier: Modifier = Modifier,
     openState: FoodSpotOpenState,
-    closedTime: LocalTime,
+    closedTime: LocalTime?,
     isViewMoreEnabled: Boolean,
 ) {
     val openStateTextRes = openState.getStringRes()
@@ -498,7 +498,7 @@ private fun FoodSpotBusinessInformation(
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        if (openState == FoodSpotOpenState.OPEN) {
+        if (openState == FoodSpotOpenState.OPEN && closedTime != null) {
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text =
