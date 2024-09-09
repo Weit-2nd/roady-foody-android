@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.common
 
 import android.net.Uri
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,6 +65,8 @@ fun EditableProfileImage(
 fun ProfileImage(
     modifier: Modifier = Modifier,
     imgUri: Uri? = null,
+    @DrawableRes fallback: Int = R.drawable.ic_launcher_background,
+    placeholder: Painter? = ColorPainter(Gray4),
     onProfileImageClick: (() -> Unit) = {},
 ) {
     var isImageLoading by remember { mutableStateOf(true) }
@@ -75,10 +80,11 @@ fun ProfileImage(
         AsyncImage(
             modifier = modifier.fillMaxSize(),
             model = imgUri,
-            contentDescription = null,
+            contentDescription = "ProfileImage",
             contentScale = ContentScale.Crop,
             onSuccess = { isImageLoading = false },
-            placeholder = painterResource(id = R.drawable.ic_default_profile),
+            fallback = painterResource(id = fallback),
+            placeholder = placeholder,
         )
 
         if (isImageLoading) {

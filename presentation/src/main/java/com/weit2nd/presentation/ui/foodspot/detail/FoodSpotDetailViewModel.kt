@@ -1,19 +1,25 @@
 package com.weit2nd.presentation.ui.foodspot.detail
 
 import androidx.lifecycle.SavedStateHandle
+import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
+import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.domain.model.spot.FoodSpotDetailOperationHours
 import com.weit2nd.domain.model.spot.FoodSpotReview
 import com.weit2nd.domain.model.spot.ReviewSortType
+import com.weit2nd.domain.usecase.search.SearchPlaceWithCoordinateUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotDetailUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -24,6 +30,7 @@ class FoodSpotDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getFoodSpotDetailUseCase: GetFoodSpotDetailUseCase,
     private val getFoodSpotReviewsUseCase: GetFoodSpotReviewsUseCase,
+    private val searchPlaceWithCoordinateUseCase: SearchPlaceWithCoordinateUseCase,
 ) : BaseViewModel<FoodSpotDetailState, FoodSpotDetailSideEffect>() {
     override val container: Container<FoodSpotDetailState, FoodSpotDetailSideEffect> =
         container(FoodSpotDetailState())
@@ -50,11 +57,27 @@ class FoodSpotDetailViewModel @Inject constructor(
     }
 
     fun onPostReviewClick() {
-        // TODO PostReviewScreen 연결
+        FoodSpotDetailIntent.NavToPostReview.post()
     }
 
-    fun onNavigationButtonClick() {
-        FoodSpotDetailIntent.NavToBack.post()
+    fun onMapReady(map: KakaoMap) {
+        FoodSpotDetailIntent.OnMapReady(map).post()
+    }
+
+    fun onReviewContentsClick(position: Int) {
+        FoodSpotDetailIntent
+            .ChangeReviewContentExpendState(
+                position = position,
+                expandState = false,
+            ).post()
+    }
+
+    fun onReviewContentsReadMoreClick(position: Int) {
+        FoodSpotDetailIntent
+            .ChangeReviewContentExpendState(
+                position = position,
+                expandState = true,
+            ).post()
     }
 
     private fun FoodSpotDetailIntent.post() =
@@ -76,6 +99,16 @@ class FoodSpotDetailViewModel @Inject constructor(
                                 sortType = ReviewSortType.LATEST,
                             )
                         val detail = getFoodSpotDetailUseCase(id)
+                        val address =
+                            searchPlaceWithCoordinateUseCase(
+                                coordinate =
+                                    Coordinate(
+                                        latitude = detail.latitude,
+                                        longitude = detail.longitude,
+                                    ),
+                            ).let { place ->
+                                place.roadAddressName.takeIf { it.isNotBlank() } ?: place.addressName
+                            }
                         reduce {
                             state.copy(
                                 name = detail.name,
@@ -86,12 +119,22 @@ class FoodSpotDetailViewModel @Inject constructor(
                                     ),
                                 movableFoodSpots = detail.movableFoodSpots,
                                 openState = detail.openState,
+                                address = address,
                                 storeClosure = detail.storeClosure,
                                 operationHours = detail.operationHoursList.map { it.toOperationHour() },
+                                todayCloseTime = getTodayCloseTime(detail.operationHoursList),
                                 foodCategoryList = detail.foodCategoryList,
                                 foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
                                 reviews = foodSpotReviews.reviews.map { it.toReview() },
                                 hasMoreReviews = foodSpotReviews.hasNext,
+                            )
+                        }
+                        state.map?.let { map ->
+                            postSideEffect(
+                                FoodSpotDetailSideEffect.MoveAndDrawMarker(
+                                    map = map,
+                                    position = state.position,
+                                ),
                             )
                         }
                     }.onFailure {
@@ -119,8 +162,63 @@ class FoodSpotDetailViewModel @Inject constructor(
                 FoodSpotDetailIntent.NavToBack -> {
                     postSideEffect(FoodSpotDetailSideEffect.NavToBack)
                 }
+
+                is FoodSpotDetailIntent.OnMapReady -> {
+                    reduce {
+                        state.copy(
+                            map = map,
+                        )
+                    }
+                    postSideEffect(
+                        FoodSpotDetailSideEffect.MoveAndDrawMarker(
+                            map = map,
+                            position = state.position,
+                        ),
+                    )
+                }
+
+                FoodSpotDetailIntent.NavToPostReview -> {
+                    val id = foodSpotId ?: return@intent
+                    val foodSpotForReviewDTO =
+                        FoodSpotForReviewDTO(
+                            id = id,
+                            name = state.name,
+                        )
+                    postSideEffect(
+                        FoodSpotDetailSideEffect.NavToPostReview(
+                            foodSpotForReviewDTO = foodSpotForReviewDTO,
+                        ),
+                    )
+                }
+
+                is FoodSpotDetailIntent.ChangeReviewContentExpendState -> {
+                    val updatedReviews =
+                        state.reviews
+                            .mapIndexed { index, review ->
+                                if (index == position) {
+                                    review.copy(
+                                        isExpended = expandState,
+                                    )
+                                } else {
+                                    review
+                                }
+                            }
+                    reduce {
+                        state.copy(
+                            reviews = updatedReviews,
+                        )
+                    }
+                }
             }
         }
+
+    private fun getTodayCloseTime(operationHours: List<FoodSpotDetailOperationHours>): LocalTime? {
+        val todayDayOfWeek = LocalDate.now().dayOfWeek
+        return operationHours
+            .find {
+                it.dayOfWeek.dayOfWeek == todayDayOfWeek
+            }?.closingHours
+    }
 
     companion object {
         private const val DEFAULT_REVIEW_COUNT = 3
@@ -134,14 +232,18 @@ class FoodSpotDetailViewModel @Inject constructor(
             close = closingHours.format(operationHourFormat),
         )
 
-    private fun FoodSpotReview.toReview(): Review =
-        Review(
-            userId = id,
-            nickname = userInfo.nickname,
-            profileImage = userInfo.profileImage,
-            date = createdAt,
-            rating = rate / 2f,
-            reviewImages = photos.map { it.image },
-            contents = contents,
+    private fun FoodSpotReview.toReview(): FoodSpotDetailReview =
+        FoodSpotDetailReview(
+            review =
+                Review(
+                    userId = id,
+                    nickname = userInfo.nickname,
+                    profileImage = userInfo.profileImage,
+                    date = createdAt,
+                    rating = rate / 2f,
+                    reviewImages = photos.map { it.image },
+                    contents = contents,
+                ),
+            isExpended = false,
         )
 }
