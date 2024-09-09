@@ -90,7 +90,6 @@ private fun DefaultProfileImage(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
-                .clip(CircleShape)
                 .border(1.dp, Gray4, shape = CircleShape)
                 .background(Gray5)
                 .clip(CircleShape),

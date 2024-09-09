@@ -150,21 +150,6 @@ private fun handleSideEffects(
 }
 
 @Composable
-private fun TopBar(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = stringResource(R.string.sign_up_topbar_title),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-
-@Composable
 private fun NicknameSetting(
     modifier: Modifier = Modifier,
     nickname: String,
