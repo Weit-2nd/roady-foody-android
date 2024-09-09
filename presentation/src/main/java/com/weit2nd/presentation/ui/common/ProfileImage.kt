@@ -1,7 +1,6 @@
 package com.weit2nd.presentation.ui.common
 
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.theme.Black
+import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray4
 import com.weit2nd.presentation.ui.theme.Gray5
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
@@ -97,13 +97,14 @@ private fun DefaultProfileImage(modifier: Modifier = Modifier) {
                 .clip(CircleShape),
         contentAlignment = Alignment.Center,
     ) {
-        Image(
+        Icon(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(16.dp),
             painter = painterResource(id = R.drawable.ic_default_profile),
             contentDescription = "",
+            tint = Gray2,
         )
     }
 }
