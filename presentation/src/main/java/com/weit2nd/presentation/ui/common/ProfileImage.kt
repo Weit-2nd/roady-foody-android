@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,8 +52,8 @@ fun EditableProfileImage(
         EditButton(
             modifier =
                 Modifier
-                    .align(Alignment.BottomEnd)
-                    .clickable { onProfileImageClick() },
+                    .align(Alignment.BottomEnd),
+            onClick = onProfileImageClick,
         )
     }
 }
@@ -77,6 +78,7 @@ fun ProfileImage(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             onSuccess = { isImageLoading = false },
+            placeholder = painterResource(id = R.drawable.ic_default_profile),
         )
 
         if (isImageLoading) {
@@ -107,25 +109,30 @@ private fun DefaultProfileImage(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun EditButton(modifier: Modifier = Modifier) {
-    Box(
+private fun EditButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    IconButton(
         modifier =
             modifier
                 .shadow(2.dp, CircleShape)
                 .fillMaxSize(0.35f)
                 .clip(CircleShape)
                 .background(White),
+        onClick = onClick,
     ) {
-        Icon(
-            modifier =
-                Modifier
-                    .fillMaxSize(0.7f)
-                    .align(Alignment.Center)
-                    .size(24.dp),
-            imageVector = Icons.Outlined.Edit,
-            contentDescription = "",
-            tint = Black,
-        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                modifier = Modifier.fillMaxSize(0.7f),
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = "",
+                tint = Black,
+            )
+        }
     }
 }
 
@@ -155,6 +162,6 @@ private fun EditableProfileImagePreview() {
 @Preview(showBackground = true)
 private fun EditButtonPreview() {
     RoadyFoodyTheme {
-        EditButton(modifier = Modifier.size(32.dp))
+        EditButton(modifier = Modifier.size(32.dp)) {}
     }
 }
