@@ -26,6 +26,7 @@ val Error = Color(0xFFBB0003)
 val Outline = Color(0xFF444648)
 val OutlineVariant = Color(0xFF999897)
 val Scrim = Color(0x80212223)
+val Blue = Color(0xFF0004FF)
 
 val KakaoLoginBackground = Color(0xFFFEE500)
 val KakaoLoginText = Color(0xD9000000)
