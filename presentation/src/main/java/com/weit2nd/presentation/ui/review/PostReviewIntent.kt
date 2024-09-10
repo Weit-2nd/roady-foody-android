@@ -16,4 +16,6 @@ sealed interface PostReviewIntent {
     data class ChangeReviewContent(
         val content: String,
     ) : PostReviewIntent
+
+    data object NavToBack : PostReviewIntent
 }

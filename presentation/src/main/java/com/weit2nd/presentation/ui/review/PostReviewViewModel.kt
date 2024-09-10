@@ -55,6 +55,10 @@ class PostReviewViewModel @Inject constructor(
         PostReviewIntent.ChangeReviewContent(content).post()
     }
 
+    fun onNavigationButtonClick() {
+        PostReviewIntent.NavToBack.post()
+    }
+
     private fun PostReviewIntent.post() =
         intent {
             when (this@post) {
@@ -122,6 +126,9 @@ class PostReviewViewModel @Inject constructor(
                             selectedImages = state.selectedImages.minus(image),
                         )
                     }
+                }
+                PostReviewIntent.NavToBack -> {
+                    postSideEffect(PostReviewSideEffect.NavToBack)
                 }
             }
         }

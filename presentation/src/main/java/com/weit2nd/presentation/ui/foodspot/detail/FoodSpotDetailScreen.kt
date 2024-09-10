@@ -323,12 +323,18 @@ private fun FoodSpotDetailContent(
         }
         if (state.hasMoreReviews) {
             item {
-                BorderButton(
-                    text = stringResource(id = R.string.food_spot_detail_view_more_review),
-                    onClick = {
-                        // TODO 리뷰 더보기 화면으로 이동
-                    },
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    BorderButton(
+                        text = stringResource(id = R.string.food_spot_detail_view_more_review),
+                        onClick = {
+                            // TODO 리뷰 더보기 화면으로 이동
+                        },
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
