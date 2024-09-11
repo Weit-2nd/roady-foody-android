@@ -19,16 +19,13 @@ android {
 
     defaultConfig {
         minSdk = 29
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            isMinifyEnabled = true
+            proguardFiles(*fileTree("proguard").toList().toTypedArray())
+            consumerProguardFiles(*fileTree("proguard").toList().toTypedArray())
         }
     }
     compileOptions {

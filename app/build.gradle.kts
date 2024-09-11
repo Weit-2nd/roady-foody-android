@@ -21,8 +21,8 @@ android {
         applicationId = "com.weit2nd.roadyfoody"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.0.1"
+        versionCode = 4
+        versionName = "0.0.4"
 
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties.getProperty("KAKAO_NATIVE_APP_KEY")
     }
@@ -40,10 +40,6 @@ android {
         release {
             isMinifyEnabled = true
             signingConfig = signingConfigs["release"]
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
         }
         debug {
             isMinifyEnabled = false
