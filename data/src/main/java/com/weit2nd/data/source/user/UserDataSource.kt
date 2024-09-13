@@ -1,5 +1,6 @@
 package com.weit2nd.data.source.user
 
+import com.weit2nd.data.model.review.UserReviewsDTO
 import com.weit2nd.data.model.spot.FoodSpotHistoriesDTO
 import com.weit2nd.data.model.user.UserDTO
 import com.weit2nd.data.service.UserService
@@ -18,6 +19,18 @@ class UserDataSource @Inject constructor(
         lastItemId: Long?,
     ): FoodSpotHistoriesDTO {
         return service.getFoodSpotHistories(
+            userId = userId,
+            size = count,
+            lastId = lastItemId,
+        )
+    }
+
+    suspend fun getUserReviews(
+        userId: Long,
+        count: Int,
+        lastItemId: Long?,
+    ): UserReviewsDTO {
+        return service.getUserReviews(
             userId = userId,
             size = count,
             lastId = lastItemId,
