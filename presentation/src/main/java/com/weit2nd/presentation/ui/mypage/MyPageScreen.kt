@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
@@ -38,6 +40,7 @@ import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.text.NumberFormat
+import java.time.LocalDateTime
 import java.util.Locale
 
 @Composable
@@ -84,6 +87,7 @@ fun MyPageScreen(
             profileImage = state.profileImage,
             nickname = state.nickname,
             coin = state.coin,
+            foodSpotHistory = state.foodSpotHistory,
             onLogoutButtonClick = vm::onLogoutButtonClick,
             onWithdrawButtonClick = vm::onWithdrawButtonClick,
             onLogoutConfirm = vm::onLogoutConfirm,
@@ -102,6 +106,7 @@ private fun MyPageContent(
     profileImage: String?,
     nickname: String,
     coin: Int,
+    foodSpotHistory: FoodSpotHistoryContent?,
     onLogoutButtonClick: () -> Unit,
     onWithdrawButtonClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
@@ -170,6 +175,27 @@ private fun MyPageContent(
 
             Spacer(modifier = Modifier.height(24.dp))
             HorizontalDivider()
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "내가 제보한 음식점 ()",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    tint = DarkGray,
+                    contentDescription = "",
+                )
+            }
+            if (foodSpotHistory != null) {
+                FoodSpotItem(foodSpot = foodSpotHistory)
+            } else {
+                Text(text = "제보한 음식점이 없습니다.")
+            }
         }
         Row(
             modifier =
@@ -213,6 +239,22 @@ private fun MyPageContentPreview() {
             profileImage = null,
             nickname = "nicknameExample",
             coin = 10000,
+            foodSpotHistory =
+                FoodSpotHistoryContent(
+                    id = 8229,
+                    userId = 3828,
+                    foodSpotsId = 3783,
+                    name = "음식점 이름이에요",
+                    longitude = 8.9,
+                    latitude = 10.11,
+                    createdDateTime = LocalDateTime.now(),
+                    reportPhotos = listOf(),
+                    categories =
+                        listOf(
+                            com.weit2nd.domain.model.spot
+                                .FoodCategory(0, "포장마차"),
+                        ),
+                ),
             onLogoutButtonClick = {},
             onWithdrawButtonClick = {},
             onLogoutConfirm = {},

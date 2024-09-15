@@ -1,9 +1,12 @@
 package com.weit2nd.presentation.ui.mypage
 
+import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
+
 data class MyPageState(
     val profileImage: String? = null,
     val nickname: String = "",
     val coin: Int = 0,
     val isLogoutDialogShown: Boolean = false,
     val isWithdrawDialogShown: Boolean = false,
+    val foodSpotHistory: FoodSpotHistoryContent? = null,
 )

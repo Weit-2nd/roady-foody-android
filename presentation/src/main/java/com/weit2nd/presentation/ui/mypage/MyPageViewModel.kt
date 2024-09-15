@@ -2,6 +2,7 @@ package com.weit2nd.presentation.ui.mypage
 
 import com.weit2nd.domain.usecase.logout.LogoutUseCase
 import com.weit2nd.domain.usecase.logout.WithdrawUseCase
+import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
 import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,11 +15,13 @@ class MyPageViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val withdrawUseCase: WithdrawUseCase,
     private val getMyUserInfoUseCase: GetMyUserInfoUseCase,
+    private val getFoodSpotHistoriesUseCase: GetFoodSpotHistoriesUseCase,
 ) : BaseViewModel<MyPageState, MyPageSideEffect>() {
     override val container: Container<MyPageState, MyPageSideEffect> = container(MyPageState())
 
     fun onCreate() {
         MyPageIntent.GetMyUserInfo.post()
+        MyPageIntent.GetMyReportedFoodSpots.post()
     }
 
     fun onLogoutButtonClick() {
@@ -63,6 +66,23 @@ class MyPageViewModel @Inject constructor(
                             )
                         }
                     }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
+                }
+
+                MyPageIntent.GetMyReportedFoodSpots -> {
+                    runCatching {
+                        val reportedFoodSpot =
+                            getFoodSpotHistoriesUseCase
+                                .invoke(
+                                    userId = 0, // todo userId 지정
+                                    count = 1,
+                                ).contents
+                                .firstOrNull()
+                        reduce {
+                            state.copy(
+                                foodSpotHistory = reportedFoodSpot,
+                            )
+                        }
+                    }
                 }
 
                 is MyPageIntent.SetLogoutDialogShownState -> {
