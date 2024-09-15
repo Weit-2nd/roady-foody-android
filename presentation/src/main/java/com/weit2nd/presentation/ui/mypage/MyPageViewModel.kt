@@ -45,6 +45,10 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.SetWithdrawDialogShownState(false).post()
     }
 
+    fun onBackButtonClick() {
+        MyPageIntent.NavToBack.post()
+    }
+
     private fun MyPageIntent.post() =
         intent {
             when (this@post) {
@@ -99,6 +103,10 @@ class MyPageViewModel @Inject constructor(
                     } else {
                         postSideEffect(MyPageSideEffect.ShowToastMessage("실패!"))
                     }
+                }
+
+                MyPageIntent.NavToBack -> {
+                    postSideEffect(MyPageSideEffect.NavToBack)
                 }
             }
         }

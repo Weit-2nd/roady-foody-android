@@ -108,4 +108,8 @@
     <string name="post_review_confirm">작성 완료</string>
     <string name="post_review_placeholder">솔직한 경험을 공유해주세요!</string>
     <string name="post_review_content_length">%d / %d</string>
+
+    <!-- myPage -->
+    <string name="my_page_toolbar_title">마이페이지</string>
+
 </resources>

@@ -16,10 +16,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
@@ -28,6 +31,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun MyPageScreen(
     navToLogin: () -> Unit,
+    navToBack: () -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
     val state by vm.collectAsState()
@@ -37,8 +41,13 @@ fun MyPageScreen(
             MyPageSideEffect.NavToLogin -> {
                 navToLogin()
             }
+
             is MyPageSideEffect.ShowToastMessage -> {
                 Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+
+            MyPageSideEffect.NavToBack -> {
+                navToBack()
             }
         }
     }
@@ -47,7 +56,14 @@ fun MyPageScreen(
         vm.onCreate()
     }
 
-    Scaffold {
+    Scaffold(
+        topBar = {
+            BackTopBar(
+                title = stringResource(R.string.my_page_toolbar_title),
+                onClickBackBtn = vm::onBackButtonClick,
+            )
+        },
+    ) {
         MyPageContent(
             modifier =
                 Modifier

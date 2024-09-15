@@ -14,4 +14,6 @@ sealed class MyPageIntent {
     data object Logout : MyPageIntent()
 
     data object Withdraw : MyPageIntent()
+
+    data object NavToBack : MyPageIntent()
 }

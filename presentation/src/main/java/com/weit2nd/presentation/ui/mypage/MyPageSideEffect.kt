@@ -6,4 +6,6 @@ sealed class MyPageSideEffect {
     ) : MyPageSideEffect()
 
     data object NavToLogin : MyPageSideEffect()
+
+    data object NavToBack : MyPageSideEffect()
 }
