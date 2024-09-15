@@ -1,8 +1,8 @@
 package com.weit2nd.presentation.ui.mypage.review
 
-import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.model.reivew.ExpendableReview
 
 data class ReviewHistoryState(
     val totalCount: Int = 0,
-    val reviews: List<Review> = emptyList(),
+    val reviews: List<ExpendableReview> = emptyList(),
 )

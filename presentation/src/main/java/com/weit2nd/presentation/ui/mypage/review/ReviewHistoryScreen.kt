@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.presentation.R
-import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.common.TotalCount
@@ -87,6 +87,8 @@ fun ReviewHistoryScreen(
             totalCount = state.totalCount,
             reviews = state.reviews,
             lazyListState = lazyListState,
+            onReviewContentClick = vm::onReviewContentsClick,
+            onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
         )
     }
 }
@@ -95,8 +97,10 @@ fun ReviewHistoryScreen(
 fun ReviewHistoryContent(
     modifier: Modifier = Modifier,
     totalCount: Int,
-    reviews: List<Review>,
+    reviews: List<ExpendableReview>,
     lazyListState: LazyListState = rememberLazyListState(),
+    onReviewContentClick: (Int) -> Unit,
+    onReviewContentReadMoreClick: (Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -114,9 +118,16 @@ fun ReviewHistoryContent(
         ) {
             itemsIndexed(reviews) { index, review ->
                 ReviewItem(
-                    review = review,
+                    review = review.review,
+                    isContentExpended = review.isExpended,
                     onImageClick = { _, _ ->
                         // TODO 이미지 상세 이동
+                    },
+                    onContentClick = {
+                        onReviewContentClick(index)
+                    },
+                    onReadMoreClick = {
+                        onReviewContentReadMoreClick(index)
                     },
                 )
                 if (index < reviews.lastIndex) {

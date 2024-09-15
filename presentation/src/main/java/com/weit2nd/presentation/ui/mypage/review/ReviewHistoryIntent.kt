@@ -6,4 +6,9 @@ sealed interface ReviewHistoryIntent {
     data class LoadNextReviews(
         val lastId: Long?,
     ) : ReviewHistoryIntent
+
+    data class ChangeReviewContentExpendState(
+        val position: Int,
+        val expandState: Boolean,
+    ) : ReviewHistoryIntent
 }

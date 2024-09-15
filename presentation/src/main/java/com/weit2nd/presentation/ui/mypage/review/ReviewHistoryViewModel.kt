@@ -6,6 +6,7 @@ import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.ReviewHistoryRoutes
 import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,9 +45,25 @@ class ReviewHistoryViewModel @Inject constructor(
         val isRequestEnable = requestReviewJob.isCompleted && needNextPage && hasNext.get()
         if (isRequestEnable) {
             container.stateFlow.value.reviews.lastOrNull()?.let {
-                requestReviewJob = ReviewHistoryIntent.LoadNextReviews(it.reviewId).post()
+                requestReviewJob = ReviewHistoryIntent.LoadNextReviews(it.review.reviewId).post()
             }
         }
+    }
+
+    fun onReviewContentsClick(position: Int) {
+        ReviewHistoryIntent
+            .ChangeReviewContentExpendState(
+                position = position,
+                expandState = false,
+            ).post()
+    }
+
+    fun onReviewContentsReadMoreClick(position: Int) {
+        ReviewHistoryIntent
+            .ChangeReviewContentExpendState(
+                position = position,
+                expandState = true,
+            ).post()
     }
 
     private fun ReviewHistoryIntent.post() =
@@ -83,6 +100,24 @@ class ReviewHistoryViewModel @Inject constructor(
                         }
                     }
                 }
+                is ReviewHistoryIntent.ChangeReviewContentExpendState -> {
+                    val updatedReviews =
+                        state.reviews
+                            .mapIndexed { index, review ->
+                                if (index == position) {
+                                    review.copy(
+                                        isExpended = expandState,
+                                    )
+                                } else {
+                                    review
+                                }
+                            }
+                    reduce {
+                        state.copy(
+                            reviews = updatedReviews,
+                        )
+                    }
+                }
             }
         }
 
@@ -90,15 +125,19 @@ class ReviewHistoryViewModel @Inject constructor(
         userId: Long,
         nickname: String,
         profileImage: String?,
-    ) = Review(
-        reviewId = id,
-        userId = userId,
-        nickname = nickname,
-        profileImage = profileImage,
-        date = createdAt,
-        rating = rating.toFloat(),
-        reviewImages = photos.map { it.image },
-        contents = contents,
+    ) = ExpendableReview(
+        review =
+            Review(
+                reviewId = id,
+                userId = userId,
+                nickname = nickname,
+                profileImage = profileImage,
+                date = createdAt,
+                rating = rating.toFloat(),
+                reviewImages = photos.map { it.image },
+                contents = contents,
+            ),
+        isExpended = false,
     )
 
     private fun List<UserReview>.toReviews(
