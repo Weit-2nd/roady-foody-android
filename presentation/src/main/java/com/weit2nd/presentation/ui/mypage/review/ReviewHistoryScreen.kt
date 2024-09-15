@@ -80,7 +80,10 @@ fun ReviewHistoryScreen(
         },
     ) {
         ReviewHistoryContent(
-            modifier = Modifier.padding(it),
+            modifier =
+                Modifier.padding(
+                    top = it.calculateTopPadding(),
+                ),
             totalCount = state.totalCount,
             reviews = state.reviews,
             lazyListState = lazyListState,
