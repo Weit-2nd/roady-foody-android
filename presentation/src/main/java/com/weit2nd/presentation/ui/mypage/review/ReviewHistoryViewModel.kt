@@ -2,6 +2,8 @@ package com.weit2nd.presentation.ui.mypage.review
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import com.weit2nd.domain.exception.UnknownException
+import com.weit2nd.domain.exception.user.UserReviewException
 import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
@@ -65,7 +67,12 @@ class ReviewHistoryViewModel @Inject constructor(
                             )
                         }
                     } else {
-                        val error = result.exceptionOrNull()
+                        val error = result.exceptionOrNull() ?: UnknownException()
+                        if (error is UserReviewException.NoMoreReviewException) {
+                            hasNext.set(false)
+                        } else {
+                            postSideEffect(ReviewHistorySideEffect.ShowNetworkErrorMessage)
+                        }
                     }
                 }
             }
