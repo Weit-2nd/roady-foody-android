@@ -53,6 +53,7 @@ class MyPageViewModel @Inject constructor(
                         val userInfo = getMyUserInfoUseCase.invoke()
                         reduce {
                             state.copy(
+                                userId = userInfo.userId,
                                 nickname = userInfo.nickname,
                                 profileImage = userInfo.profileImage,
                                 coin = userInfo.coin,
