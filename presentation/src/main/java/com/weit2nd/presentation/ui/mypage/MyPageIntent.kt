@@ -11,6 +11,8 @@ sealed class MyPageIntent {
         val isShown: Boolean,
     ) : MyPageIntent()
 
+    data object NavToReviewHistory : MyPageIntent()
+
     data object Logout : MyPageIntent()
 
     data object Withdraw : MyPageIntent()

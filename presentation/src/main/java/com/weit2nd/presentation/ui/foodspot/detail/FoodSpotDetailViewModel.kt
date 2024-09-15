@@ -13,6 +13,7 @@ import com.weit2nd.domain.usecase.spot.GetFoodSpotReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -232,8 +233,8 @@ class FoodSpotDetailViewModel @Inject constructor(
             close = closingHours.format(operationHourFormat),
         )
 
-    private fun FoodSpotReview.toReview(): FoodSpotDetailReview =
-        FoodSpotDetailReview(
+    private fun FoodSpotReview.toReview(): ExpendableReview =
+        ExpendableReview(
             review =
                 Review(
                     userId = id,
