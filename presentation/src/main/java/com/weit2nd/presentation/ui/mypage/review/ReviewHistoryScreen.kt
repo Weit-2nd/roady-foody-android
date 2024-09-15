@@ -61,6 +61,10 @@ fun ReviewHistoryScreen(
             }
         }
 
+    LaunchedEffect(Unit) {
+        vm.onCreate()
+    }
+
     LaunchedEffect(firstVisibleItemIndex) {
         vm.onFirstVisibleItemChanged(firstVisibleItemIndex)
     }

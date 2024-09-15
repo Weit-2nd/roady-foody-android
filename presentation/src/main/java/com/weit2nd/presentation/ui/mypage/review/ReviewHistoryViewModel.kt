@@ -1,10 +1,13 @@
 package com.weit2nd.presentation.ui.mypage.review
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
+import com.weit2nd.presentation.navigation.ReviewHistoryRoutes
+import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -13,10 +16,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReviewHistoryViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getUserReviewsUseCase: GetUserReviewsUseCase,
 ) : BaseViewModel<ReviewHistoryState, ReviewHistorySideEffect>() {
     override val container: Container<ReviewHistoryState, ReviewHistorySideEffect> =
         container(ReviewHistoryState())
+    private val userInfo =
+        savedStateHandle.get<ReviewHistoryDTO>(ReviewHistoryRoutes.REVIEW_HISTORY_KEY)!!
     private var hasNext = AtomicBoolean(true)
 
     fun onCreate() {
@@ -41,7 +47,7 @@ class ReviewHistoryViewModel @Inject constructor(
                     val result =
                         runCatching {
                             getUserReviewsUseCase.invoke(
-                                userId = 0,
+                                userId = userInfo.userId,
                                 count = DEFAULT_LOAD_REVIEW_COUNT,
                                 lastItemId = lastId,
                             )
@@ -49,9 +55,9 @@ class ReviewHistoryViewModel @Inject constructor(
                     if (result.isSuccess) {
                         val reviews =
                             result.getOrThrow().toReviews(
-                                userId = 0,
-                                nickname = "",
-                                profileImage = null,
+                                userId = userInfo.userId,
+                                nickname = userInfo.nickname,
+                                profileImage = userInfo.profileImage,
                             )
                         reduce {
                             state.copy(
