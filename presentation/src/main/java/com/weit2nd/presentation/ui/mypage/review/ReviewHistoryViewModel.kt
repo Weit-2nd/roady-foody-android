@@ -1,8 +1,6 @@
 package com.weit2nd.presentation.ui.mypage.review
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import com.weit2nd.domain.exception.UnknownException
 import com.weit2nd.domain.exception.user.UserReviewException
 import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
@@ -11,6 +9,7 @@ import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.ReviewHistoryRoutes
 import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import java.util.concurrent.atomic.AtomicBoolean
@@ -26,17 +25,28 @@ class ReviewHistoryViewModel @Inject constructor(
     private val userInfo =
         savedStateHandle.get<ReviewHistoryDTO>(ReviewHistoryRoutes.REVIEW_HISTORY_KEY)!!
     private var hasNext = AtomicBoolean(true)
+    private var requestReviewJob: Job =
+        Job().apply {
+            complete()
+        }
 
     fun onCreate() {
         ReviewHistoryIntent.LoadNextReviews(null).post()
     }
 
     fun onNavigationClick() {
-        ReviewHistoryIntent.NavToBack.post()
+        requestReviewJob = ReviewHistoryIntent.NavToBack.post()
     }
 
-    fun onFirstVisibleItemChanged(position: Int) {
-        Log.d("MainTest", "$position")
+    fun onLastVisibleItemChanged(position: Int) {
+        val currentReviewSize = container.stateFlow.value.reviews.size
+        val needNextPage = (currentReviewSize - position) <= REMAINING_PAGE_FOR_REQUEST
+        val isRequestEnable = requestReviewJob.isCompleted && needNextPage && hasNext.get()
+        if (isRequestEnable) {
+            container.stateFlow.value.reviews.lastOrNull()?.let {
+                requestReviewJob = ReviewHistoryIntent.LoadNextReviews(it.reviewId).post()
+            }
+        }
     }
 
     private fun ReviewHistoryIntent.post() =
@@ -46,17 +56,15 @@ class ReviewHistoryViewModel @Inject constructor(
                     ReviewHistorySideEffect.NavToBack
                 }
                 is ReviewHistoryIntent.LoadNextReviews -> {
-                    val result =
-                        runCatching {
-                            getUserReviewsUseCase.invoke(
-                                userId = userInfo.userId,
-                                count = DEFAULT_LOAD_REVIEW_COUNT,
-                                lastItemId = lastId,
-                            )
-                        }
-                    if (result.isSuccess) {
+                    runCatching {
+                        getUserReviewsUseCase.invoke(
+                            userId = userInfo.userId,
+                            count = DEFAULT_LOAD_REVIEW_COUNT,
+                            lastItemId = lastId,
+                        )
+                    }.onSuccess { userReviews ->
                         val reviews =
-                            result.getOrThrow().toReviews(
+                            userReviews.toReviews(
                                 userId = userInfo.userId,
                                 nickname = userInfo.nickname,
                                 profileImage = userInfo.profileImage,
@@ -66,9 +74,8 @@ class ReviewHistoryViewModel @Inject constructor(
                                 reviews = state.reviews.plus(reviews),
                             )
                         }
-                    } else {
-                        val error = result.exceptionOrNull() ?: UnknownException()
-                        if (error is UserReviewException.NoMoreReviewException) {
+                    }.onFailure {
+                        if (it is UserReviewException.NoMoreReviewException) {
                             hasNext.set(false)
                         } else {
                             postSideEffect(ReviewHistorySideEffect.ShowNetworkErrorMessage)
@@ -83,6 +90,7 @@ class ReviewHistoryViewModel @Inject constructor(
         nickname: String,
         profileImage: String?,
     ) = Review(
+        reviewId = id,
         userId = userId,
         nickname = nickname,
         profileImage = profileImage,
@@ -106,5 +114,6 @@ class ReviewHistoryViewModel @Inject constructor(
 
     companion object {
         private const val DEFAULT_LOAD_REVIEW_COUNT = 10
+        private const val REMAINING_PAGE_FOR_REQUEST = 3
     }
 }

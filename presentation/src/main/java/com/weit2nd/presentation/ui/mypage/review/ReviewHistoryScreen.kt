@@ -54,10 +54,12 @@ fun ReviewHistoryScreen(
         }
     }
 
-    val firstVisibleItemIndex by
+    val lastVisibleItemIndex by
         remember {
             derivedStateOf {
-                lazyListState.firstVisibleItemIndex
+                lazyListState.layoutInfo.visibleItemsInfo
+                    .lastOrNull()
+                    ?.index ?: 0
             }
         }
 
@@ -65,8 +67,8 @@ fun ReviewHistoryScreen(
         vm.onCreate()
     }
 
-    LaunchedEffect(firstVisibleItemIndex) {
-        vm.onFirstVisibleItemChanged(firstVisibleItemIndex)
+    LaunchedEffect(lastVisibleItemIndex) {
+        vm.onLastVisibleItemChanged(lastVisibleItemIndex)
     }
 
     Scaffold(
