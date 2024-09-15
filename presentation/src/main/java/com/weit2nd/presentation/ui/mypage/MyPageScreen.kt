@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.ProfileImage
 import org.orbitmvi.orbit.compose.collectAsState
@@ -28,6 +29,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun MyPageScreen(
     navToLogin: () -> Unit,
+    navToReviewHistory: (ReviewHistoryDTO) -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
     val state by vm.collectAsState()
