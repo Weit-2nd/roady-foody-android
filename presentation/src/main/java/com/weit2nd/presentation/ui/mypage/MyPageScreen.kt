@@ -42,6 +42,10 @@ fun MyPageScreen(
             is MyPageSideEffect.ShowToastMessage -> {
                 Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
             }
+
+            is MyPageSideEffect.NavToReviewHistory -> {
+                navToReviewHistory(sideEffect.reviewHistoryDTO)
+            }
         }
     }
 

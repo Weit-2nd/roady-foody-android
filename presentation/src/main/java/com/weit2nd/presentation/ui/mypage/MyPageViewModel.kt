@@ -4,6 +4,7 @@ import com.weit2nd.domain.usecase.logout.LogoutUseCase
 import com.weit2nd.domain.usecase.logout.WithdrawUseCase
 import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -100,6 +101,18 @@ class MyPageViewModel @Inject constructor(
                     } else {
                         postSideEffect(MyPageSideEffect.ShowToastMessage("실패!"))
                     }
+                }
+
+                MyPageIntent.NavToReviewHistory -> {
+                    postSideEffect(
+                        MyPageSideEffect.NavToReviewHistory(
+                            ReviewHistoryDTO(
+                                userId = state.userId,
+                                nickname = state.nickname,
+                                profileImage = state.profileImage,
+                            ),
+                        ),
+                    )
                 }
             }
         }
