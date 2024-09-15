@@ -108,4 +108,12 @@
     <string name="post_review_confirm">작성 완료</string>
     <string name="post_review_placeholder">솔직한 경험을 공유해주세요!</string>
     <string name="post_review_content_length">%d / %d</string>
+
+    <!-- review history -->
+    <string name="review_history_title">내가 쓴 리뷰</string>
+
+    <!-- total count -->
+    <string name="total_count">전체</string>
+
+    <string name="error_network">인터넷 연결 상태를 확인해주세요</string>
 </resources>
