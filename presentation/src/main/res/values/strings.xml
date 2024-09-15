@@ -111,5 +111,7 @@
 
     <!-- myPage -->
     <string name="my_page_toolbar_title">마이페이지</string>
+    <string name="my_page_logout">로그아웃</string>
+    <string name="my_page_account_deletion">회원탈퇴</string>
 
 </resources>
