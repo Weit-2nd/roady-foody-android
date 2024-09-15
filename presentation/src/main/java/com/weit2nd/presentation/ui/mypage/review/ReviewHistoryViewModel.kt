@@ -56,6 +56,7 @@ class ReviewHistoryViewModel @Inject constructor(
                     ReviewHistorySideEffect.NavToBack
                 }
                 is ReviewHistoryIntent.LoadNextReviews -> {
+                    // TODO 응답으로 리뷰 총 개수도 받아와야함
                     runCatching {
                         getUserReviewsUseCase.invoke(
                             userId = userInfo.userId,

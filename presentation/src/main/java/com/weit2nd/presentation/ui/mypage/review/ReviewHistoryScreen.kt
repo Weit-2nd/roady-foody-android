@@ -81,6 +81,7 @@ fun ReviewHistoryScreen(
     ) {
         ReviewHistoryContent(
             modifier = Modifier.padding(it),
+            totalCount = state.totalCount,
             reviews = state.reviews,
             lazyListState = lazyListState,
         )
@@ -90,6 +91,7 @@ fun ReviewHistoryScreen(
 @Composable
 fun ReviewHistoryContent(
     modifier: Modifier = Modifier,
+    totalCount: Int,
     reviews: List<Review>,
     lazyListState: LazyListState = rememberLazyListState(),
 ) {
@@ -98,7 +100,7 @@ fun ReviewHistoryContent(
     ) {
         TotalCount(
             modifier = Modifier.padding(horizontal = 16.dp),
-            count = reviews.size,
+            count = totalCount,
         )
         Spacer(modifier = Modifier.height(4.dp))
         HorizontalDivider(
