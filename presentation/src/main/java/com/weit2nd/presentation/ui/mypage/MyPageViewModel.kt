@@ -4,7 +4,9 @@ import com.weit2nd.domain.usecase.logout.LogoutUseCase
 import com.weit2nd.domain.usecase.logout.WithdrawUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
 import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
+import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
@@ -17,6 +19,7 @@ class MyPageViewModel @Inject constructor(
     private val withdrawUseCase: WithdrawUseCase,
     private val getMyUserInfoUseCase: GetMyUserInfoUseCase,
     private val getFoodSpotHistoriesUseCase: GetFoodSpotHistoriesUseCase,
+    private val getUserReviewsUseCase: GetUserReviewsUseCase,
 ) : BaseViewModel<MyPageState, MyPageSideEffect>() {
     override val container: Container<MyPageState, MyPageSideEffect> = container(MyPageState())
 
@@ -65,6 +68,12 @@ class MyPageViewModel @Inject constructor(
                                     count = LOAD_DATA_NUMBER,
                                 ).contents
                                 .firstOrNull()
+                        val writtenReview =
+                            getUserReviewsUseCase
+                                .invoke(
+                                    userId = userInfo.userId,
+                                    count = LOAD_DATA_NUMBER,
+                                ).firstOrNull()
                         reduce {
                             state.copy(
                                 userId = userInfo.userId,
@@ -72,6 +81,19 @@ class MyPageViewModel @Inject constructor(
                                 profileImage = userInfo.profileImage,
                                 coin = userInfo.coin,
                                 foodSpotHistory = reportedFoodSpot,
+                                review =
+                                    writtenReview?.let {
+                                        Review(
+                                            writtenReview.id,
+                                            userInfo.userId,
+                                            userInfo.profileImage,
+                                            userInfo.nickname,
+                                            writtenReview.createdAt,
+                                            writtenReview.rating.toFloat(),
+                                            writtenReview.photos.map { it.image },
+                                            writtenReview.contents,
+                                        )
+                                    },
                             )
                         }
                     }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }

@@ -10,7 +10,7 @@ class GetUserReviewsUseCase @Inject constructor(
     suspend operator fun invoke(
         userId: Long,
         count: Int,
-        lastItemId: Long?,
+        lastItemId: Long? = null,
     ): List<UserReview> {
         return repository.getUserReviews(
             userId = userId,
