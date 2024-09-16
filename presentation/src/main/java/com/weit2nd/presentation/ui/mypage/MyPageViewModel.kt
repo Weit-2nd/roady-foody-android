@@ -22,7 +22,6 @@ class MyPageViewModel @Inject constructor(
 
     fun onCreate() {
         MyPageIntent.GetMyUserInfo.post()
-//        MyPageIntent.GetMyReportedFoodSpots.post()
     }
 
     fun onLogoutButtonClick() {
@@ -59,32 +58,23 @@ class MyPageViewModel @Inject constructor(
                 MyPageIntent.GetMyUserInfo -> {
                     runCatching {
                         val userInfo = getMyUserInfoUseCase.invoke()
+                        val reportedFoodSpot =
+                            getFoodSpotHistoriesUseCase
+                                .invoke(
+                                    userId = userInfo.userId,
+                                    count = LOAD_DATA_NUMBER,
+                                ).contents
+                                .firstOrNull()
                         reduce {
                             state.copy(
                                 userId = userInfo.userId,
                                 nickname = userInfo.nickname,
                                 profileImage = userInfo.profileImage,
                                 coin = userInfo.coin,
-                            )
-                        }
-                    }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
-                }
-
-                MyPageIntent.GetMyReportedFoodSpots -> {
-                    runCatching {
-                        val reportedFoodSpot =
-                            getFoodSpotHistoriesUseCase
-                                .invoke(
-                                    userId = state.userId,
-                                    count = 1,
-                                ).contents
-                                .firstOrNull()
-                        reduce {
-                            state.copy(
                                 foodSpotHistory = reportedFoodSpot,
                             )
                         }
-                    }
+                    }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
                 }
 
                 is MyPageIntent.SetLogoutDialogShownState -> {
@@ -144,4 +134,8 @@ class MyPageViewModel @Inject constructor(
                 }
             }
         }
+
+    companion object {
+        private const val LOAD_DATA_NUMBER = 1
+    }
 }

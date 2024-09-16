@@ -3,8 +3,6 @@ package com.weit2nd.presentation.ui.mypage
 sealed class MyPageIntent {
     data object GetMyUserInfo : MyPageIntent()
 
-    data object GetMyReportedFoodSpots : MyPageIntent()
-
     data class SetLogoutDialogShownState(
         val isShown: Boolean,
     ) : MyPageIntent()
