@@ -55,6 +55,10 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.NavToBack.post()
     }
 
+    fun onReviewHistoryClick(){
+        MyPageIntent.NavToReviewHistory.post()
+    }
+
     private fun MyPageIntent.post() =
         intent {
             when (this@post) {

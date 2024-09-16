@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,6 +42,7 @@ import com.weit2nd.presentation.ui.common.EditableProfileImage
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.theme.Gray4
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -88,25 +91,31 @@ fun MyPageScreen(
             )
         },
     ) {
-        MyPageContent(
+        LazyColumn(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(it),
-            profileImage = state.profileImage,
-            nickname = state.nickname,
-            coin = state.coin,
-            foodSpotHistory = state.foodSpotHistory,
-            review = state.review,
-            onLogoutButtonClick = vm::onLogoutButtonClick,
-            onWithdrawButtonClick = vm::onWithdrawButtonClick,
-            onLogoutConfirm = vm::onLogoutConfirm,
-            onWithdrawConfirm = vm::onWithdrawConfirm,
-            onLogoutDialogClose = vm::onLogoutDialogClose,
-            onWithdrawDialogClose = vm::onWithdrawDialogClose,
-            isLogoutDialogShown = state.isLogoutDialogShown,
-            isWithdrawDialogShown = state.isWithdrawDialogShown,
-        )
+        ) {
+            item {
+                MyPageContent(
+                    profileImage = state.profileImage,
+                    nickname = state.nickname,
+                    coin = state.coin,
+                    foodSpotHistory = state.foodSpotHistory,
+                    review = state.review,
+                    onLogoutButtonClick = vm::onLogoutButtonClick,
+                    onWithdrawButtonClick = vm::onWithdrawButtonClick,
+                    onLogoutConfirm = vm::onLogoutConfirm,
+                    onWithdrawConfirm = vm::onWithdrawConfirm,
+                    onLogoutDialogClose = vm::onLogoutDialogClose,
+                    onWithdrawDialogClose = vm::onWithdrawDialogClose,
+                    isLogoutDialogShown = state.isLogoutDialogShown,
+                    isWithdrawDialogShown = state.isWithdrawDialogShown,
+                    onReviewHistoryClick = vm::onReviewHistoryClick,
+                )
+            }
+        }
     }
 }
 
@@ -126,6 +135,7 @@ private fun MyPageContent(
     onWithdrawDialogClose: () -> Unit,
     isLogoutDialogShown: Boolean,
     isWithdrawDialogShown: Boolean,
+    onReviewHistoryClick: () -> Unit,
 ) {
     Box(
         modifier = modifier,
@@ -162,21 +172,7 @@ private fun MyPageContent(
                 modifier = Modifier.size(160.dp),
                 imgUri = profileImage?.toUri(),
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_coin),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = "coinIcon",
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = NumberFormat.getInstance(Locale.getDefault()).format(coin),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = DarkGray,
-                )
-            }
+            CoinText(coin = coin)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = nickname,
@@ -185,84 +181,39 @@ private fun MyPageContent(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Gray4)
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "내가 제보한 음식점 ()",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(id = R.drawable.ic_arrow_right),
-                    tint = DarkGray,
-                    contentDescription = "",
-                )
-            }
-            if (foodSpotHistory != null) {
-                FoodSpotItem(foodSpot = foodSpotHistory)
-            } else {
-                Text(
-                    modifier = Modifier.padding(vertical = 32.dp),
-                    text = "제보한 음식점이 없습니다.",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Gray1,
-                )
-            }
+
+            ReportedFoodSpot(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                foodSpotHistory = foodSpotHistory,
+            )
+
             Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Gray4)
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "내가 쓴 리뷰 ()",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(id = R.drawable.ic_arrow_right),
-                    tint = DarkGray,
-                    contentDescription = "",
-                )
-            }
-            if (review != null) {
-                ReviewItem(review = review, onImageClick = { _, _ -> })
-            } else {
-                Text(
-                    modifier = Modifier.padding(vertical = 32.dp),
-                    text = "작성한 리뷰가 없습니다.",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Gray1,
-                )
-            }
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-            Row(
+
+            WrittenReview(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                review = review,
+                onReviewHistoryClick = onReviewHistoryClick,
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Gray4)
+
+            LogoutButton(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                         .clickable { onLogoutButtonClick() },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    modifier = Modifier.padding(4.dp),
-                    painter = painterResource(id = R.drawable.ic_logout),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = "logoutIcon",
-                )
-                Text(
-                    text = stringResource(R.string.my_page_logout),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            )
         }
 
         Text(
@@ -274,6 +225,120 @@ private fun MyPageContent(
             text = stringResource(R.string.my_page_account_deletion),
             style = MaterialTheme.typography.labelLarge,
             color = Gray1,
+        )
+    }
+}
+
+@Composable
+private fun CoinText(
+    modifier: Modifier = Modifier,
+    coin: Int,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_coin),
+            tint = MaterialTheme.colorScheme.primary,
+            contentDescription = "coinIcon",
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = NumberFormat.getInstance(Locale.getDefault()).format(coin),
+            style = MaterialTheme.typography.headlineSmall,
+            color = DarkGray,
+        )
+    }
+}
+
+@Composable
+private fun ReportedFoodSpot(
+    modifier: Modifier = Modifier,
+    foodSpotHistory: FoodSpotHistoryContent?,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "내가 제보한 음식점 ()",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Icon(
+            modifier = Modifier.size(32.dp),
+            painter = painterResource(id = R.drawable.ic_arrow_right),
+            tint = DarkGray,
+            contentDescription = "",
+        )
+    }
+    if (foodSpotHistory != null) {
+        FoodSpotItem(foodSpot = foodSpotHistory)
+    } else {
+        Text(
+            modifier = Modifier.padding(vertical = 32.dp),
+            text = stringResource(R.string.my_page_no_reported_food_spot),
+            style = MaterialTheme.typography.titleLarge,
+            color = Gray1,
+        )
+    }
+}
+
+@Composable
+private fun WrittenReview(
+    modifier: Modifier = Modifier,
+    review: Review?,
+    onReviewHistoryClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "내가 쓴 리뷰 ()",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        if (review != null) {
+            IconButton(onClick = { onReviewHistoryClick() }) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    tint = DarkGray,
+                    contentDescription = "",
+                )
+            }
+        }
+    }
+    if (review != null) {
+        ReviewItem(review = review, onImageClick = { _, _ -> })
+    } else {
+        Text(
+            modifier = Modifier.padding(vertical = 32.dp),
+            text = stringResource(R.string.my_page_no_written_review),
+            style = MaterialTheme.typography.titleLarge,
+            color = Gray1,
+        )
+    }
+}
+
+@Composable
+private fun LogoutButton(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier.padding(4.dp),
+            painter = painterResource(id = R.drawable.ic_logout),
+            tint = MaterialTheme.colorScheme.onSurface,
+            contentDescription = "logoutIcon",
+        )
+        Text(
+            text = stringResource(R.string.my_page_logout),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -327,6 +392,7 @@ private fun MyPageContentPreview() {
             onWithdrawDialogClose = {},
             isLogoutDialogShown = false,
             isWithdrawDialogShown = false,
+            onReviewHistoryClick = {},
         )
     }
 }
@@ -350,6 +416,7 @@ private fun MyPageNoContentPreview() {
             onWithdrawDialogClose = {},
             isLogoutDialogShown = false,
             isWithdrawDialogShown = false,
+            onReviewHistoryClick = {},
         )
     }
 }
