@@ -262,7 +262,7 @@ private fun ReportedFoodSpot(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "내가 제보한 음식점 ()",
+            text = "내가 제보한 음식점 ()", // todo 총 개수 표시
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -296,7 +296,7 @@ private fun WrittenReview(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "내가 쓴 리뷰 ()",
+            text = "내가 쓴 리뷰 ()", // todo 총 개수 표시
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
