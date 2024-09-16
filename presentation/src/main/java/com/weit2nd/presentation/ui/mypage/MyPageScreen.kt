@@ -32,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.BackTopBar
+import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.EditableProfileImage
 import com.weit2nd.presentation.ui.theme.DarkGray
@@ -46,6 +47,7 @@ import java.util.Locale
 @Composable
 fun MyPageScreen(
     navToLogin: () -> Unit,
+    navToReviewHistory: (ReviewHistoryDTO) -> Unit,
     navToBack: () -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
@@ -59,6 +61,10 @@ fun MyPageScreen(
 
             is MyPageSideEffect.ShowToastMessage -> {
                 Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+
+            is MyPageSideEffect.NavToReviewHistory -> {
+                navToReviewHistory(sideEffect.reviewHistoryDTO)
             }
 
             MyPageSideEffect.NavToBack -> {

@@ -114,4 +114,11 @@
     <string name="my_page_logout">로그아웃</string>
     <string name="my_page_account_deletion">회원탈퇴</string>
 
+    <!-- review history -->
+    <string name="review_history_title">내가 쓴 리뷰</string>
+
+    <!-- total count -->
+    <string name="total_count">전체</string>
+
+    <string name="error_network">인터넷 연결 상태를 확인해주세요</string>
 </resources>

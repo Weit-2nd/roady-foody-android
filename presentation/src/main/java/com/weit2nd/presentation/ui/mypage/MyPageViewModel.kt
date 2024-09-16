@@ -5,6 +5,7 @@ import com.weit2nd.domain.usecase.logout.WithdrawUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
 import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -60,6 +61,7 @@ class MyPageViewModel @Inject constructor(
                         val userInfo = getMyUserInfoUseCase.invoke()
                         reduce {
                             state.copy(
+                                userId = userInfo.userId,
                                 nickname = userInfo.nickname,
                                 profileImage = userInfo.profileImage,
                                 coin = userInfo.coin,
@@ -127,6 +129,18 @@ class MyPageViewModel @Inject constructor(
 
                 MyPageIntent.NavToBack -> {
                     postSideEffect(MyPageSideEffect.NavToBack)
+                }
+
+                MyPageIntent.NavToReviewHistory -> {
+                    postSideEffect(
+                        MyPageSideEffect.NavToReviewHistory(
+                            ReviewHistoryDTO(
+                                userId = state.userId,
+                                nickname = state.nickname,
+                                profileImage = state.profileImage,
+                            ),
+                        ),
+                    )
                 }
             }
         }

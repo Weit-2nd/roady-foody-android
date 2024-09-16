@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
+import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toPlaceDTO
@@ -25,6 +26,7 @@ import com.weit2nd.presentation.navigation.type.CoordinateType
 import com.weit2nd.presentation.navigation.type.FoodSpotForReviewType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
 import com.weit2nd.presentation.navigation.type.PlaceSearchType
+import com.weit2nd.presentation.navigation.type.ReviewHistoryType
 import com.weit2nd.presentation.navigation.type.TermIdsType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
@@ -33,6 +35,7 @@ import com.weit2nd.presentation.ui.foodspot.report.FoodSpotReportScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.mypage.MyPageScreen
+import com.weit2nd.presentation.ui.mypage.review.ReviewHistoryScreen
 import com.weit2nd.presentation.ui.review.PostReviewScreen
 import com.weit2nd.presentation.ui.search.SearchScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
@@ -70,6 +73,7 @@ fun AppNavHost(
         postReviewComposable(navController)
         searchComposable(navController)
         foodSpotDetailComposable(navController)
+        reviewHistoryComposable(navController)
     }
 }
 
@@ -292,6 +296,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
             navToBack = {
                 navController.popBackStack()
             },
+            navToReviewHistory = {
+                navController.navigateToReviewHistory(it)
+            },
         )
     }
 }
@@ -332,6 +339,24 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
                     }
                 }
             },
+            navToBack = {
+                navController.popBackStack()
+            },
+        )
+    }
+}
+
+private fun NavGraphBuilder.reviewHistoryComposable(navController: NavHostController) {
+    composable(
+        route = "${ReviewHistoryRoutes.GRAPT}/{${ReviewHistoryRoutes.REVIEW_HISTORY_KEY}}",
+        arguments =
+            listOf(
+                navArgument(ReviewHistoryRoutes.REVIEW_HISTORY_KEY) {
+                    type = ReviewHistoryType()
+                },
+            ),
+    ) {
+        ReviewHistoryScreen(
             navToBack = {
                 navController.popBackStack()
             },
@@ -433,6 +458,14 @@ private fun NavHostController.navigateToFoodSpotDetail(
     navigate("${FoodSpotDetailRoutes.GRAPH}/$foodSpotId", builder)
 }
 
+private fun NavHostController.navigateToReviewHistory(
+    reviewHistoryDTO: ReviewHistoryDTO,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val reviewHistoryJson = Uri.encode(Gson().toJson(reviewHistoryDTO))
+    navigate("${ReviewHistoryRoutes.GRAPT}/$reviewHistoryJson", builder)
+}
+
 object SplashRoutes {
     const val GRAPH = "splash"
 }
@@ -501,4 +534,9 @@ object SearchRoutes {
 object FoodSpotDetailRoutes {
     const val GRAPH = "food_spot_detail"
     const val FOOD_SPOT_ID_KEY = "food_spot_id_key"
+}
+
+object ReviewHistoryRoutes {
+    const val GRAPT = "review_history"
+    const val REVIEW_HISTORY_KEY = "review_history_key"
 }

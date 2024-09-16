@@ -1,5 +1,6 @@
 package com.weit2nd.data.service
 
+import com.weit2nd.data.model.review.UserReviewsDTO
 import com.weit2nd.data.model.spot.FoodSpotHistoriesDTO
 import com.weit2nd.data.model.user.UserDTO
 import retrofit2.http.GET
@@ -16,4 +17,11 @@ interface UserService {
         @Query("size") size: Int,
         @Query("lastId") lastId: Long?,
     ): FoodSpotHistoriesDTO
+
+    @GET("/api/v1/users/{userId}/reviews")
+    suspend fun getUserReviews(
+        @Path("userId") userId: Long,
+        @Query("size") size: Int,
+        @Query("lastId") lastId: Long?,
+    ): UserReviewsDTO
 }
