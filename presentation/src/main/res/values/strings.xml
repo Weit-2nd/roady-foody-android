@@ -112,6 +112,9 @@
     <!-- review history -->
     <string name="review_history_title">내가 쓴 리뷰</string>
 
+    <!-- foodSpot history -->
+    <string name="food_spot_history_title">내가 제보한 음식점</string>
+
     <!-- total count -->
     <string name="total_count">전체</string>
 

@@ -10,6 +10,7 @@ import com.weit2nd.data.model.user.UserDTO
 import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.user.UserDataSource
 import com.weit2nd.data.util.JwtDecoder
+import com.weit2nd.domain.exception.user.UserFoodSpotException
 import com.weit2nd.domain.exception.user.UserReviewException
 import com.weit2nd.domain.model.UserInfo
 import com.weit2nd.domain.model.review.UserReview
@@ -48,12 +49,20 @@ class UserRepositoryImpl @Inject constructor(
         count: Int,
         lastItemId: Long?,
     ): FoodSpotHistories {
-        return userDataSource
-            .getFoodSpotHistories(
-                userId = userId,
-                count = count,
-                lastItemId = lastItemId,
-            ).toFoodSpotHistories()
+        val foodSpots =
+            userDataSource
+                .getFoodSpotHistories(
+                    userId = userId,
+                    count = count,
+                    lastItemId = lastItemId,
+                ).toFoodSpotHistories()
+
+        val isFoodSpotEmpty = foodSpots.hasNext.not() && foodSpots.contents.isEmpty()
+        return if (isFoodSpotEmpty) {
+            throw UserFoodSpotException.NoMoreFoodSpotException()
+        } else {
+            foodSpots
+        }
     }
 
     override suspend fun getUserReviews(
