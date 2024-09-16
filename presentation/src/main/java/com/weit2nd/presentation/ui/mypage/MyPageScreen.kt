@@ -143,23 +143,19 @@ private fun MyPageContent(
         if (isLogoutDialogShown) {
             CommonAlertDialog(
                 modifier = Modifier.align(Alignment.Center),
-                title = "로그아웃",
-                contents = "진짜 해요?",
+                title = stringResource(R.string.my_page_logout),
+                contents = stringResource(R.string.logout_dialog_content),
                 onPositiveButtonClick = onLogoutConfirm,
                 onNegativeButtonClick = onLogoutDialogClose,
-                positiveButtonText = "맞아",
-                negativeButtonText = "잘못 눌렀어",
             )
         }
         if (isWithdrawDialogShown) {
             CommonAlertDialog(
                 modifier = Modifier.align(Alignment.Center),
-                title = "회원탈퇴",
-                contents = "진짜 해요?",
+                title = stringResource(R.string.account_deletion_dialog_title),
+                contents = stringResource(R.string.account_deletion_dialog_content),
                 onPositiveButtonClick = onWithdrawConfirm,
                 onNegativeButtonClick = onWithdrawDialogClose,
-                positiveButtonText = "맞아",
-                negativeButtonText = "잘못 눌렀어",
             )
         }
 
