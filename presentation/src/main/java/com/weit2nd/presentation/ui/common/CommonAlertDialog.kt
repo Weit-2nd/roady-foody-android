@@ -11,18 +11,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.theme.Gray2
+import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 
 @Composable
 fun CommonAlertDialog(
@@ -32,8 +37,8 @@ fun CommonAlertDialog(
     onDismiss: (() -> Unit)? = null,
     onPositiveButtonClick: (() -> Unit)? = null,
     onNegativeButtonClick: (() -> Unit)? = null,
-    positiveButtonText: String = "확인",
-    negativeButtonText: String = "취소",
+    positiveButtonText: String = stringResource(R.string.dialog_confirm),
+    negativeButtonText: String = stringResource(R.string.dialog_cancel),
     dialogProperties: DialogProperties = DialogProperties(),
 ) {
     CommonAlertDialogColumn(
@@ -43,15 +48,16 @@ fun CommonAlertDialog(
     ) {
         Spacer(modifier = Modifier.padding(vertical = 16.dp))
         TitleAndContents(
+            modifier = Modifier.padding(horizontal = 16.dp),
             title = title,
             contents = contents,
-            modifier = Modifier.padding(horizontal = 16.dp),
         )
-        Spacer(modifier = Modifier.padding(vertical = 16.dp))
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
         CommonDialogButton(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
             onDismiss = onDismiss,
             onPositiveButtonClick = onPositiveButtonClick,
             onNegativeButtonClick = onNegativeButtonClick,
@@ -75,15 +81,25 @@ private fun CommonDialogButton(
     ) {
         if (onNegativeButtonClick != null) {
             Button(
-                modifier = Modifier
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .weight(1f),
                 onClick = {
                     onNegativeButtonClick()
                     onDismiss?.invoke()
                 },
+                colors =
+                    ButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        disabledContentColor = MaterialTheme.colorScheme.onSurface,
+                        disabledContainerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                border = BorderStroke(1.dp, Gray2),
             ) {
                 Text(
                     text = negativeButtonText,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
@@ -94,8 +110,9 @@ private fun CommonDialogButton(
         }
         if (onPositiveButtonClick != null) {
             Button(
-                modifier = Modifier
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .weight(1f),
                 onClick = {
                     onPositiveButtonClick()
                     onDismiss?.invoke()
@@ -103,6 +120,8 @@ private fun CommonDialogButton(
             ) {
                 Text(
                     text = positiveButtonText,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }
@@ -121,17 +140,16 @@ private fun TitleAndContents(
     ) {
         Text(
             text = title,
-            color = Color.Black,
-            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         Text(
             text = contents,
-            color = Color.Black,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleSmall,
         )
     }
 }
@@ -148,13 +166,14 @@ private fun CommonAlertDialogColumn(
         properties = dialogProperties,
     ) {
         Surface(
-            modifier = modifier
+            modifier =
+                modifier
                     .fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(1.dp, Color.LightGray),
         ) {
             Column(
-                modifier = Modifier.background(Color.White),
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                 content = content,
             )
         }
@@ -164,11 +183,13 @@ private fun CommonAlertDialogColumn(
 @Preview
 @Composable
 fun CommonAlertDialogPreview() {
-    CommonAlertDialog(
-        title = "제목 제목",
-        contents = "본문 본문\n본문 본문",
-        onDismiss = { /* Do Nothing */ },
-        onPositiveButtonClick = { },
-        onNegativeButtonClick = { },
-    )
+    RoadyFoodyTheme {
+        CommonAlertDialog(
+            title = "제목 제목",
+            contents = "본문 본문본문 본문본문 본문본문 본문",
+            onDismiss = { /* Do Nothing */ },
+            onPositiveButtonClick = { },
+            onNegativeButtonClick = { },
+        )
+    }
 }

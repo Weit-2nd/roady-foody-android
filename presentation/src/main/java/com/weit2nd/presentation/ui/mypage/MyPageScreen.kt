@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -143,23 +144,19 @@ private fun MyPageContent(
         if (isLogoutDialogShown) {
             CommonAlertDialog(
                 modifier = Modifier.align(Alignment.Center),
-                title = "로그아웃",
-                contents = "진짜 해요?",
+                title = stringResource(R.string.my_page_logout),
+                contents = stringResource(R.string.logout_dialog_content),
                 onPositiveButtonClick = onLogoutConfirm,
                 onNegativeButtonClick = onLogoutDialogClose,
-                positiveButtonText = "맞아",
-                negativeButtonText = "잘못 눌렀어",
             )
         }
         if (isWithdrawDialogShown) {
             CommonAlertDialog(
                 modifier = Modifier.align(Alignment.Center),
-                title = "회원탈퇴",
-                contents = "진짜 해요?",
+                title = stringResource(R.string.account_deletion_dialog_title),
+                contents = stringResource(R.string.account_deletion_dialog_content),
                 onPositiveButtonClick = onWithdrawConfirm,
                 onNegativeButtonClick = onWithdrawDialogClose,
-                positiveButtonText = "맞아",
-                negativeButtonText = "잘못 눌렀어",
             )
         }
 
@@ -267,7 +264,7 @@ private fun ReportedFoodSpot(
             color = MaterialTheme.colorScheme.onSurface,
         )
         Icon(
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(32.dp).offset(y = 2.dp),
             painter = painterResource(id = R.drawable.ic_arrow_right),
             tint = DarkGray,
             contentDescription = "",
@@ -303,7 +300,7 @@ private fun WrittenReview(
         if (review != null) {
             IconButton(onClick = { onReviewHistoryClick() }) {
                 Icon(
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(32.dp).offset(y = 2.dp),
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     tint = DarkGray,
                     contentDescription = "",
