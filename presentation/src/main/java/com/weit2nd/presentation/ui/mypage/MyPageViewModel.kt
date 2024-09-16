@@ -22,7 +22,7 @@ class MyPageViewModel @Inject constructor(
 
     fun onCreate() {
         MyPageIntent.GetMyUserInfo.post()
-        MyPageIntent.GetMyReportedFoodSpots.post()
+//        MyPageIntent.GetMyReportedFoodSpots.post()
     }
 
     fun onLogoutButtonClick() {
@@ -75,7 +75,7 @@ class MyPageViewModel @Inject constructor(
                         val reportedFoodSpot =
                             getFoodSpotHistoriesUseCase
                                 .invoke(
-                                    userId = 0, // todo userId 지정
+                                    userId = state.userId,
                                     count = 1,
                                 ).contents
                                 .firstOrNull()

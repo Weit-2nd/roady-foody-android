@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +32,7 @@ import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.theme.Gray4
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 import com.weit2nd.presentation.util.LocalDateTimeFormatter
 import java.time.LocalDateTime
@@ -41,7 +43,7 @@ fun FoodSpotItem(
     foodSpot: FoodSpotHistoryContent,
 ) {
     Row(
-        modifier = modifier.padding(vertical = 16.dp),
+        modifier = modifier.padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -84,6 +86,7 @@ fun FoodSpotItem(
             model = foodSpot.reportPhotos.firstOrNull(),
             contentScale = ContentScale.Crop,
             contentDescription = "foodspot image",
+            placeholder = ColorPainter(Gray4),
             fallback = painterResource(id = R.drawable.ic_input_delete_filled),
         )
     }

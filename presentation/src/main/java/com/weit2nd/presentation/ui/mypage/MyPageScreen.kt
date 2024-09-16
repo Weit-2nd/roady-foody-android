@@ -30,11 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
+import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.presentation.R
-import com.weit2nd.presentation.ui.common.BackTopBar
+import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.EditableProfileImage
+import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
@@ -94,6 +97,7 @@ fun MyPageScreen(
             nickname = state.nickname,
             coin = state.coin,
             foodSpotHistory = state.foodSpotHistory,
+            review = state.review,
             onLogoutButtonClick = vm::onLogoutButtonClick,
             onWithdrawButtonClick = vm::onWithdrawButtonClick,
             onLogoutConfirm = vm::onLogoutConfirm,
@@ -113,6 +117,7 @@ private fun MyPageContent(
     nickname: String,
     coin: Int,
     foodSpotHistory: FoodSpotHistoryContent?,
+    review: Review?,
     onLogoutButtonClick: () -> Unit,
     onWithdrawButtonClick: () -> Unit,
     onLogoutConfirm: () -> Unit,
@@ -123,7 +128,7 @@ private fun MyPageContent(
     isWithdrawDialogShown: Boolean,
 ) {
     Box(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier,
     ) {
         if (isLogoutDialogShown) {
             CommonAlertDialog(
@@ -180,10 +185,10 @@ private fun MyPageContent(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-            HorizontalDivider()
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             Spacer(modifier = Modifier.height(16.dp))
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -192,6 +197,7 @@ private fun MyPageContent(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Icon(
+                    modifier = Modifier.size(32.dp),
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     tint = DarkGray,
                     contentDescription = "",
@@ -200,27 +206,63 @@ private fun MyPageContent(
             if (foodSpotHistory != null) {
                 FoodSpotItem(foodSpot = foodSpotHistory)
             } else {
-                Text(text = "제보한 음식점이 없습니다.")
+                Text(
+                    modifier = Modifier.padding(vertical = 32.dp),
+                    text = "제보한 음식점이 없습니다.",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Gray1,
+                )
             }
-        }
-        Row(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomStart)
-                    .clickable { onLogoutButtonClick() },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                modifier = Modifier.padding(4.dp),
-                painter = painterResource(id = R.drawable.ic_logout),
-                tint = MaterialTheme.colorScheme.onSurface,
-                contentDescription = "logoutIcon",
-            )
-            Text(
-                text = stringResource(R.string.my_page_logout),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "내가 쓴 리뷰 ()",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    tint = DarkGray,
+                    contentDescription = "",
+                )
+            }
+            if (review != null) {
+                ReviewItem(review = review, onImageClick = { _, _ -> })
+            } else {
+                Text(
+                    modifier = Modifier.padding(vertical = 32.dp),
+                    text = "작성한 리뷰가 없습니다.",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Gray1,
+                )
+            }
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .clickable { onLogoutButtonClick() },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    painter = painterResource(id = R.drawable.ic_logout),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    contentDescription = "logoutIcon",
+                )
+                Text(
+                    text = stringResource(R.string.my_page_logout),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
 
         Text(
@@ -228,7 +270,7 @@ private fun MyPageContent(
                 Modifier
                     .align(Alignment.BottomEnd)
                     .clickable { onWithdrawButtonClick() }
-                    .padding(bottom = 8.dp),
+                    .padding(16.dp),
             text = stringResource(R.string.my_page_account_deletion),
             style = MaterialTheme.typography.labelLarge,
             color = Gray1,
@@ -254,13 +296,52 @@ private fun MyPageContentPreview() {
                     longitude = 8.9,
                     latitude = 10.11,
                     createdDateTime = LocalDateTime.now(),
-                    reportPhotos = listOf(),
+                    reportPhotos = listOf(FoodSpotPhoto(0, "")),
                     categories =
                         listOf(
                             com.weit2nd.domain.model.spot
                                 .FoodCategory(0, "포장마차"),
                         ),
                 ),
+            review =
+                Review(
+                    userId = 1,
+                    profileImage = null,
+                    nickname = "모르는개산책",
+                    date = LocalDateTime.now(),
+                    rating = 4f,
+                    reviewImages = listOf("", "", ""),
+                    contents =
+                        """
+                        가나다가나다가나다가나다가나다가나다가나다
+                        가나다가나다가나다가나다가나다가나다가나다
+                        가나다가나다가나다가나다가나다가나다가나다
+                        가나다가나다가나다가나다가나다가나다가나다
+                        """.trimIndent(),
+                ),
+            onLogoutButtonClick = {},
+            onWithdrawButtonClick = {},
+            onLogoutConfirm = {},
+            onWithdrawConfirm = {},
+            onLogoutDialogClose = {},
+            onWithdrawDialogClose = {},
+            isLogoutDialogShown = false,
+            isWithdrawDialogShown = false,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MyPageNoContentPreview() {
+    RoadyFoodyTheme {
+        MyPageContent(
+            modifier = Modifier.fillMaxSize(),
+            profileImage = null,
+            nickname = "가나다라마가가가가가가가가가가가",
+            coin = 10000000,
+            foodSpotHistory = null,
+            review = null,
             onLogoutButtonClick = {},
             onWithdrawButtonClick = {},
             onLogoutConfirm = {},
