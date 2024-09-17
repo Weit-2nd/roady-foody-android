@@ -126,6 +126,9 @@ class FoodSpotDetailViewModel @Inject constructor(
                                 todayCloseTime = getTodayCloseTime(detail.operationHoursList),
                                 foodCategoryList = detail.foodCategoryList,
                                 foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
+                                reviewCount = detail.reviewInfo.reviewCount,
+                                averageRating = detail.reviewInfo.average,
+                                ratingCounts = detail.ratingCounts,
                                 reviews = foodSpotReviews.reviews.map { it.toReview() },
                                 hasMoreReviews = foodSpotReviews.hasNext,
                             )
