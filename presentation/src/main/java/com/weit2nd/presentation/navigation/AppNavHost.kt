@@ -172,12 +172,12 @@ private fun NavGraphBuilder.homeComposable(navController: NavHostController) {
     composable(
         route = "${HomeNavRoutes.GRAPH}/{${HomeNavRoutes.PLACE_SEARCH_KEY}}",
         arguments =
-            listOf(
-                navArgument(HomeNavRoutes.PLACE_SEARCH_KEY) {
-                    type = PlaceSearchType()
-                    nullable = true
-                },
-            ),
+        listOf(
+            navArgument(HomeNavRoutes.PLACE_SEARCH_KEY) {
+                type = PlaceSearchType()
+                nullable = true
+            },
+        ),
     ) {
         HomeScreen(
             navToFoodSpotReport = {
@@ -234,11 +234,11 @@ private fun NavGraphBuilder.selectPlaceMapComposable(navController: NavHostContr
     composable(
         route = "${SelectPlaceMapRoutes.GRAPH}/{${SelectPlaceMapRoutes.INITIAL_POSITION_KEY}}",
         arguments =
-            listOf(
-                navArgument(SelectPlaceMapRoutes.INITIAL_POSITION_KEY) {
-                    type = CoordinateType()
-                },
-            ),
+        listOf(
+            navArgument(SelectPlaceMapRoutes.INITIAL_POSITION_KEY) {
+                type = CoordinateType()
+            },
+        ),
     ) {
         SelectPlaceMapScreen(
             onSelectPlace = { place ->
@@ -259,11 +259,11 @@ private fun NavGraphBuilder.imageViewerComposable(navController: NavHostControll
     composable(
         route = "${ImageViewerRoutes.GRAPH}/{${ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY}}",
         arguments =
-            listOf(
-                navArgument(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY) {
-                    type = ImageViewerDataType()
-                },
-            ),
+        listOf(
+            navArgument(ImageViewerRoutes.IMAGES_VIEWER_DATA_KEY) {
+                type = ImageViewerDataType()
+            },
+        ),
     ) {
         ImageViewerScreen(
             onExitBtnClick = { navController.popBackStack() },
@@ -301,6 +301,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
             navToReviewHistory = {
                 navController.navigateToReviewHistory(it)
             },
+            navToFoodSpotHistory = { userId->
+                navController.navigateToFoodSpotHistory(userId)
+            }
         )
     }
 }
@@ -309,11 +312,11 @@ private fun NavGraphBuilder.postReviewComposable(navController: NavHostControlle
     composable(
         route = "${PostReviewRoutes.GRAPH}/{${PostReviewRoutes.FOOD_SPOT_FOR_REVIEW_KEY}}",
         arguments =
-            listOf(
-                navArgument(PostReviewRoutes.FOOD_SPOT_FOR_REVIEW_KEY) {
-                    type = FoodSpotForReviewType()
-                },
-            ),
+        listOf(
+            navArgument(PostReviewRoutes.FOOD_SPOT_FOR_REVIEW_KEY) {
+                type = FoodSpotForReviewType()
+            },
+        ),
     ) {
         PostReviewScreen(
             navToBack = {
@@ -327,11 +330,11 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
     composable(
         route = "${SearchRoutes.GRAPH}/{${SearchRoutes.INITIAL_SEARCH_WORDS_KEY}}",
         arguments =
-            listOf(
-                navArgument(SearchRoutes.INITIAL_SEARCH_WORDS_KEY) {
-                    type = PlaceSearchType()
-                },
-            ),
+        listOf(
+            navArgument(SearchRoutes.INITIAL_SEARCH_WORDS_KEY) {
+                type = PlaceSearchType()
+            },
+        ),
     ) {
         SearchScreen(
             navToHome = {
@@ -352,11 +355,11 @@ private fun NavGraphBuilder.reviewHistoryComposable(navController: NavHostContro
     composable(
         route = "${ReviewHistoryRoutes.GRAPH}/{${ReviewHistoryRoutes.REVIEW_HISTORY_KEY}}",
         arguments =
-            listOf(
-                navArgument(ReviewHistoryRoutes.REVIEW_HISTORY_KEY) {
-                    type = ReviewHistoryType()
-                },
-            ),
+        listOf(
+            navArgument(ReviewHistoryRoutes.REVIEW_HISTORY_KEY) {
+                type = ReviewHistoryType()
+            },
+        ),
     ) {
         ReviewHistoryScreen(
             navToBack = {
@@ -370,11 +373,11 @@ private fun NavGraphBuilder.foodSpotHistoryComposable(navController: NavHostCont
     composable(
         route = "${FoodSpotHistoryRoutes.GRAPH}/{${FoodSpotHistoryRoutes.FOOD_SPOT_HISTORY_USER_ID_KEY}}",
         arguments =
-            listOf(
-                navArgument(FoodSpotHistoryRoutes.FOOD_SPOT_HISTORY_USER_ID_KEY) {
-                    type = NavType.LongType
-                },
-            ),
+        listOf(
+            navArgument(FoodSpotHistoryRoutes.FOOD_SPOT_HISTORY_USER_ID_KEY) {
+                type = NavType.LongType
+            },
+        ),
     ) {
         FoodSpotHistoryScreen(
             navToBack = {
@@ -388,11 +391,11 @@ private fun NavGraphBuilder.foodSpotDetailComposable(navController: NavHostContr
     composable(
         route = "${FoodSpotDetailRoutes.GRAPH}/{${FoodSpotDetailRoutes.FOOD_SPOT_ID_KEY}}",
         arguments =
-            listOf(
-                navArgument(FoodSpotDetailRoutes.FOOD_SPOT_ID_KEY) {
-                    type = NavType.LongType
-                },
-            ),
+        listOf(
+            navArgument(FoodSpotDetailRoutes.FOOD_SPOT_ID_KEY) {
+                type = NavType.LongType
+            },
+        ),
     ) {
         FoodSpotDetailScreen(
             navToBack = {
@@ -484,6 +487,13 @@ private fun NavHostController.navigateToReviewHistory(
 ) {
     val reviewHistoryJson = Uri.encode(Gson().toJson(reviewHistoryDTO))
     navigate("${ReviewHistoryRoutes.GRAPH}/$reviewHistoryJson", builder)
+}
+
+private fun NavHostController.navigateToFoodSpotHistory(
+    userId: Long,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    navigate("${FoodSpotHistoryRoutes.GRAPH}/$userId", builder)
 }
 
 object SplashRoutes {

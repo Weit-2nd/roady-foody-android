@@ -176,15 +176,7 @@ class MyPageViewModel @Inject constructor(
                 }
 
                 MyPageIntent.NavToFoodSpotHistory -> {
-                    postSideEffect(
-                        MyPageSideEffect.NavToFoodSpotHistory(
-                            ReviewHistoryDTO(
-                                userId = state.userId,
-                                nickname = state.nickname,
-                                profileImage = state.profileImage,
-                            ),
-                        ),
-                    )
+                    postSideEffect(MyPageSideEffect.NavToFoodSpotHistory(state.userId))
                 }
             }
         }
