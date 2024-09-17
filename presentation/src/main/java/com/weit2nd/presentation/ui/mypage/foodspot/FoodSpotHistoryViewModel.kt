@@ -44,6 +44,10 @@ class FoodSpotHistoryViewModel @Inject constructor(
         }
     }
 
+    fun onFoodSpotContentClick(foodSpotId: Long) {
+        FoodSpotHistoryIntent.NavToFoodSpotDetail(foodSpotId).post()
+    }
+
     private fun FoodSpotHistoryIntent.post() =
         intent {
             when (this@post) {
@@ -72,6 +76,10 @@ class FoodSpotHistoryViewModel @Inject constructor(
                             postSideEffect(FoodSpotHistorySideEffect.ShowNetworkErrorMessage)
                         }
                     }
+                }
+
+                is FoodSpotHistoryIntent.NavToFoodSpotDetail -> {
+                    postSideEffect(FoodSpotHistorySideEffect.NavToFoodSpotDetail(foodSpotId))
                 }
             }
         }
