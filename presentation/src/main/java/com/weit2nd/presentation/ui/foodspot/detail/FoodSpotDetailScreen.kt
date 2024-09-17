@@ -63,6 +63,7 @@ import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.FoodSpotImagePager
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.common.ReviewRequest
+import com.weit2nd.presentation.ui.common.ReviewTotal
 import com.weit2nd.presentation.ui.common.TitleAndCategory
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray4
@@ -284,6 +285,7 @@ private fun FoodSpotDetailContent(
                     onClick = {
                         // TODO 리뷰 더보기 이동
                     },
+                    isReadMoreVisible = true,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -332,51 +334,6 @@ private fun FoodSpotDetailContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-    }
-}
-
-@Composable
-private fun ReviewTotal(
-    modifier: Modifier = Modifier,
-    averageRating: Float,
-    reviewCount: Int,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier =
-            modifier.clickable {
-                onClick()
-            },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = R.drawable.ic_star),
-            contentDescription = "review rating",
-            tint = MaterialTheme.colorScheme.tertiary,
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = averageRating.toString(),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.tertiary,
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text =
-                stringResource(
-                    id = R.string.food_spot_detail_review_count,
-                    reviewCount,
-                ),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        Icon(
-            modifier = Modifier.size(20.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_right),
-            contentDescription = "navigate to review detail",
-            tint = Gray2,
-        )
     }
 }
 
