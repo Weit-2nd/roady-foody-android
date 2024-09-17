@@ -7,7 +7,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -68,6 +67,7 @@ import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.ReviewItem
+import com.weit2nd.presentation.ui.common.ReviewRequest
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray4
@@ -453,29 +453,6 @@ private fun ReviewTotal(
             painter = painterResource(id = R.drawable.ic_arrow_right),
             contentDescription = "navigate to review detail",
             tint = Gray2,
-        )
-    }
-}
-
-@Composable
-private fun ReviewRequest(
-    modifier: Modifier = Modifier,
-    onPostReviewClick: () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(id = R.string.food_spot_detail_post_review_description),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        BorderButton(
-            text = stringResource(id = R.string.food_spot_detail_post_review_button),
-            onClick = onPostReviewClick,
         )
     }
 }
