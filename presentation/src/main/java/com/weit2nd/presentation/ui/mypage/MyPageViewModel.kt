@@ -55,8 +55,12 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.NavToBack.post()
     }
 
-    fun onReviewHistoryClick(){
+    fun onReviewHistoryClick() {
         MyPageIntent.NavToReviewHistory.post()
+    }
+
+    fun onFoodSpotHistoryClick() {
+        MyPageIntent.NavToFoodSpotHistory.post()
     }
 
     private fun MyPageIntent.post() =
@@ -150,6 +154,18 @@ class MyPageViewModel @Inject constructor(
                 MyPageIntent.NavToReviewHistory -> {
                     postSideEffect(
                         MyPageSideEffect.NavToReviewHistory(
+                            ReviewHistoryDTO(
+                                userId = state.userId,
+                                nickname = state.nickname,
+                                profileImage = state.profileImage,
+                            ),
+                        ),
+                    )
+                }
+
+                MyPageIntent.NavToFoodSpotHistory -> {
+                    postSideEffect(
+                        MyPageSideEffect.NavToFoodSpotHistory(
                             ReviewHistoryDTO(
                                 userId = state.userId,
                                 nickname = state.nickname,

@@ -11,5 +11,7 @@ data class MyPageState(
     val isLogoutDialogShown: Boolean = false,
     val isWithdrawDialogShown: Boolean = false,
     val foodSpotHistory: FoodSpotHistoryContent? = null,
+    val foodSpotCount: Int = 0,
     val review: Review? = null,
+    val reviewCount: Int = 0,
 )

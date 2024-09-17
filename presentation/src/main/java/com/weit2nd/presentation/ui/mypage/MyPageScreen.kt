@@ -74,6 +74,10 @@ fun MyPageScreen(
                 navToReviewHistory(sideEffect.reviewHistoryDTO)
             }
 
+            is MyPageSideEffect.NavToFoodSpotHistory -> {
+                // TODO 내가 제보한 음식점 화면으로 이동
+            }
+
             MyPageSideEffect.NavToBack -> {
                 navToBack()
             }
@@ -113,7 +117,10 @@ fun MyPageScreen(
                     onWithdrawDialogClose = vm::onWithdrawDialogClose,
                     isLogoutDialogShown = state.isLogoutDialogShown,
                     isWithdrawDialogShown = state.isWithdrawDialogShown,
+                    onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
                     onReviewHistoryClick = vm::onReviewHistoryClick,
+                    foodSpotCount = state.foodSpotCount,
+                    reviewCount = state.reviewCount,
                 )
             }
         }
@@ -136,7 +143,10 @@ private fun MyPageContent(
     onWithdrawDialogClose: () -> Unit,
     isLogoutDialogShown: Boolean,
     isWithdrawDialogShown: Boolean,
+    onFoodSpotHistoryClick: () -> Unit,
     onReviewHistoryClick: () -> Unit,
+    foodSpotCount: Int,
+    reviewCount: Int,
 ) {
     Box(
         modifier = modifier,
@@ -187,6 +197,8 @@ private fun MyPageContent(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                 foodSpotHistory = foodSpotHistory,
+                onFoodSpotHistoryClick = onFoodSpotHistoryClick,
+                foodSpotCount = foodSpotCount,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -200,6 +212,7 @@ private fun MyPageContent(
                         .padding(horizontal = 16.dp),
                 review = review,
                 onReviewHistoryClick = onReviewHistoryClick,
+                reviewCount = reviewCount,
             )
 
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), color = Gray4)
@@ -253,22 +266,32 @@ private fun CoinText(
 private fun ReportedFoodSpot(
     modifier: Modifier = Modifier,
     foodSpotHistory: FoodSpotHistoryContent?,
+    onFoodSpotHistoryClick: () -> Unit,
+    foodSpotCount: Int,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "내가 제보한 음식점 ()", // todo 총 개수 표시
+            text = stringResource(R.string.my_page_reported_food_spot_title, foodSpotCount),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        Icon(
-            modifier = Modifier.size(32.dp).offset(y = 2.dp),
-            painter = painterResource(id = R.drawable.ic_arrow_right),
-            tint = DarkGray,
-            contentDescription = "",
-        )
+
+        if (foodSpotHistory != null) {
+            IconButton(onClick = { onFoodSpotHistoryClick() }) {
+                Icon(
+                    modifier =
+                        Modifier
+                            .size(32.dp)
+                            .offset(y = 2.dp),
+                    painter = painterResource(id = R.drawable.ic_arrow_right),
+                    tint = DarkGray,
+                    contentDescription = "",
+                )
+            }
+        }
     }
     if (foodSpotHistory != null) {
         FoodSpotItem(foodSpot = foodSpotHistory)
@@ -287,20 +310,24 @@ private fun WrittenReview(
     modifier: Modifier = Modifier,
     review: Review?,
     onReviewHistoryClick: () -> Unit,
+    reviewCount: Int,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "내가 쓴 리뷰 ()", // todo 총 개수 표시
+            text = stringResource(R.string.my_page_written_review_title, reviewCount),
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
         if (review != null) {
             IconButton(onClick = { onReviewHistoryClick() }) {
                 Icon(
-                    modifier = Modifier.size(32.dp).offset(y = 2.dp),
+                    modifier =
+                        Modifier
+                            .size(32.dp)
+                            .offset(y = 2.dp),
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     tint = DarkGray,
                     contentDescription = "",
@@ -390,6 +417,9 @@ private fun MyPageContentPreview() {
             isLogoutDialogShown = false,
             isWithdrawDialogShown = false,
             onReviewHistoryClick = {},
+            onFoodSpotHistoryClick = {},
+            reviewCount = 2,
+            foodSpotCount = 3,
         )
     }
 }
@@ -414,6 +444,9 @@ private fun MyPageNoContentPreview() {
             isLogoutDialogShown = false,
             isWithdrawDialogShown = false,
             onReviewHistoryClick = {},
+            onFoodSpotHistoryClick = {},
+            reviewCount = 0,
+            foodSpotCount = 0,
         )
     }
 }

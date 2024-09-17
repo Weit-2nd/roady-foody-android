@@ -13,6 +13,8 @@ sealed class MyPageIntent {
 
     data object NavToReviewHistory : MyPageIntent()
 
+    data object NavToFoodSpotHistory : MyPageIntent()
+
     data object Logout : MyPageIntent()
 
     data object Withdraw : MyPageIntent()
