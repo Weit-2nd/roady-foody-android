@@ -34,8 +34,8 @@ class FoodSpotHistoryViewModel @Inject constructor(
     }
 
     fun onLastVisibleItemChanged(position: Int) {
-        val currentReviewSize = container.stateFlow.value.foodSpots.size
-        val needNextPage = (currentReviewSize - position) <= REMAINING_PAGE_FOR_REQUEST
+        val currentFoodSpotSize = container.stateFlow.value.foodSpots.size
+        val needNextPage = (currentFoodSpotSize - position) <= REMAINING_PAGE_FOR_REQUEST
         val isRequestEnable = requestFoodSpotJob.isCompleted && needNextPage && hasNext.get()
         if (isRequestEnable) {
             container.stateFlow.value.foodSpots.lastOrNull()?.let {
@@ -66,7 +66,7 @@ class FoodSpotHistoryViewModel @Inject constructor(
                     }.onSuccess { reportedFoodSpot ->
                         reduce {
                             state.copy(
-                                foodSpots = reportedFoodSpot.contents,
+                                foodSpots = state.foodSpots.plus(reportedFoodSpot.contents),
                             )
                         }
                     }.onFailure {
