@@ -249,6 +249,7 @@ private fun CoinText(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
+            modifier = Modifier.size(32.dp),
             painter = painterResource(id = R.drawable.ic_coin),
             tint = MaterialTheme.colorScheme.primary,
             contentDescription = "coinIcon",
@@ -354,7 +355,7 @@ private fun LogoutButton(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(4.dp).size(24.dp),
             painter = painterResource(id = R.drawable.ic_logout),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = "logoutIcon",

@@ -59,7 +59,7 @@ fun FoodSpotItem(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-//                if (isFoodTruck) {
+//                if (isFoodTruck) { // todo api 수정되면 푸드트럭 여부 화면에 반영
 //                    Spacer(modifier = Modifier.width(4.dp))
 //                    Icon(
 //                        painter = painterResource(id = R.drawable.ic_truck),
@@ -105,6 +105,7 @@ private fun FoodCategory(
         for ((index, category) in categories.withIndex()) {
             if (index > 2) {
                 Icon(
+                    modifier = Modifier.size(16.dp),
                     painter = painterResource(id = R.drawable.ic_more),
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = "more_category_icon",
