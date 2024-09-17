@@ -345,7 +345,7 @@ private fun NavGraphBuilder.searchComposable(navController: NavHostController) {
 
 private fun NavGraphBuilder.reviewHistoryComposable(navController: NavHostController) {
     composable(
-        route = "${ReviewHistoryRoutes.GRAPT}/{${ReviewHistoryRoutes.REVIEW_HISTORY_KEY}}",
+        route = "${ReviewHistoryRoutes.GRAPH}/{${ReviewHistoryRoutes.REVIEW_HISTORY_KEY}}",
         arguments =
             listOf(
                 navArgument(ReviewHistoryRoutes.REVIEW_HISTORY_KEY) {
@@ -460,7 +460,7 @@ private fun NavHostController.navigateToReviewHistory(
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
     val reviewHistoryJson = Uri.encode(Gson().toJson(reviewHistoryDTO))
-    navigate("${ReviewHistoryRoutes.GRAPT}/$reviewHistoryJson", builder)
+    navigate("${ReviewHistoryRoutes.GRAPH}/$reviewHistoryJson", builder)
 }
 
 object SplashRoutes {
@@ -534,6 +534,6 @@ object FoodSpotDetailRoutes {
 }
 
 object ReviewHistoryRoutes {
-    const val GRAPT = "review_history"
+    const val GRAPH = "review_history"
     const val REVIEW_HISTORY_KEY = "review_history_key"
 }
