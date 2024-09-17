@@ -11,7 +11,7 @@ interface UserService {
     @GET("/api/v1/users/me")
     suspend fun getMyUserInfo(): UserDTO
 
-    @GET("/api/v1/users/{userId}/food_spots/histories")
+    @GET("/api/v1/users/{userId}/food-spots/histories")
     suspend fun getFoodSpotHistories(
         @Path("userId") userId: Long,
         @Query("size") size: Int,

@@ -295,6 +295,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
                     }
                 }
             },
+            navToBack = {
+                navController.popBackStack()
+            },
             navToReviewHistory = {
                 navController.navigateToReviewHistory(it)
             },
