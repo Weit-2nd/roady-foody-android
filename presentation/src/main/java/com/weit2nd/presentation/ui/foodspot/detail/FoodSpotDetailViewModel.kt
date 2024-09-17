@@ -16,6 +16,9 @@ import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
+import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
+import com.weit2nd.presentation.navigation.dto.toFoodCategoryDTO
+import com.weit2nd.presentation.navigation.dto.toRatingCountDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
@@ -79,6 +82,10 @@ class FoodSpotDetailViewModel @Inject constructor(
                 position = position,
                 expandState = true,
             ).post()
+    }
+
+    fun onReviewReadMoreClick() {
+        FoodSpotDetailIntent.NavToFoodSpotReview.post()
     }
 
     private fun FoodSpotDetailIntent.post() =
@@ -212,6 +219,22 @@ class FoodSpotDetailViewModel @Inject constructor(
                             reviews = updatedReviews,
                         )
                     }
+                }
+
+                FoodSpotDetailIntent.NavToFoodSpotReview -> {
+                    val id = foodSpotId ?: return@intent
+                    val foodSpotReviewDTO =
+                        FoodSpotReviewDTO(
+                            id = id,
+                            name = state.name,
+                            foodSpotsPhotos = state.foodSpotsPhotos,
+                            movableFoodSpots = state.movableFoodSpots,
+                            categories = state.foodCategoryList.map { it.toFoodCategoryDTO() },
+                            reviewCount = state.reviewCount,
+                            averageRating = state.averageRating,
+                            ratingCounts = state.ratingCounts.map { it.toRatingCountDTO() },
+                        )
+                    postSideEffect(FoodSpotDetailSideEffect.NavToFoodSpotReview(foodSpotReviewDTO))
                 }
             }
         }

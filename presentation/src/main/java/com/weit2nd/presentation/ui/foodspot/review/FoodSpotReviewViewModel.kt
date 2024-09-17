@@ -7,6 +7,7 @@ import com.weit2nd.domain.usecase.spot.GetFoodSpotReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.model.reivew.ExpendableReview
+import com.weit2nd.presentation.navigation.FoodSpotReviewRoutes
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
 import com.weit2nd.presentation.navigation.dto.toFoodCategory
 import com.weit2nd.presentation.navigation.dto.toRatingCount
@@ -22,7 +23,7 @@ class FoodSpotReviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getFoodSpotReviewsUseCase: GetFoodSpotReviewsUseCase,
 ) : BaseViewModel<FoodSpotReviewState, FoodSpotReviewSideEffect>() {
-    private val foodSpotReviewDTO = savedStateHandle.get<FoodSpotReviewDTO>("")!!
+    private val foodSpotReviewDTO = savedStateHandle.get<FoodSpotReviewDTO>(FoodSpotReviewRoutes.FOOD_SPOT_REVIEW_KEY)!!
     override val container: Container<FoodSpotReviewState, FoodSpotReviewSideEffect> =
         container(
             FoodSpotReviewState(
@@ -113,7 +114,7 @@ class FoodSpotReviewViewModel @Inject constructor(
                 is FoodSpotReviewIntent.LoadNextReviews -> {
                     runCatching {
                         getFoodSpotReviewsUseCase.invoke(
-                            foodSpotsId = 0L,
+                            foodSpotsId = state.id,
                             count = DEFAULT_LOAD_REVIEW_COUNT,
                             lastItemId = lastId,
                             sortType = ReviewSortType.LATEST,

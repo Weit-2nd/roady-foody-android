@@ -59,6 +59,7 @@ import com.weit2nd.domain.model.spot.FoodSpotOpenState
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
+import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.FoodSpotImagePager
 import com.weit2nd.presentation.ui.common.ReviewItem
@@ -80,6 +81,7 @@ fun FoodSpotDetailScreen(
     vm: FoodSpotDetailViewModel = hiltViewModel(),
     navToBack: () -> Unit,
     navToPostReview: (FoodSpotForReviewDTO) -> Unit,
+    navToFoodSpotReview: (FoodSpotReviewDTO) -> Unit,
 ) {
     val state by vm.collectAsState()
 
@@ -108,6 +110,10 @@ fun FoodSpotDetailScreen(
 
             is FoodSpotDetailSideEffect.NavToPostReview -> {
                 navToPostReview(sideEffect.foodSpotForReviewDTO)
+            }
+
+            is FoodSpotDetailSideEffect.NavToFoodSpotReview -> {
+                navToFoodSpotReview(sideEffect.foodSpotReviewDTO)
             }
         }
     }
@@ -154,6 +160,7 @@ fun FoodSpotDetailScreen(
         onPostReviewClick = vm::onPostReviewClick,
         onReviewContentClick = vm::onReviewContentsClick,
         onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
+        onReviewReadMoreClick = vm::onReviewReadMoreClick,
     )
 }
 
@@ -170,6 +177,7 @@ private fun FoodSpotDetailContent(
     onPostReviewClick: () -> Unit,
     onReviewContentClick: (position: Int) -> Unit,
     onReviewContentReadMoreClick: (position: Int) -> Unit,
+    onReviewReadMoreClick: () -> Unit,
 ) {
     val imagePagerState =
         rememberPagerState(
@@ -282,9 +290,7 @@ private fun FoodSpotDetailContent(
                         ),
                     averageRating = state.averageRating,
                     reviewCount = state.reviewCount,
-                    onClick = {
-                        // TODO 리뷰 더보기 이동
-                    },
+                    onClick = onReviewReadMoreClick,
                     isReadMoreVisible = true,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -326,9 +332,7 @@ private fun FoodSpotDetailContent(
                 ) {
                     BorderButton(
                         text = stringResource(id = R.string.food_spot_detail_view_more_review),
-                        onClick = {
-                            // TODO 리뷰 더보기 화면으로 이동
-                        },
+                        onClick = onReviewReadMoreClick,
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -523,6 +527,7 @@ private fun FoodSpotDetailPreview() {
                 onPostReviewClick = {},
                 onReviewContentClick = {},
                 onReviewContentReadMoreClick = {},
+                onReviewReadMoreClick = {},
             )
         }
     }

@@ -15,3 +15,9 @@ fun RatingCountDTO.toRatingCount() =
         rating = rating,
         count = count,
     )
+
+fun RatingCount.toRatingCountDTO() =
+    RatingCountDTO(
+        rating = rating,
+        count = count,
+    )

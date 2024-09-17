@@ -23,4 +23,6 @@ sealed interface FoodSpotDetailIntent {
         val position: Int,
         val expandState: Boolean,
     ) : FoodSpotDetailIntent
+
+    data object NavToFoodSpotReview : FoodSpotDetailIntent
 }

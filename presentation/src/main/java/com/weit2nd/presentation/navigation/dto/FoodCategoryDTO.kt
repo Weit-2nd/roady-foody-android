@@ -15,3 +15,9 @@ fun FoodCategoryDTO.toFoodCategory() =
         id = id,
         name = name,
     )
+
+fun FoodCategory.toFoodCategoryDTO() =
+    FoodCategoryDTO(
+        id = id,
+        name = name,
+    )
