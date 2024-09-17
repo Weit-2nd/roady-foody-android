@@ -9,6 +9,8 @@ import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -67,44 +69,54 @@ class MyPageViewModel @Inject constructor(
         intent {
             when (this@post) {
                 MyPageIntent.GetMyUserInfo -> {
-                    runCatching {
-                        val userInfo = getMyUserInfoUseCase.invoke()
-                        val reportedFoodSpot =
-                            getFoodSpotHistoriesUseCase
-                                .invoke(
+                    coroutineScope {
+                        runCatching {
+                            val userInfo = getMyUserInfoUseCase.invoke()
+                            val reportedFoodSpotDeferred =
+                                async {
+                                    getFoodSpotHistoriesUseCase
+                                        .invoke(
+                                            userId = userInfo.userId,
+                                            count = LOAD_DATA_NUMBER,
+                                        ).contents
+                                        .firstOrNull()
+                                }
+                            val writtenReviewDeferred =
+                                async {
+                                    getUserReviewsUseCase
+                                        .invoke(
+                                            userId = userInfo.userId,
+                                            count = LOAD_DATA_NUMBER,
+                                        ).firstOrNull()
+                                }
+
+                            val reportedFoodSpot = reportedFoodSpotDeferred.await()
+                            val writtenReview = writtenReviewDeferred.await()
+
+                            reduce {
+                                state.copy(
                                     userId = userInfo.userId,
-                                    count = LOAD_DATA_NUMBER,
-                                ).contents
-                                .firstOrNull()
-                        val writtenReview =
-                            getUserReviewsUseCase
-                                .invoke(
-                                    userId = userInfo.userId,
-                                    count = LOAD_DATA_NUMBER,
-                                ).firstOrNull()
-                        reduce {
-                            state.copy(
-                                userId = userInfo.userId,
-                                nickname = userInfo.nickname,
-                                profileImage = userInfo.profileImage,
-                                coin = userInfo.coin,
-                                foodSpotHistory = reportedFoodSpot,
-                                review =
-                                    writtenReview?.let {
-                                        Review(
-                                            writtenReview.id,
-                                            userInfo.userId,
-                                            userInfo.profileImage,
-                                            userInfo.nickname,
-                                            writtenReview.createdAt,
-                                            writtenReview.rating.toFloat(),
-                                            writtenReview.photos.map { it.image },
-                                            writtenReview.contents,
-                                        )
-                                    },
-                            )
-                        }
-                    }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
+                                    nickname = userInfo.nickname,
+                                    profileImage = userInfo.profileImage,
+                                    coin = userInfo.coin,
+                                    foodSpotHistory = reportedFoodSpot,
+                                    review =
+                                        writtenReview?.let {
+                                            Review(
+                                                writtenReview.id,
+                                                userInfo.userId,
+                                                userInfo.profileImage,
+                                                userInfo.nickname,
+                                                writtenReview.createdAt,
+                                                writtenReview.rating.toFloat(),
+                                                writtenReview.photos.map { it.image },
+                                                writtenReview.contents,
+                                            )
+                                        },
+                                )
+                            }
+                        }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
+                    }
                 }
 
                 is MyPageIntent.SetLogoutDialogShownState -> {
