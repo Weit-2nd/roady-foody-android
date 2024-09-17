@@ -118,8 +118,8 @@
     <string name="logout_dialog_content">로그아웃 하시겠습니까?</string>
     <string name="account_deletion_dialog_title">정말 탈퇴하시겠습니까?</string>
     <string name="account_deletion_dialog_content">탈퇴 선택 시,\n계정은 삭제되며 복구되지 않습니다.</string>
-    <string name="my_page_written_review_title">내가 쓴 리뷰 (%1$s)</string>
-    <string name="my_page_reported_food_spot_title">내가 제보한 음식점 (%1$s)</string>
+    <string name="my_page_written_review_title">내가 쓴 리뷰 (%d)</string>
+    <string name="my_page_reported_food_spot_title">내가 제보한 음식점 (%d)</string>
 
     <!-- review history -->
     <string name="review_history_title">내가 쓴 리뷰</string>
