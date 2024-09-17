@@ -5,7 +5,6 @@ import com.weit2nd.domain.exception.user.UserFoodSpotException
 import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.FoodSpotHistoryRoutes
-import com.weit2nd.presentation.ui.mypage.review.ReviewHistorySideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
@@ -52,7 +51,7 @@ class FoodSpotHistoryViewModel @Inject constructor(
         intent {
             when (this@post) {
                 FoodSpotHistoryIntent.NavToBack -> {
-                    ReviewHistorySideEffect.NavToBack
+                    postSideEffect(FoodSpotHistorySideEffect.NavToBack)
                 }
 
                 is FoodSpotHistoryIntent.LoadNextFoodSpots -> {
