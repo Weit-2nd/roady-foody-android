@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -37,8 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -65,6 +60,7 @@ import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.ui.common.BorderButton
+import com.weit2nd.presentation.ui.common.FoodSpotImagePager
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.common.ReviewRequest
 import com.weit2nd.presentation.ui.common.TitleAndCategory
@@ -336,34 +332,6 @@ private fun FoodSpotDetailContent(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun FoodSpotImagePager(
-    modifier: Modifier = Modifier,
-    pagerState: PagerState,
-    images: List<String>,
-    onImageClick: (Int) -> Unit,
-) {
-    HorizontalPager(
-        modifier = modifier,
-        state = pagerState,
-    ) { page ->
-        AsyncImage(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        onImageClick(page)
-                    },
-            model = images[page],
-            contentDescription = "foodSpotImage$page",
-            contentScale = ContentScale.Crop,
-            fallback = painterResource(id = R.drawable.ic_input_delete_filled),
-            placeholder = ColorPainter(Gray4),
-        )
     }
 }
 
