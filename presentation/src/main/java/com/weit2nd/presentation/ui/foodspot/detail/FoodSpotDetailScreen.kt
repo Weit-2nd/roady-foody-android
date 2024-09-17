@@ -42,7 +42,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,7 +67,7 @@ import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.common.ReviewRequest
-import com.weit2nd.presentation.ui.theme.Gray1
+import com.weit2nd.presentation.ui.common.TitleAndCategory
 import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray4
 import com.weit2nd.presentation.ui.theme.Gray5
@@ -365,50 +364,6 @@ private fun FoodSpotImagePager(
             fallback = painterResource(id = R.drawable.ic_input_delete_filled),
             placeholder = ColorPainter(Gray4),
         )
-    }
-}
-
-@Composable
-private fun TitleAndCategory(
-    modifier: Modifier = Modifier,
-    title: String,
-    isFoodTruck: Boolean,
-    categories: List<FoodCategory>,
-) {
-    val categoriseText =
-        categories.joinToString(", ") {
-            it.name
-        }
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Bold,
-        )
-        if (isFoodTruck) {
-            Spacer(modifier = Modifier.width(4.dp))
-            Icon(
-                modifier = Modifier.size(16.dp),
-                painter = painterResource(id = R.drawable.ic_truck),
-                contentDescription = "food truck",
-                tint = MaterialTheme.colorScheme.secondary,
-            )
-        }
-        if (categories.isNotEmpty()) {
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                modifier = Modifier.weight(1f),
-                text = categoriseText,
-                style = MaterialTheme.typography.labelLarge,
-                color = Gray1,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
     }
 }
 
