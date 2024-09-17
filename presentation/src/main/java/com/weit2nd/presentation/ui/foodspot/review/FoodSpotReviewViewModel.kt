@@ -8,6 +8,7 @@ import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.FoodSpotReviewRoutes
+import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
 import com.weit2nd.presentation.navigation.dto.toFoodCategory
 import com.weit2nd.presentation.navigation.dto.toRatingCount
@@ -91,6 +92,12 @@ class FoodSpotReviewViewModel @Inject constructor(
         intent {
             when (this@post) {
                 FoodSpotReviewIntent.NavToPostReview -> {
+                    val foodSpotForReviewDTO =
+                        FoodSpotForReviewDTO(
+                            id = state.id,
+                            name = state.name,
+                        )
+                    postSideEffect(FoodSpotReviewSideEffect.NavToPostReview(foodSpotForReviewDTO))
                 }
                 is FoodSpotReviewIntent.ChangeReviewContentExpendState -> {
                     val updatedReviews =
