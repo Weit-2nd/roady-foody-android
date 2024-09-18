@@ -87,7 +87,6 @@ fun FoodSpotItem(
             contentScale = ContentScale.Crop,
             contentDescription = "foodspot image",
             placeholder = ColorPainter(Gray4),
-            fallback = painterResource(id = R.drawable.ic_input_delete_filled),
         )
     }
 }
