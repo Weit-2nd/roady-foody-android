@@ -70,8 +70,9 @@ class ReviewHistoryViewModel @Inject constructor(
         intent {
             when (this@post) {
                 ReviewHistoryIntent.NavToBack -> {
-                    ReviewHistorySideEffect.NavToBack
+                    postSideEffect(ReviewHistorySideEffect.NavToBack)
                 }
+
                 is ReviewHistoryIntent.LoadNextReviews -> {
                     // TODO 응답으로 리뷰 총 개수도 받아와야함
                     runCatching {
@@ -100,6 +101,7 @@ class ReviewHistoryViewModel @Inject constructor(
                         }
                     }
                 }
+
                 is ReviewHistoryIntent.ChangeReviewContentExpendState -> {
                     val updatedReviews =
                         state.reviews

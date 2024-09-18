@@ -56,6 +56,7 @@ fun MyPageScreen(
     navToLogin: () -> Unit,
     navToReviewHistory: (ReviewHistoryDTO) -> Unit,
     navToBack: () -> Unit,
+    navToFoodSpotHistory: (Long) -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
     val state by vm.collectAsState()
@@ -75,7 +76,7 @@ fun MyPageScreen(
             }
 
             is MyPageSideEffect.NavToFoodSpotHistory -> {
-                // TODO 내가 제보한 음식점 화면으로 이동
+                navToFoodSpotHistory(sideEffect.userId)
             }
 
             MyPageSideEffect.NavToBack -> {

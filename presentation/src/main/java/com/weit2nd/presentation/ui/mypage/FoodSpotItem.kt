@@ -83,11 +83,10 @@ fun FoodSpotItem(
                 Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(12.dp)),
-            model = foodSpot.reportPhotos.firstOrNull(),
+            model = foodSpot.reportPhotos.firstOrNull()?.image,
             contentScale = ContentScale.Crop,
             contentDescription = "foodspot image",
             placeholder = ColorPainter(Gray4),
-            fallback = painterResource(id = R.drawable.ic_input_delete_filled),
         )
     }
 }

@@ -38,6 +38,7 @@ import com.weit2nd.presentation.ui.foodspot.review.FoodSpotReviewScreen
 import com.weit2nd.presentation.ui.home.HomeScreen
 import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.mypage.MyPageScreen
+import com.weit2nd.presentation.ui.mypage.foodspot.FoodSpotHistoryScreen
 import com.weit2nd.presentation.ui.mypage.review.ReviewHistoryScreen
 import com.weit2nd.presentation.ui.review.PostReviewScreen
 import com.weit2nd.presentation.ui.search.SearchScreen
@@ -77,6 +78,7 @@ fun AppNavHost(
         searchComposable(navController)
         foodSpotDetailComposable(navController)
         reviewHistoryComposable(navController)
+        foodSpotHistoryComposable(navController)
         foodSpotReviewComposable(navController)
     }
 }
@@ -303,6 +305,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
             navToReviewHistory = {
                 navController.navigateToReviewHistory(it)
             },
+            navToFoodSpotHistory = { userId ->
+                navController.navigateToFoodSpotHistory(userId)
+            },
         )
     }
 }
@@ -363,6 +368,27 @@ private fun NavGraphBuilder.reviewHistoryComposable(navController: NavHostContro
         ReviewHistoryScreen(
             navToBack = {
                 navController.popBackStack()
+            },
+        )
+    }
+}
+
+private fun NavGraphBuilder.foodSpotHistoryComposable(navController: NavHostController) {
+    composable(
+        route = "${FoodSpotHistoryRoutes.GRAPH}/{${FoodSpotHistoryRoutes.FOOD_SPOT_HISTORY_USER_ID_KEY}}",
+        arguments =
+            listOf(
+                navArgument(FoodSpotHistoryRoutes.FOOD_SPOT_HISTORY_USER_ID_KEY) {
+                    type = NavType.LongType
+                },
+            ),
+    ) {
+        FoodSpotHistoryScreen(
+            navToBack = {
+                navController.popBackStack()
+            },
+            navToFoodSpotDetail = { foodSpotId ->
+                navController.navigateToFoodSpotDetail(foodSpotId)
             },
         )
     }
@@ -491,6 +517,13 @@ private fun NavHostController.navigateToReviewHistory(
     navigate("${ReviewHistoryRoutes.GRAPH}/$reviewHistoryJson", builder)
 }
 
+private fun NavHostController.navigateToFoodSpotHistory(
+    userId: Long,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    navigate("${FoodSpotHistoryRoutes.GRAPH}/$userId", builder)
+}
+
 private fun NavHostController.navigateToFoodSpotReview(
     foodSpotReviewDTO: FoodSpotReviewDTO,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -572,6 +605,11 @@ object FoodSpotDetailRoutes {
 object ReviewHistoryRoutes {
     const val GRAPH = "review_history"
     const val REVIEW_HISTORY_KEY = "review_history_key"
+}
+
+object FoodSpotHistoryRoutes {
+    const val GRAPH = "food_spot_history"
+    const val FOOD_SPOT_HISTORY_USER_ID_KEY = "food_spot_history_key"
 }
 
 object FoodSpotReviewRoutes {

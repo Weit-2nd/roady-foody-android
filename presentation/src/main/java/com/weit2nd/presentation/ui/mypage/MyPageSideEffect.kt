@@ -16,6 +16,6 @@ sealed class MyPageSideEffect {
     ) : MyPageSideEffect()
 
     data class NavToFoodSpotHistory(
-        val reviewHistoryDTO: ReviewHistoryDTO, // todo 네이밍 수정
+        val userId: Long,
     ) : MyPageSideEffect()
 }
