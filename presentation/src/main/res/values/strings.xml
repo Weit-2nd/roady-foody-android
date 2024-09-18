@@ -101,7 +101,7 @@
     <string name="food_spot_detail_post_review_button">리뷰 작성하기</string>
     <string name="food_spot_detail_review_count">리뷰 %d</string>
     <string name="food_spot_detail_view_more_review">리뷰 더보기</string>
-    <string name="food_spot_detail_operation_hour_close_time">%d:%.2d 까지</string>
+    <string name="food_spot_detail_operation_hour_close_time">%d:%02d 까지</string>
 
     <!-- post review -->
     <string name="post_review_title">리뷰를 남겨주세요!</string>

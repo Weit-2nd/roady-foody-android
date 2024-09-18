@@ -8,7 +8,9 @@ import com.weit2nd.data.model.spot.FoodSpotPhotoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewContentDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewUserInfoDTO
 import com.weit2nd.data.model.spot.FoodSpotReviewsDTO
+import com.weit2nd.data.model.spot.RatingCountDTO
 import com.weit2nd.data.model.spot.ReportFoodSpotRequest
+import com.weit2nd.data.model.spot.ReviewInfoDTO
 import com.weit2nd.data.model.spot.UpdateFoodSpotReportRequest
 import com.weit2nd.data.model.spot.toFoodSpotPhoto
 import com.weit2nd.data.model.spot.toRequest
@@ -27,7 +29,9 @@ import com.weit2nd.domain.model.spot.FoodSpotReview
 import com.weit2nd.domain.model.spot.FoodSpotReviewUserInfo
 import com.weit2nd.domain.model.spot.FoodSpotReviews
 import com.weit2nd.domain.model.spot.OperationHour
+import com.weit2nd.domain.model.spot.RatingCount
 import com.weit2nd.domain.model.spot.ReportFoodSpotState
+import com.weit2nd.domain.model.spot.ReviewInfo
 import com.weit2nd.domain.model.spot.ReviewSortType
 import com.weit2nd.domain.repository.spot.FoodSpotRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
@@ -303,6 +307,8 @@ class FoodSpotRepositoryImpl @Inject constructor(
             foodCategoryList = foodCategoryList.map { it.toFoodCategory() },
             foodSpotsPhotos = foodSpotsPhotos.map { it.toFoodSpotPhoto() },
             createdDateTime = createdDateTime,
+            reviewInfo = reviewInfo.toReviewInfo(),
+            ratingCounts = ratingCounts.map { it.toRatingCount() },
         )
 
     private fun FoodSpotDetailOperationHoursDTO.toFoodSpotDetailOperationHours() =
@@ -311,6 +317,18 @@ class FoodSpotRepositoryImpl @Inject constructor(
             dayOfWeek = FoodSpotOperationDayOfWeek.findDayOfWeek(dayOfWeek),
             openingHours = toLocalTime(openingHours),
             closingHours = toLocalTime(closingHours),
+        )
+
+    private fun ReviewInfoDTO.toReviewInfo() =
+        ReviewInfo(
+            average = average,
+            reviewCount = reviewCount,
+        )
+
+    private fun RatingCountDTO.toRatingCount() =
+        RatingCount(
+            rating = rating,
+            count = count,
         )
 
     private fun toLocalTime(time: String): LocalTime = LocalTime.parse(time, timeFormatter)
