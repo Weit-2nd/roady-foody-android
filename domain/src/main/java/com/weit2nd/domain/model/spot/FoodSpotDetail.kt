@@ -29,6 +29,8 @@ data class FoodSpotDetail(
     val foodCategoryList: List<FoodCategory>,
     val foodSpotsPhotos: List<FoodSpotPhoto>,
     val createdDateTime: LocalDateTime,
+    val reviewInfo: ReviewInfo,
+    val ratingCounts: List<RatingCount>,
 )
 
 data class FoodSpotDetailOperationHours(

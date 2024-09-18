@@ -4,11 +4,11 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.spot.FoodCategory
 import com.weit2nd.domain.model.spot.FoodSpotOpenState
+import com.weit2nd.domain.model.spot.RatingCount
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.model.reivew.ExpendableReview
 import java.time.LocalTime
 
-// TODO 리뷰 카운트랑 평균 별점 가져와야됨
 data class FoodSpotDetailState(
     val name: String = "",
     val position: LatLng = LatLng.from(37.5597706, 126.9423666),
@@ -22,6 +22,7 @@ data class FoodSpotDetailState(
     val foodSpotsPhotos: List<String> = emptyList(),
     val reviews: List<ExpendableReview> = emptyList(),
     val reviewCount: Int = 256,
+    val ratingCounts: List<RatingCount> = emptyList(),
     val averageRating: Float = 4.8f,
     val hasMoreReviews: Boolean = false,
     val isOperationHoursOpen: Boolean = false,

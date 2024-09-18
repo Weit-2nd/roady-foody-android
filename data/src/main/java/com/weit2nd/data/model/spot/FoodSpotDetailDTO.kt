@@ -19,6 +19,8 @@ data class FoodSpotDetailDTO(
     @field:Json(name = "foodCategoryList") val foodCategoryList: List<FoodCategoryDTO>,
     @field:Json(name = "foodSpotsPhotos") val foodSpotsPhotos: List<FoodSpotPhotoDTO>,
     @field:Json(name = "createdDateTime") @StringToLocalDateTime val createdDateTime: LocalDateTime,
+    @field:Json(name = "reviewInfo") val reviewInfo: ReviewInfoDTO,
+    @field:Json(name = "ratingCount") val ratingCounts: List<RatingCountDTO>,
 )
 
 @JsonClass(generateAdapter = true)
