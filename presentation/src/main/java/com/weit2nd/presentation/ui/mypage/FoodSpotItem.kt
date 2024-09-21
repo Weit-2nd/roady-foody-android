@@ -62,6 +62,7 @@ fun FoodSpotItem(
                 if (foodSpot.isFoodTruck) {
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
+                        modifier = Modifier.size(16.dp),
                         painter = painterResource(id = R.drawable.ic_truck),
                         contentDescription = "food truck",
                         tint = MaterialTheme.colorScheme.secondary,
