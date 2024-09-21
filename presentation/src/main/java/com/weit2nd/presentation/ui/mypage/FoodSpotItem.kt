@@ -59,14 +59,14 @@ fun FoodSpotItem(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
-//                if (isFoodTruck) { // todo api 수정되면 푸드트럭 여부 화면에 반영
-//                    Spacer(modifier = Modifier.width(4.dp))
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ic_truck),
-//                        contentDescription = "food truck",
-//                        tint = MaterialTheme.colorScheme.secondary,
-//                    )
-//                }
+                if (foodSpot.isFoodTruck) {
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_truck),
+                        contentDescription = "food truck",
+                        tint = MaterialTheme.colorScheme.secondary,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(4.dp))
             FoodCategory(categories = foodSpot.categories)
@@ -176,6 +176,7 @@ private fun FoodSpotItemPreview() {
                     latitude = 45.55,
                     createdDateTime = LocalDateTime.now(),
                     reportPhotos = listOf(),
+                    isFoodTruck = true,
                     categories =
                         listOf(
                             FoodCategory(

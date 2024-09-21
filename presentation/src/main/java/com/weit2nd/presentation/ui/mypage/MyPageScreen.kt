@@ -393,6 +393,7 @@ private fun MyPageContentPreview() {
                     latitude = 10.11,
                     createdDateTime = LocalDateTime.now(),
                     reportPhotos = listOf(FoodSpotPhoto(0, "")),
+                    isFoodTruck = true,
                     categories =
                         listOf(
                             com.weit2nd.domain.model.spot

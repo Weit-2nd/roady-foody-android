@@ -23,4 +23,5 @@ data class FoodSpotHistoryContentDTO(
     @field:Json(name = "createdDateTime") @StringToLocalDateTime val createdDateTime: LocalDateTime,
     @field:Json(name = "reportPhotos") val reportPhotos: List<FoodSpotPhotoDTO>,
     @field:Json(name = "categories") val categories: List<FoodCategoryDTO>,
+    @field:Json(name = "foodTruck") val isFoodTruck: Boolean,
 )
