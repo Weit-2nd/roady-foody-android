@@ -69,6 +69,11 @@ class MyPageViewModel @Inject constructor(
         intent {
             when (this@post) {
                 MyPageIntent.GetMyUserInfo -> {
+                    reduce {
+                        state.copy(
+                            isLoading = true,
+                        )
+                    }
                     coroutineScope {
                         runCatching {
                             val userInfo = getMyUserInfoUseCase.invoke()
@@ -113,6 +118,7 @@ class MyPageViewModel @Inject constructor(
                                                 writtenReview.contents,
                                             )
                                         },
+                                    isLoading = false,
                                 )
                             }
                         }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }

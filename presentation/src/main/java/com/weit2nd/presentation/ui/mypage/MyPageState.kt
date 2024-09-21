@@ -4,6 +4,7 @@ import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.presentation.model.foodspot.Review
 
 data class MyPageState(
+    val isLoading: Boolean = false,
     val userId: Long = 0,
     val profileImage: String? = null,
     val nickname: String = "",

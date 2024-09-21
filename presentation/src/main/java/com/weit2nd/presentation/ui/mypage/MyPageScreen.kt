@@ -40,6 +40,7 @@ import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.EditableProfileImage
+import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray1
@@ -87,6 +88,10 @@ fun MyPageScreen(
 
     LaunchedEffect(Unit) {
         vm.onCreate()
+    }
+
+    if (state.isLoading) {
+        LoadingDialogScreen()
     }
 
     Scaffold(
