@@ -18,4 +18,8 @@ sealed class MyPageSideEffect {
     data class NavToFoodSpotHistory(
         val userId: Long,
     ) : MyPageSideEffect()
+
+    data class NavToFoodSpotDetail(
+        val foodSpotId: Long,
+    ) : MyPageSideEffect()
 }

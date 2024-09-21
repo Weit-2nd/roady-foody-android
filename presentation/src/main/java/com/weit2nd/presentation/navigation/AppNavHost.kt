@@ -308,6 +308,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
             navToFoodSpotHistory = { userId ->
                 navController.navigateToFoodSpotHistory(userId)
             },
+            navToFoodSpotDetail = { foodSpotId ->
+                navController.navigateToFoodSpotDetail(foodSpotId)
+            },
         )
     }
 }

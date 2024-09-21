@@ -58,6 +58,7 @@ fun MyPageScreen(
     navToReviewHistory: (ReviewHistoryDTO) -> Unit,
     navToBack: () -> Unit,
     navToFoodSpotHistory: (Long) -> Unit,
+    navToFoodSpotDetail: (Long) -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
     val state by vm.collectAsState()
@@ -82,6 +83,10 @@ fun MyPageScreen(
 
             MyPageSideEffect.NavToBack -> {
                 navToBack()
+            }
+
+            is MyPageSideEffect.NavToFoodSpotDetail -> {
+                navToFoodSpotDetail(sideEffect.foodSpotId)
             }
         }
     }
@@ -124,6 +129,7 @@ fun MyPageScreen(
                     isLogoutDialogShown = state.isLogoutDialogShown,
                     isWithdrawDialogShown = state.isWithdrawDialogShown,
                     onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
+                    onFoodSpotContentClick = vm::onFoodSpotContentClick,
                     onReviewHistoryClick = vm::onReviewHistoryClick,
                     foodSpotCount = state.foodSpotCount,
                     reviewCount = state.reviewCount,
@@ -150,6 +156,7 @@ private fun MyPageContent(
     isLogoutDialogShown: Boolean,
     isWithdrawDialogShown: Boolean,
     onFoodSpotHistoryClick: () -> Unit,
+    onFoodSpotContentClick: (Long) -> Unit,
     onReviewHistoryClick: () -> Unit,
     foodSpotCount: Int,
     reviewCount: Int,
@@ -204,6 +211,7 @@ private fun MyPageContent(
                         .padding(horizontal = 16.dp),
                 foodSpotHistory = foodSpotHistory,
                 onFoodSpotHistoryClick = onFoodSpotHistoryClick,
+                onFoodSpotContentClick = onFoodSpotContentClick,
                 foodSpotCount = foodSpotCount,
             )
 
@@ -274,6 +282,7 @@ private fun ReportedFoodSpot(
     modifier: Modifier = Modifier,
     foodSpotHistory: FoodSpotHistoryContent?,
     onFoodSpotHistoryClick: () -> Unit,
+    onFoodSpotContentClick: (Long) -> Unit,
     foodSpotCount: Int,
 ) {
     Row(
@@ -301,7 +310,10 @@ private fun ReportedFoodSpot(
         }
     }
     if (foodSpotHistory != null) {
-        FoodSpotItem(foodSpot = foodSpotHistory)
+        FoodSpotItem(
+            modifier = Modifier.clickable { onFoodSpotContentClick(foodSpotHistory.foodSpotsId) },
+            foodSpot = foodSpotHistory,
+        )
     } else {
         Text(
             modifier = Modifier.padding(vertical = 32.dp),
@@ -428,6 +440,7 @@ private fun MyPageContentPreview() {
             onFoodSpotHistoryClick = {},
             reviewCount = 2,
             foodSpotCount = 3,
+            onFoodSpotContentClick = { _ -> },
         )
     }
 }
@@ -455,6 +468,7 @@ private fun MyPageNoContentPreview() {
             onFoodSpotHistoryClick = {},
             reviewCount = 0,
             foodSpotCount = 0,
+            onFoodSpotContentClick = { _ -> },
         )
     }
 }

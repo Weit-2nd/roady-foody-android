@@ -65,6 +65,10 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.NavToFoodSpotHistory.post()
     }
 
+    fun onFoodSpotContentClick(foodSpotId: Long) {
+        MyPageIntent.NavToFoodSpotDetail(foodSpotId).post()
+    }
+
     private fun MyPageIntent.post() =
         intent {
             when (this@post) {
@@ -186,6 +190,10 @@ class MyPageViewModel @Inject constructor(
 
                 MyPageIntent.NavToFoodSpotHistory -> {
                     postSideEffect(MyPageSideEffect.NavToFoodSpotHistory(state.userId))
+                }
+
+                is MyPageIntent.NavToFoodSpotDetail -> {
+                    postSideEffect(MyPageSideEffect.NavToFoodSpotDetail(foodSpotId))
                 }
             }
         }
