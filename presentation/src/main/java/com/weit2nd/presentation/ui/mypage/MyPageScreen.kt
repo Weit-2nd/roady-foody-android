@@ -95,45 +95,47 @@ fun MyPageScreen(
         vm.onCreate()
     }
 
-    if (state.isLoading) {
-        LoadingDialogScreen()
-    }
+    Box {
+        if (state.isLoading) {
+            LoadingDialogScreen()
+        }
 
-    Scaffold(
-        topBar = {
-            BackTopBar(
-                title = stringResource(R.string.my_page_toolbar_title),
-                onClickBackBtn = vm::onBackButtonClick,
-            )
-        },
-    ) {
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(it),
-        ) {
-            item {
-                MyPageContent(
-                    profileImage = state.profileImage,
-                    nickname = state.nickname,
-                    coin = state.coin,
-                    foodSpotHistory = state.foodSpotHistory,
-                    review = state.review,
-                    onLogoutButtonClick = vm::onLogoutButtonClick,
-                    onWithdrawButtonClick = vm::onWithdrawButtonClick,
-                    onLogoutConfirm = vm::onLogoutConfirm,
-                    onWithdrawConfirm = vm::onWithdrawConfirm,
-                    onLogoutDialogClose = vm::onLogoutDialogClose,
-                    onWithdrawDialogClose = vm::onWithdrawDialogClose,
-                    isLogoutDialogShown = state.isLogoutDialogShown,
-                    isWithdrawDialogShown = state.isWithdrawDialogShown,
-                    onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
-                    onFoodSpotContentClick = vm::onFoodSpotContentClick,
-                    onReviewHistoryClick = vm::onReviewHistoryClick,
-                    foodSpotCount = state.foodSpotCount,
-                    reviewCount = state.reviewCount,
+        Scaffold(
+            topBar = {
+                BackTopBar(
+                    title = stringResource(R.string.my_page_toolbar_title),
+                    onClickBackBtn = vm::onBackButtonClick,
                 )
+            },
+        ) {
+            LazyColumn(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(it),
+            ) {
+                item {
+                    MyPageContent(
+                        profileImage = state.profileImage,
+                        nickname = state.nickname,
+                        coin = state.coin,
+                        foodSpotHistory = state.foodSpotHistory,
+                        review = state.review,
+                        onLogoutButtonClick = vm::onLogoutButtonClick,
+                        onWithdrawButtonClick = vm::onWithdrawButtonClick,
+                        onLogoutConfirm = vm::onLogoutConfirm,
+                        onWithdrawConfirm = vm::onWithdrawConfirm,
+                        onLogoutDialogClose = vm::onLogoutDialogClose,
+                        onWithdrawDialogClose = vm::onWithdrawDialogClose,
+                        isLogoutDialogShown = state.isLogoutDialogShown,
+                        isWithdrawDialogShown = state.isWithdrawDialogShown,
+                        onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
+                        onFoodSpotContentClick = vm::onFoodSpotContentClick,
+                        onReviewHistoryClick = vm::onReviewHistoryClick,
+                        foodSpotCount = state.foodSpotCount,
+                        reviewCount = state.reviewCount,
+                    )
+                }
             }
         }
     }
