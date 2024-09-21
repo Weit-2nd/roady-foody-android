@@ -17,4 +17,5 @@ data class FoodSpotHistoryContent(
     val createdDateTime: LocalDateTime,
     val reportPhotos: List<FoodSpotPhoto>,
     val categories: List<FoodCategory>,
+    val isFoodTruck: Boolean,
 )

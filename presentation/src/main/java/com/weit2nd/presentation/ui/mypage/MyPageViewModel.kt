@@ -65,10 +65,19 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.NavToFoodSpotHistory.post()
     }
 
+    fun onFoodSpotContentClick(foodSpotId: Long) {
+        MyPageIntent.NavToFoodSpotDetail(foodSpotId).post()
+    }
+
     private fun MyPageIntent.post() =
         intent {
             when (this@post) {
                 MyPageIntent.GetMyUserInfo -> {
+                    reduce {
+                        state.copy(
+                            isLoading = true,
+                        )
+                    }
                     coroutineScope {
                         runCatching {
                             val userInfo = getMyUserInfoUseCase.invoke()
@@ -113,9 +122,13 @@ class MyPageViewModel @Inject constructor(
                                                 writtenReview.contents,
                                             )
                                         },
+                                    isLoading = false,
                                 )
                             }
-                        }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
+                        }.onFailure {
+                            postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다."))
+                            postSideEffect(MyPageSideEffect.NavToBack)
+                        }
                     }
                 }
 
@@ -177,6 +190,10 @@ class MyPageViewModel @Inject constructor(
 
                 MyPageIntent.NavToFoodSpotHistory -> {
                     postSideEffect(MyPageSideEffect.NavToFoodSpotHistory(state.userId))
+                }
+
+                is MyPageIntent.NavToFoodSpotDetail -> {
+                    postSideEffect(MyPageSideEffect.NavToFoodSpotDetail(foodSpotId))
                 }
             }
         }

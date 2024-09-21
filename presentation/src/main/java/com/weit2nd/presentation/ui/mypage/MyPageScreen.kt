@@ -40,6 +40,7 @@ import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.EditableProfileImage
+import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray1
@@ -57,6 +58,7 @@ fun MyPageScreen(
     navToReviewHistory: (ReviewHistoryDTO) -> Unit,
     navToBack: () -> Unit,
     navToFoodSpotHistory: (Long) -> Unit,
+    navToFoodSpotDetail: (Long) -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
     val state by vm.collectAsState()
@@ -82,6 +84,10 @@ fun MyPageScreen(
             MyPageSideEffect.NavToBack -> {
                 navToBack()
             }
+
+            is MyPageSideEffect.NavToFoodSpotDetail -> {
+                navToFoodSpotDetail(sideEffect.foodSpotId)
+            }
         }
     }
 
@@ -89,40 +95,47 @@ fun MyPageScreen(
         vm.onCreate()
     }
 
-    Scaffold(
-        topBar = {
-            BackTopBar(
-                title = stringResource(R.string.my_page_toolbar_title),
-                onClickBackBtn = vm::onBackButtonClick,
-            )
-        },
-    ) {
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(it),
-        ) {
-            item {
-                MyPageContent(
-                    profileImage = state.profileImage,
-                    nickname = state.nickname,
-                    coin = state.coin,
-                    foodSpotHistory = state.foodSpotHistory,
-                    review = state.review,
-                    onLogoutButtonClick = vm::onLogoutButtonClick,
-                    onWithdrawButtonClick = vm::onWithdrawButtonClick,
-                    onLogoutConfirm = vm::onLogoutConfirm,
-                    onWithdrawConfirm = vm::onWithdrawConfirm,
-                    onLogoutDialogClose = vm::onLogoutDialogClose,
-                    onWithdrawDialogClose = vm::onWithdrawDialogClose,
-                    isLogoutDialogShown = state.isLogoutDialogShown,
-                    isWithdrawDialogShown = state.isWithdrawDialogShown,
-                    onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
-                    onReviewHistoryClick = vm::onReviewHistoryClick,
-                    foodSpotCount = state.foodSpotCount,
-                    reviewCount = state.reviewCount,
+    Box {
+        if (state.isLoading) {
+            LoadingDialogScreen()
+        }
+
+        Scaffold(
+            topBar = {
+                BackTopBar(
+                    title = stringResource(R.string.my_page_toolbar_title),
+                    onClickBackBtn = vm::onBackButtonClick,
                 )
+            },
+        ) {
+            LazyColumn(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(it),
+            ) {
+                item {
+                    MyPageContent(
+                        profileImage = state.profileImage,
+                        nickname = state.nickname,
+                        coin = state.coin,
+                        foodSpotHistory = state.foodSpotHistory,
+                        review = state.review,
+                        onLogoutButtonClick = vm::onLogoutButtonClick,
+                        onWithdrawButtonClick = vm::onWithdrawButtonClick,
+                        onLogoutConfirm = vm::onLogoutConfirm,
+                        onWithdrawConfirm = vm::onWithdrawConfirm,
+                        onLogoutDialogClose = vm::onLogoutDialogClose,
+                        onWithdrawDialogClose = vm::onWithdrawDialogClose,
+                        isLogoutDialogShown = state.isLogoutDialogShown,
+                        isWithdrawDialogShown = state.isWithdrawDialogShown,
+                        onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
+                        onFoodSpotContentClick = vm::onFoodSpotContentClick,
+                        onReviewHistoryClick = vm::onReviewHistoryClick,
+                        foodSpotCount = state.foodSpotCount,
+                        reviewCount = state.reviewCount,
+                    )
+                }
             }
         }
     }
@@ -145,6 +158,7 @@ private fun MyPageContent(
     isLogoutDialogShown: Boolean,
     isWithdrawDialogShown: Boolean,
     onFoodSpotHistoryClick: () -> Unit,
+    onFoodSpotContentClick: (Long) -> Unit,
     onReviewHistoryClick: () -> Unit,
     foodSpotCount: Int,
     reviewCount: Int,
@@ -199,6 +213,7 @@ private fun MyPageContent(
                         .padding(horizontal = 16.dp),
                 foodSpotHistory = foodSpotHistory,
                 onFoodSpotHistoryClick = onFoodSpotHistoryClick,
+                onFoodSpotContentClick = onFoodSpotContentClick,
                 foodSpotCount = foodSpotCount,
             )
 
@@ -269,6 +284,7 @@ private fun ReportedFoodSpot(
     modifier: Modifier = Modifier,
     foodSpotHistory: FoodSpotHistoryContent?,
     onFoodSpotHistoryClick: () -> Unit,
+    onFoodSpotContentClick: (Long) -> Unit,
     foodSpotCount: Int,
 ) {
     Row(
@@ -296,7 +312,10 @@ private fun ReportedFoodSpot(
         }
     }
     if (foodSpotHistory != null) {
-        FoodSpotItem(foodSpot = foodSpotHistory)
+        FoodSpotItem(
+            modifier = Modifier.clickable { onFoodSpotContentClick(foodSpotHistory.foodSpotsId) },
+            foodSpot = foodSpotHistory,
+        )
     } else {
         Text(
             modifier = Modifier.padding(vertical = 32.dp),
@@ -388,6 +407,7 @@ private fun MyPageContentPreview() {
                     latitude = 10.11,
                     createdDateTime = LocalDateTime.now(),
                     reportPhotos = listOf(FoodSpotPhoto(0, "")),
+                    isFoodTruck = true,
                     categories =
                         listOf(
                             com.weit2nd.domain.model.spot
@@ -422,6 +442,7 @@ private fun MyPageContentPreview() {
             onFoodSpotHistoryClick = {},
             reviewCount = 2,
             foodSpotCount = 3,
+            onFoodSpotContentClick = { _ -> },
         )
     }
 }
@@ -449,6 +470,7 @@ private fun MyPageNoContentPreview() {
             onFoodSpotHistoryClick = {},
             reviewCount = 0,
             foodSpotCount = 0,
+            onFoodSpotContentClick = { _ -> },
         )
     }
 }

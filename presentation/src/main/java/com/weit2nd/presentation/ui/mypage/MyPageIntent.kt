@@ -15,6 +15,10 @@ sealed class MyPageIntent {
 
     data object NavToFoodSpotHistory : MyPageIntent()
 
+    data class NavToFoodSpotDetail(
+        val foodSpotId: Long,
+    ) : MyPageIntent()
+
     data object Logout : MyPageIntent()
 
     data object Withdraw : MyPageIntent()

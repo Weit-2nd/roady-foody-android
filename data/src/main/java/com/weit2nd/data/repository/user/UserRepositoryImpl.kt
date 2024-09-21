@@ -101,5 +101,6 @@ class UserRepositoryImpl @Inject constructor(
             createdDateTime = createdDateTime,
             reportPhotos = reportPhotos.map { it.toFoodSpotPhoto() },
             categories = categories.map { it.toFoodCategory() },
+            isFoodTruck = isFoodTruck,
         )
 }
