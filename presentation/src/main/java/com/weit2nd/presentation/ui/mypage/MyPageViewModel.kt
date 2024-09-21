@@ -121,7 +121,10 @@ class MyPageViewModel @Inject constructor(
                                     isLoading = false,
                                 )
                             }
-                        }.onFailure { postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다.")) }
+                        }.onFailure {
+                            postSideEffect(MyPageSideEffect.ShowToastMessage("네트워크 오류가 발생했습니다."))
+                            postSideEffect(MyPageSideEffect.NavToBack)
+                        }
                     }
                 }
 
