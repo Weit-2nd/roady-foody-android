@@ -417,6 +417,12 @@ private fun NavGraphBuilder.foodSpotDetailComposable(navController: NavHostContr
             navToFoodSpotReview = {
                 navController.navigateToFoodSpotReview(it)
             },
+            navToImageViewer = {
+                navController.navigateToImageViewer(
+                    it.images,
+                    it.position,
+                )
+            },
         )
     }
 }

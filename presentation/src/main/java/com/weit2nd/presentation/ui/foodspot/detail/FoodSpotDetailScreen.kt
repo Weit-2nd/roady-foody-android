@@ -3,6 +3,7 @@ package com.weit2nd.presentation.ui.foodspot.detail
 import android.content.Context
 import android.graphics.PointF
 import android.util.Log
+import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,8 +61,11 @@ import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
+import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.FoodSpotImagePager
+import com.weit2nd.presentation.ui.common.LoadingDialogScreen
+import com.weit2nd.presentation.ui.common.RetryScreen
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.common.ReviewRequest
 import com.weit2nd.presentation.ui.common.ReviewTotal
@@ -82,6 +86,7 @@ fun FoodSpotDetailScreen(
     navToBack: () -> Unit,
     navToPostReview: (FoodSpotForReviewDTO) -> Unit,
     navToFoodSpotReview: (FoodSpotReviewDTO) -> Unit,
+    navToImageViewer: (ImageViewerDTO) -> Unit,
 ) {
     val state by vm.collectAsState()
 
@@ -114,6 +119,10 @@ fun FoodSpotDetailScreen(
 
             is FoodSpotDetailSideEffect.NavToFoodSpotReview -> {
                 navToFoodSpotReview(sideEffect.foodSpotReviewDTO)
+            }
+
+            is FoodSpotDetailSideEffect.NavToImageViewer -> {
+                navToImageViewer(sideEffect.imageViewerDTO)
             }
         }
     }
@@ -150,18 +159,30 @@ fun FoodSpotDetailScreen(
             state.openState != FoodSpotOpenState.UNKNOWN
         }
     }
-    FoodSpotDetailContent(
-        state = state,
-        mapView = mapView,
-        isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
-        isBusinessInformationShow = isBusinessInformationShow,
-        onImageClick = vm::onImageClick,
-        onOperationHourClick = vm::onOperationHourClick,
-        onPostReviewClick = vm::onPostReviewClick,
-        onReviewContentClick = vm::onReviewContentsClick,
-        onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
-        onReviewReadMoreClick = vm::onReviewReadMoreClick,
-    )
+    Box {
+        if (state.isLoading) {
+            LoadingDialogScreen()
+        }
+        if (state.shouldRetry) {
+            RetryScreen(
+                modifier = Modifier.fillMaxSize(),
+                onRetryButtonClick = vm::onRetryButtonClick,
+            )
+        } else {
+            FoodSpotDetailContent(
+                state = state,
+                mapView = mapView,
+                isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
+                isBusinessInformationShow = isBusinessInformationShow,
+                onImageClick = vm::onImageClick,
+                onOperationHourClick = vm::onOperationHourClick,
+                onPostReviewClick = vm::onPostReviewClick,
+                onReviewContentClick = vm::onReviewContentsClick,
+                onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
+                onReviewReadMoreClick = vm::onReviewReadMoreClick,
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -190,10 +211,10 @@ private fun FoodSpotDetailContent(
         item {
             FoodSpotImagePager(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(4f / 3f)
-                        .heightIn(max = 500.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(4f / 3f)
+                    .heightIn(max = 500.dp),
                 pagerState = imagePagerState,
                 images = state.foodSpotsPhotos,
                 onImageClick = { position ->
@@ -269,7 +290,10 @@ private fun FoodSpotDetailContent(
                             .clip(RoundedCornerShape(12.dp))
                             .aspectRatio(4f / 3f)
                             .fillMaxWidth(),
-                    factory = { mapView },
+                    factory = {
+                        (mapView.parent as? ViewGroup)?.removeView(mapView)
+                        mapView
+                    },
                 )
             }
         }

@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.foodspot.detail
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
@@ -17,9 +18,11 @@ import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
+import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toFoodCategoryDTO
 import com.weit2nd.presentation.navigation.dto.toRatingCountDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.LocalDate
@@ -49,11 +52,23 @@ class FoodSpotDetailViewModel @Inject constructor(
         }
     }
 
+    fun onRetryButtonClick() {
+        if (foodSpotId != null) {
+            FoodSpotDetailIntent.LoadFoodSpotDetail(foodSpotId).post()
+        } else {
+            FoodSpotDetailIntent.NavToBack.post()
+        }
+    }
+
     fun onImageClick(
         images: List<String>,
         position: Int,
     ) {
-        // TODO ImageViewScreen 연결
+        FoodSpotDetailIntent
+            .NavToImageViewer(
+                images = images,
+                position = position,
+            ).post()
     }
 
     fun onOperationHourClick(currentOperationHourOpenState: Boolean) {
@@ -98,15 +113,45 @@ class FoodSpotDetailViewModel @Inject constructor(
                             isLoading = true,
                         )
                     }
+
                     runCatching {
-                        val foodSpotReviews =
-                            getFoodSpotReviewsUseCase(
-                                foodSpotsId = id,
-                                count = DEFAULT_REVIEW_COUNT,
-                                lastItemId = null,
-                                sortType = ReviewSortType.LATEST,
+                        val foodSpotReviewsDeferred =
+                            viewModelScope.async {
+                                getFoodSpotReviewsUseCase(
+                                    foodSpotsId = id,
+                                    count = DEFAULT_REVIEW_COUNT,
+                                    lastItemId = null,
+                                    sortType = ReviewSortType.LATEST,
+                                )
+                            }
+                        val detailDeferred =
+                            viewModelScope.async {
+                                getFoodSpotDetailUseCase(id)
+                            }
+                        val foodSpotReviews = foodSpotReviewsDeferred.await()
+                        val detail = detailDeferred.await()
+                        reduce {
+                            state.copy(
+                                name = detail.name,
+                                position =
+                                    LatLng.from(
+                                        detail.latitude,
+                                        detail.longitude,
+                                    ),
+                                movableFoodSpots = detail.movableFoodSpots,
+                                openState = detail.openState,
+                                storeClosure = detail.storeClosure,
+                                operationHours = detail.operationHoursList.map { it.toOperationHour() },
+                                todayCloseTime = getTodayCloseTime(detail.operationHoursList),
+                                foodCategoryList = detail.foodCategoryList,
+                                foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
+                                reviewCount = detail.reviewInfo.reviewCount,
+                                averageRating = detail.reviewInfo.average,
+                                ratingCounts = detail.ratingCounts,
+                                reviews = foodSpotReviews.reviews.map { it.toReview() },
+                                hasMoreReviews = foodSpotReviews.hasNext,
                             )
-                        val detail = getFoodSpotDetailUseCase(id)
+                        }
                         val address =
                             searchPlaceWithCoordinateUseCase(
                                 coordinate =
@@ -119,25 +164,7 @@ class FoodSpotDetailViewModel @Inject constructor(
                             }
                         reduce {
                             state.copy(
-                                name = detail.name,
-                                position =
-                                    LatLng.from(
-                                        detail.latitude,
-                                        detail.longitude,
-                                    ),
-                                movableFoodSpots = detail.movableFoodSpots,
-                                openState = detail.openState,
                                 address = address,
-                                storeClosure = detail.storeClosure,
-                                operationHours = detail.operationHoursList.map { it.toOperationHour() },
-                                todayCloseTime = getTodayCloseTime(detail.operationHoursList),
-                                foodCategoryList = detail.foodCategoryList,
-                                foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
-                                reviewCount = detail.reviewInfo.reviewCount,
-                                averageRating = detail.reviewInfo.average,
-                                ratingCounts = detail.ratingCounts,
-                                reviews = foodSpotReviews.reviews.map { it.toReview() },
-                                hasMoreReviews = foodSpotReviews.hasNext,
                             )
                         }
                         state.map?.let { map ->
@@ -235,6 +262,15 @@ class FoodSpotDetailViewModel @Inject constructor(
                             ratingCounts = state.ratingCounts.map { it.toRatingCountDTO() },
                         )
                     postSideEffect(FoodSpotDetailSideEffect.NavToFoodSpotReview(foodSpotReviewDTO))
+                }
+
+                is FoodSpotDetailIntent.NavToImageViewer -> {
+                    val imageViewerDTO =
+                        ImageViewerDTO(
+                            images = images,
+                            position = position,
+                        )
+                    postSideEffect(FoodSpotDetailSideEffect.NavToImageViewer(imageViewerDTO))
                 }
             }
         }
