@@ -61,6 +61,7 @@ import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.OperationHour
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
+import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.FoodSpotImagePager
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
@@ -84,6 +85,7 @@ fun FoodSpotDetailScreen(
     navToBack: () -> Unit,
     navToPostReview: (FoodSpotForReviewDTO) -> Unit,
     navToFoodSpotReview: (FoodSpotReviewDTO) -> Unit,
+    navToImageViewer: (ImageViewerDTO) -> Unit,
 ) {
     val state by vm.collectAsState()
 
@@ -116,6 +118,10 @@ fun FoodSpotDetailScreen(
 
             is FoodSpotDetailSideEffect.NavToFoodSpotReview -> {
                 navToFoodSpotReview(sideEffect.foodSpotReviewDTO)
+            }
+
+            is FoodSpotDetailSideEffect.NavToImageViewer -> {
+                navToImageViewer(sideEffect.imageViewerDTO)
             }
         }
     }

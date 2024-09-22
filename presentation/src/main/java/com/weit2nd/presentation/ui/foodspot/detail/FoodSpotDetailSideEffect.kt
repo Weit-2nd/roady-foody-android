@@ -4,6 +4,7 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
+import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 
 sealed interface FoodSpotDetailSideEffect {
     data object NavToBack : FoodSpotDetailSideEffect
@@ -19,5 +20,9 @@ sealed interface FoodSpotDetailSideEffect {
 
     data class NavToFoodSpotReview(
         val foodSpotReviewDTO: FoodSpotReviewDTO,
+    ) : FoodSpotDetailSideEffect
+
+    data class NavToImageViewer(
+        val imageViewerDTO: ImageViewerDTO,
     ) : FoodSpotDetailSideEffect
 }

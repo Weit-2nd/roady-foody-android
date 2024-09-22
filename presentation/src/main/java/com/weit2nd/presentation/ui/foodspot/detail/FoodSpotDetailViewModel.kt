@@ -18,6 +18,7 @@ import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.FoodSpotDetailRoutes
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
+import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toFoodCategoryDTO
 import com.weit2nd.presentation.navigation.dto.toRatingCountDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,7 +56,11 @@ class FoodSpotDetailViewModel @Inject constructor(
         images: List<String>,
         position: Int,
     ) {
-        // TODO ImageViewScreen 연결
+        FoodSpotDetailIntent
+            .NavToImageViewer(
+                images = images,
+                position = position,
+            ).post()
     }
 
     fun onOperationHourClick(currentOperationHourOpenState: Boolean) {
@@ -249,6 +254,15 @@ class FoodSpotDetailViewModel @Inject constructor(
                             ratingCounts = state.ratingCounts.map { it.toRatingCountDTO() },
                         )
                     postSideEffect(FoodSpotDetailSideEffect.NavToFoodSpotReview(foodSpotReviewDTO))
+                }
+
+                is FoodSpotDetailIntent.NavToImageViewer -> {
+                    val imageViewerDTO =
+                        ImageViewerDTO(
+                            images = images,
+                            position = position,
+                        )
+                    postSideEffect(FoodSpotDetailSideEffect.NavToImageViewer(imageViewerDTO))
                 }
             }
         }

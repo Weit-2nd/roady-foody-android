@@ -25,4 +25,9 @@ sealed interface FoodSpotDetailIntent {
     ) : FoodSpotDetailIntent
 
     data object NavToFoodSpotReview : FoodSpotDetailIntent
+
+    data class NavToImageViewer(
+        val images: List<String>,
+        val position: Int,
+    ) : FoodSpotDetailIntent
 }
