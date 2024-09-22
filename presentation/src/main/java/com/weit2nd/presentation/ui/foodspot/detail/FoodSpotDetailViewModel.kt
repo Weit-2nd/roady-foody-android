@@ -117,6 +117,28 @@ class FoodSpotDetailViewModel @Inject constructor(
                             }
                         val foodSpotReviews = foodSpotReviewsDeferred.await()
                         val detail = detailDeferred.await()
+                        reduce {
+                            state.copy(
+                                name = detail.name,
+                                position =
+                                    LatLng.from(
+                                        detail.latitude,
+                                        detail.longitude,
+                                    ),
+                                movableFoodSpots = detail.movableFoodSpots,
+                                openState = detail.openState,
+                                storeClosure = detail.storeClosure,
+                                operationHours = detail.operationHoursList.map { it.toOperationHour() },
+                                todayCloseTime = getTodayCloseTime(detail.operationHoursList),
+                                foodCategoryList = detail.foodCategoryList,
+                                foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
+                                reviewCount = detail.reviewInfo.reviewCount,
+                                averageRating = detail.reviewInfo.average,
+                                ratingCounts = detail.ratingCounts,
+                                reviews = foodSpotReviews.reviews.map { it.toReview() },
+                                hasMoreReviews = foodSpotReviews.hasNext,
+                            )
+                        }
                         val address =
                             searchPlaceWithCoordinateUseCase(
                                 coordinate =
@@ -129,25 +151,7 @@ class FoodSpotDetailViewModel @Inject constructor(
                             }
                         reduce {
                             state.copy(
-                                name = detail.name,
-                                position =
-                                    LatLng.from(
-                                        detail.latitude,
-                                        detail.longitude,
-                                    ),
-                                movableFoodSpots = detail.movableFoodSpots,
-                                openState = detail.openState,
                                 address = address,
-                                storeClosure = detail.storeClosure,
-                                operationHours = detail.operationHoursList.map { it.toOperationHour() },
-                                todayCloseTime = getTodayCloseTime(detail.operationHoursList),
-                                foodCategoryList = detail.foodCategoryList,
-                                foodSpotsPhotos = detail.foodSpotsPhotos.map { it.image },
-                                reviewCount = detail.reviewInfo.reviewCount,
-                                averageRating = detail.reviewInfo.average,
-                                ratingCounts = detail.ratingCounts,
-                                reviews = foodSpotReviews.reviews.map { it.toReview() },
-                                hasMoreReviews = foodSpotReviews.hasNext,
                             )
                         }
                         state.map?.let { map ->
