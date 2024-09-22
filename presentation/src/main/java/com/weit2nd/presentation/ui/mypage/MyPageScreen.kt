@@ -1,7 +1,9 @@
 package com.weit2nd.presentation.ui.mypage
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,13 +16,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.weit2nd.domain.model.Badge
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.presentation.R
@@ -119,8 +127,11 @@ fun MyPageScreen(
                         profileImage = state.profileImage,
                         nickname = state.nickname,
                         coin = state.coin,
+                        badge = state.badge,
+                        ranking = state.myRanking,
                         foodSpotHistory = state.foodSpotHistory,
                         review = state.review,
+                        restReportCount = state.restDailyReportCreationCount,
                         onLogoutButtonClick = vm::onLogoutButtonClick,
                         onWithdrawButtonClick = vm::onWithdrawButtonClick,
                         onLogoutConfirm = vm::onLogoutConfirm,
@@ -132,6 +143,7 @@ fun MyPageScreen(
                         onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
                         onFoodSpotContentClick = vm::onFoodSpotContentClick,
                         onReviewHistoryClick = vm::onReviewHistoryClick,
+                        onRankingButtonClick = vm::onRankingButtonClick,
                         foodSpotCount = state.foodSpotCount,
                         reviewCount = state.reviewCount,
                     )
@@ -147,6 +159,9 @@ private fun MyPageContent(
     profileImage: String?,
     nickname: String,
     coin: Int,
+    badge: Badge,
+    ranking: Int,
+    restReportCount: Int,
     foodSpotHistory: FoodSpotHistoryContent?,
     review: Review?,
     onLogoutButtonClick: () -> Unit,
@@ -160,6 +175,7 @@ private fun MyPageContent(
     onFoodSpotHistoryClick: () -> Unit,
     onFoodSpotContentClick: (Long) -> Unit,
     onReviewHistoryClick: () -> Unit,
+    onRankingButtonClick: () -> Unit,
     foodSpotCount: Int,
     reviewCount: Int,
 ) {
@@ -190,16 +206,25 @@ private fun MyPageContent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(8.dp))
-            EditableProfileImage(
-                modifier = Modifier.size(160.dp),
-                imgUri = profileImage?.toUri(),
+            ProfileInfo(
+                modifier = Modifier.align(Alignment.Start),
+                profileImage = profileImage?.toUri(),
+                coin = coin,
+                badge = badge,
+                ranking = ranking,
+                onRankingButtonClick = onRankingButtonClick,
             )
-            CoinText(coin = coin)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = nickname,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.my_page_rest_report_count, restReportCount),
+                style = MaterialTheme.typography.titleSmall,
+                color = Gray1,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -255,29 +280,74 @@ private fun MyPageContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CoinText(
+private fun ProfileInfo(
     modifier: Modifier = Modifier,
+    profileImage: Uri?,
     coin: Int,
+    badge: Badge,
+    ranking: Int,
+    onRankingButtonClick: () -> Unit,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            modifier = Modifier.size(32.dp),
-            painter = painterResource(id = R.drawable.ic_coin),
-            tint = MaterialTheme.colorScheme.primary,
-            contentDescription = "coinIcon",
+        Spacer(modifier = Modifier.width(24.dp))
+        EditableProfileImage(
+            modifier = Modifier.size(160.dp),
+            imgUri = profileImage,
         )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = NumberFormat.getInstance(Locale.getDefault()).format(coin),
-            style = MaterialTheme.typography.headlineSmall,
-            color = DarkGray,
-        )
+        Spacer(modifier = Modifier.width(28.dp))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            UserInfoItem(
+                title = stringResource(R.string.my_page_coin_title),
+                content = NumberFormat.getInstance(Locale.getDefault()).format(coin),
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                backgroundColor = MaterialTheme.colorScheme.primary,
+            )
+            UserInfoItem(
+                title = stringResource(R.string.my_page_badge_title),
+                content = badge.toUi(),
+                textColor = MaterialTheme.colorScheme.onSecondary,
+                backgroundColor = MaterialTheme.colorScheme.secondary,
+            )
+            Row {
+                UserInfoItem(
+                    title = stringResource(R.string.my_page_ranking_title),
+                    content = stringResource(R.string.my_page_ranking_content, ranking),
+                    textColor = MaterialTheme.colorScheme.primary,
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    borderColor = MaterialTheme.colorScheme.primary,
+                )
+                CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
+                    IconButton(
+                        onClick = { onRankingButtonClick() },
+                        modifier = Modifier.offset(y = (-2).dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            tint = Gray1,
+                            contentDescription = "NavigateToRankingButton",
+                        )
+                    }
+                }
+            }
+        }
     }
 }
+
+private fun Badge.toUi() =
+    when (this) {
+        Badge.BEGINNER -> "초심자"
+        Badge.INTERMEDIATE -> "중수"
+        Badge.EXPERT -> "고수"
+        Badge.SUPER_EXPERT -> "초고수"
+        Badge.UNKNOWN -> ""
+    }
 
 @Composable
 private fun ReportedFoodSpot(
@@ -375,7 +445,10 @@ private fun LogoutButton(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.padding(4.dp).size(24.dp),
+            modifier =
+                Modifier
+                    .padding(4.dp)
+                    .size(24.dp),
             painter = painterResource(id = R.drawable.ic_logout),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = "logoutIcon",
@@ -443,6 +516,10 @@ private fun MyPageContentPreview() {
             reviewCount = 2,
             foodSpotCount = 3,
             onFoodSpotContentClick = { _ -> },
+            badge = Badge.BEGINNER,
+            ranking = 2,
+            restReportCount = 3,
+            onRankingButtonClick = {},
         )
     }
 }
@@ -471,6 +548,10 @@ private fun MyPageNoContentPreview() {
             reviewCount = 0,
             foodSpotCount = 0,
             onFoodSpotContentClick = { _ -> },
+            badge = Badge.BEGINNER,
+            ranking = 2,
+            restReportCount = 0,
+            onRankingButtonClick = {},
         )
     }
 }
