@@ -7,7 +7,7 @@ import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
-import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -186,7 +186,7 @@ class MyPageViewModel @Inject constructor(
                 MyPageIntent.NavToReviewHistory -> {
                     postSideEffect(
                         MyPageSideEffect.NavToReviewHistory(
-                            ReviewHistoryDTO(
+                            UserInfoDTO(
                                 userId = state.userId,
                                 nickname = state.nickname,
                                 profileImage = state.profileImage,

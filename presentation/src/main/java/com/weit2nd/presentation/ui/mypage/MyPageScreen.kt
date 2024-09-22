@@ -45,7 +45,7 @@ import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.domain.model.spot.FoodSpotPhoto
 import com.weit2nd.presentation.R
 import com.weit2nd.presentation.model.foodspot.Review
-import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.EditableProfileImage
@@ -64,7 +64,7 @@ import java.util.Locale
 @Composable
 fun MyPageScreen(
     navToLogin: () -> Unit,
-    navToReviewHistory: (ReviewHistoryDTO) -> Unit,
+    navToReviewHistory: (UserInfoDTO) -> Unit,
     navToBack: () -> Unit,
     navToFoodSpotHistory: (Long) -> Unit,
     navToFoodSpotDetail: (Long) -> Unit,
@@ -83,7 +83,7 @@ fun MyPageScreen(
             }
 
             is MyPageSideEffect.NavToReviewHistory -> {
-                navToReviewHistory(sideEffect.reviewHistoryDTO)
+                navToReviewHistory(sideEffect.userInfoDTO)
             }
 
             is MyPageSideEffect.NavToFoodSpotHistory -> {

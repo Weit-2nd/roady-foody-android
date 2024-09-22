@@ -1,6 +1,6 @@
 package com.weit2nd.presentation.ui.mypage
 
-import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 
 sealed class MyPageSideEffect {
     data class ShowToastMessage(
@@ -12,7 +12,7 @@ sealed class MyPageSideEffect {
     data object NavToBack : MyPageSideEffect()
 
     data class NavToReviewHistory(
-        val reviewHistoryDTO: ReviewHistoryDTO,
+        val userInfoDTO: UserInfoDTO,
     ) : MyPageSideEffect()
 
     data class NavToFoodSpotHistory(

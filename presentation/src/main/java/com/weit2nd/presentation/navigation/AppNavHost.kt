@@ -18,7 +18,7 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
-import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toPlaceDTO
@@ -28,8 +28,8 @@ import com.weit2nd.presentation.navigation.type.FoodSpotForReviewType
 import com.weit2nd.presentation.navigation.type.FoodSpotReviewType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
 import com.weit2nd.presentation.navigation.type.PlaceSearchType
-import com.weit2nd.presentation.navigation.type.ReviewHistoryType
 import com.weit2nd.presentation.navigation.type.TermIdsType
+import com.weit2nd.presentation.navigation.type.UserInfoType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.foodspot.detail.FoodSpotDetailScreen
@@ -366,7 +366,7 @@ private fun NavGraphBuilder.reviewHistoryComposable(navController: NavHostContro
         arguments =
             listOf(
                 navArgument(ReviewHistoryRoutes.REVIEW_HISTORY_KEY) {
-                    type = ReviewHistoryType()
+                    type = UserInfoType()
                 },
             ),
     ) {
@@ -531,10 +531,10 @@ private fun NavHostController.navigateToFoodSpotDetail(
 }
 
 private fun NavHostController.navigateToReviewHistory(
-    reviewHistoryDTO: ReviewHistoryDTO,
+    userInfoDTO: UserInfoDTO,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val reviewHistoryJson = Uri.encode(Gson().toJson(reviewHistoryDTO))
+    val reviewHistoryJson = Uri.encode(Gson().toJson(userInfoDTO))
     navigate("${ReviewHistoryRoutes.GRAPH}/$reviewHistoryJson", builder)
 }
 
