@@ -18,4 +18,9 @@ interface UserRepository {
         count: Int,
         lastItemId: Long?,
     ): List<UserReview>
+
+    suspend fun editUserInfo(
+        profileImage: String?,
+        nickname: String,
+    )
 }

@@ -3,7 +3,9 @@ package com.weit2nd.data.source.user
 import com.weit2nd.data.model.review.UserReviewsDTO
 import com.weit2nd.data.model.spot.FoodSpotHistoriesDTO
 import com.weit2nd.data.model.user.UserDTO
+import com.weit2nd.data.model.user.UserNicknameRequest
 import com.weit2nd.data.service.UserService
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class UserDataSource @Inject constructor(
@@ -35,5 +37,13 @@ class UserDataSource @Inject constructor(
             size = count,
             lastId = lastItemId,
         )
+    }
+
+    suspend fun editUserProfile(image: MultipartBody.Part?) {
+        service.editUserProfile(image)
+    }
+
+    suspend fun editUserNickname(request: UserNicknameRequest) {
+        service.editUserNickname(request)
     }
 }

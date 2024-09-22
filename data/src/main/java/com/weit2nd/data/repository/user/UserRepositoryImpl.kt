@@ -7,22 +7,30 @@ import com.weit2nd.data.model.spot.FoodSpotHistoryContentDTO
 import com.weit2nd.data.model.spot.toFoodSpotPhoto
 import com.weit2nd.data.model.user.TokenPayload
 import com.weit2nd.data.model.user.UserDTO
+import com.weit2nd.data.model.user.UserNicknameRequest
+import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.user.UserDataSource
 import com.weit2nd.data.util.JwtDecoder
+import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.user.UserFoodSpotException
+import com.weit2nd.domain.exception.user.UserInfoEditException
 import com.weit2nd.domain.exception.user.UserReviewException
 import com.weit2nd.domain.model.UserInfo
 import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.model.spot.FoodSpotHistories
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
 import com.weit2nd.domain.repository.user.UserRepository
+import okhttp3.internal.http.HTTP_BAD_REQUEST
+import okhttp3.internal.http.HTTP_CONFLICT
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
     private val tokenDataSource: TokenDataSource,
     private val jwtDecoder: JwtDecoder,
+    private val localImageDatasource: LocalImageDatasource,
 ) : UserRepository {
     override suspend fun getMyUserInfo(): UserInfo {
         return userDataSource.getMyUserInfo().toUser()
@@ -106,4 +114,45 @@ class UserRepositoryImpl @Inject constructor(
             categories = categories.map { it.toFoodCategory() },
             isFoodTruck = isFoodTruck,
         )
+
+    override suspend fun editUserInfo(
+        profileImage: String?,
+        nickname: String,
+    ) {
+        val imagePart =
+            profileImage?.let { imageUri ->
+                if (localImageDatasource.checkImageUriValid(imageUri).not()) {
+                    throw NotImageException()
+                }
+                localImageDatasource.getImageMultipartBodyPart(
+                    uri = imageUri,
+                    formDataName = "profileImage",
+                    imageName = System.currentTimeMillis().toString(),
+                )
+            }
+        runCatching {
+            userDataSource.editUserProfile(
+                image = imagePart,
+            )
+            userDataSource.editUserNickname(request = UserNicknameRequest(nickname))
+        }.onFailure {
+            throw handleUserInfoEditException(it)
+        }
+    }
+
+    private fun handleUserInfoEditException(throwable: Throwable) =
+        if (throwable is HttpException) {
+            val errorMessage = throwable.message()
+            when (throwable.code()) {
+                HTTP_BAD_REQUEST ->
+                    UserInfoEditException.BadRequestException(errorMessage)
+
+                HTTP_CONFLICT ->
+                    UserInfoEditException.DuplicateNicknameException(errorMessage)
+
+                else -> throwable
+            }
+        } else {
+            throwable
+        }
 }

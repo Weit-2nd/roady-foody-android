@@ -2,6 +2,7 @@ package com.weit2nd.data.di
 
 import com.weit2nd.data.repository.user.UserRepositoryImpl
 import com.weit2nd.data.service.UserService
+import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.user.UserDataSource
 import com.weit2nd.data.util.JwtDecoder
@@ -22,11 +23,13 @@ object UserModule {
         userDataSource: UserDataSource,
         tokenDataSource: TokenDataSource,
         jwtDecoder: JwtDecoder,
+        localImageDatasource: LocalImageDatasource,
     ): UserRepository {
         return UserRepositoryImpl(
             userDataSource = userDataSource,
             tokenDataSource = tokenDataSource,
             jwtDecoder = jwtDecoder,
+            localImageDatasource = localImageDatasource,
         )
     }
 
