@@ -9,6 +9,7 @@ import com.weit2nd.data.interceptor.AuthAuthenticator
 import com.weit2nd.data.interceptor.AuthInterceptor
 import com.weit2nd.data.interceptor.ErrorResponseInterceptor
 import com.weit2nd.data.interceptor.LoginInterceptor
+import com.weit2nd.data.util.BadgeConverter
 import com.weit2nd.data.util.BusinessStateConverter
 import com.weit2nd.data.util.DayOfWeekConverter
 import com.weit2nd.data.util.LocalDateTimeConverter
@@ -158,6 +159,7 @@ object NetworkModule {
             .add(LocalTimeConverter())
             .add(DayOfWeekConverter())
             .add(BusinessStateConverter())
+            .add(BadgeConverter())
             .add(KotlinJsonAdapterFactory())
             .build()
 }

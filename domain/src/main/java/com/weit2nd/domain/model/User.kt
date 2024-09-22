@@ -5,4 +5,7 @@ data class UserInfo(
     val nickname: String,
     val profileImage: String?,
     val coin: Int,
+    val badge: Badge,
+    val restDailyReportCreationCount: Int,
+    val myRanking: Int,
 )

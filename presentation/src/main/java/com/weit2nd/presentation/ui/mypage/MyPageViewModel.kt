@@ -108,6 +108,9 @@ class MyPageViewModel @Inject constructor(
                                     nickname = userInfo.nickname,
                                     profileImage = userInfo.profileImage,
                                     coin = userInfo.coin,
+                                    badge = userInfo.badge,
+                                    restDailyReportCreationCount = userInfo.restDailyReportCreationCount,
+                                    myRanking = userInfo.myRanking,
                                     foodSpotHistory = reportedFoodSpot,
                                     review =
                                         writtenReview?.let {
