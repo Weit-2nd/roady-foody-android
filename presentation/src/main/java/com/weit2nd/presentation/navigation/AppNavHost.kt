@@ -40,6 +40,7 @@ import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.mypage.MyPageScreen
 import com.weit2nd.presentation.ui.mypage.foodspot.FoodSpotHistoryScreen
 import com.weit2nd.presentation.ui.mypage.review.ReviewHistoryScreen
+import com.weit2nd.presentation.ui.mypage.userinfoEdit.UserInfoEditScreen
 import com.weit2nd.presentation.ui.review.PostReviewScreen
 import com.weit2nd.presentation.ui.search.SearchScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
@@ -80,6 +81,7 @@ fun AppNavHost(
         reviewHistoryComposable(navController)
         foodSpotHistoryComposable(navController)
         foodSpotReviewComposable(navController)
+        userInfoEditComposable(navController)
     }
 }
 
@@ -445,6 +447,16 @@ private fun NavGraphBuilder.foodSpotReviewComposable(navController: NavHostContr
     }
 }
 
+private fun NavGraphBuilder.userInfoEditComposable(navController: NavHostController) {
+    composable(UserInfoEditRoutes.GRAPH) {
+        UserInfoEditScreen(
+            navToBack = {
+                navController.popBackStack()
+            },
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     placeSearch: PlaceSearchDTO? = null,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -541,6 +553,10 @@ private fun NavHostController.navigateToFoodSpotReview(
     navigate("${FoodSpotReviewRoutes.GRAPH}/$foodSpotReviewJson", builder)
 }
 
+private fun NavHostController.navigateToUserInfoEdit(builder: NavOptionsBuilder.() -> Unit = {}) {
+    navigate(UserInfoEditRoutes.GRAPH, builder)
+}
+
 object SplashRoutes {
     const val GRAPH = "splash"
 }
@@ -624,4 +640,8 @@ object FoodSpotHistoryRoutes {
 object FoodSpotReviewRoutes {
     const val GRAPH = "food_spot_review"
     const val FOOD_SPOT_REVIEW_KEY = "food_spot_review_key"
+}
+
+object UserInfoEditRoutes {
+    const val GRAPH = "user_info_edit"
 }
