@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.mypage.userinfoEdit
 
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.usecase.pickimage.PickSingleImageUseCase
@@ -8,6 +9,8 @@ import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
 import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
 import com.weit2nd.domain.usecase.user.EditUserInfoUseCase
 import com.weit2nd.presentation.base.BaseViewModel
+import com.weit2nd.presentation.navigation.UserInfoEditRoutes
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -17,13 +20,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserInfoEditViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val editUserInfoUseCase: EditUserInfoUseCase,
     private val verifyNicknameUseCase: VerifyNicknameUseCase,
     private val checkNicknameDuplicateUseCase: CheckNicknameDuplicateUseCase,
     private val pickSingleImageUseCase: PickSingleImageUseCase,
 ) : BaseViewModel<UserInfoEditState, UserInfoEditSideEffect>() {
+    private val userInfo =
+        savedStateHandle.get<UserInfoDTO>(UserInfoEditRoutes.USER_INFO_EDIT_KEY)!!
     override val container: Container<UserInfoEditState, UserInfoEditSideEffect> =
-        container(UserInfoEditState())
+        container(
+            UserInfoEditState(
+                profileImageUri = userInfo.profileImage?.toUri(),
+                nickname = userInfo.nickname,
+            ),
+        )
 
     private var nicknameDuplicateCheckJob: Job = Job().apply { complete() }
 

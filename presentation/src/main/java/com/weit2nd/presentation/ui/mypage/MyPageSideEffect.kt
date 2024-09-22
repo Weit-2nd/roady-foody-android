@@ -22,4 +22,8 @@ sealed class MyPageSideEffect {
     data class NavToFoodSpotDetail(
         val foodSpotId: Long,
     ) : MyPageSideEffect()
+
+    data class NavToUserInfoEdit(
+        val userInfoDTO: UserInfoDTO,
+    ) : MyPageSideEffect()
 }

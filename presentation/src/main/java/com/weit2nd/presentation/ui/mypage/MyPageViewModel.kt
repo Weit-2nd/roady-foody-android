@@ -29,6 +29,10 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.GetMyUserInfo.post()
     }
 
+    fun onUserInfoEditButtonClick() {
+        MyPageIntent.NavToUserInfoEdit.post()
+    }
+
     fun onLogoutButtonClick() {
         MyPageIntent.SetLogoutDialogShownState(true).post()
     }
@@ -201,6 +205,18 @@ class MyPageViewModel @Inject constructor(
 
                 is MyPageIntent.NavToFoodSpotDetail -> {
                     postSideEffect(MyPageSideEffect.NavToFoodSpotDetail(foodSpotId))
+                }
+
+                MyPageIntent.NavToUserInfoEdit -> {
+                    postSideEffect(
+                        MyPageSideEffect.NavToUserInfoEdit(
+                            UserInfoDTO(
+                                userId = state.userId,
+                                nickname = state.nickname,
+                                profileImage = state.profileImage,
+                            ),
+                        ),
+                    )
                 }
             }
         }

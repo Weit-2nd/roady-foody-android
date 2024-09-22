@@ -68,6 +68,7 @@ fun MyPageScreen(
     navToBack: () -> Unit,
     navToFoodSpotHistory: (Long) -> Unit,
     navToFoodSpotDetail: (Long) -> Unit,
+    navToUserInfoEdit: (UserInfoDTO) -> Unit,
     vm: MyPageViewModel = hiltViewModel(),
 ) {
     val state by vm.collectAsState()
@@ -96,6 +97,10 @@ fun MyPageScreen(
 
             is MyPageSideEffect.NavToFoodSpotDetail -> {
                 navToFoodSpotDetail(sideEffect.foodSpotId)
+            }
+
+            is MyPageSideEffect.NavToUserInfoEdit -> {
+                navToUserInfoEdit(sideEffect.userInfoDTO)
             }
         }
     }
@@ -145,6 +150,7 @@ fun MyPageScreen(
                         onFoodSpotContentClick = vm::onFoodSpotContentClick,
                         onReviewHistoryClick = vm::onReviewHistoryClick,
                         onRankingButtonClick = vm::onRankingButtonClick,
+                        onUserInfoEditButtonClick = vm::onUserInfoEditButtonClick,
                         foodSpotCount = state.foodSpotCount,
                         reviewCount = state.reviewCount,
                     )
@@ -177,6 +183,7 @@ private fun MyPageContent(
     onFoodSpotContentClick: (Long) -> Unit,
     onReviewHistoryClick: () -> Unit,
     onRankingButtonClick: () -> Unit,
+    onUserInfoEditButtonClick: () -> Unit,
     foodSpotCount: Int,
     reviewCount: Int,
 ) {
@@ -214,6 +221,7 @@ private fun MyPageContent(
                 badge = badge,
                 ranking = ranking,
                 onRankingButtonClick = onRankingButtonClick,
+                onUserInfoEditButtonClick = onUserInfoEditButtonClick,
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -290,6 +298,7 @@ private fun ProfileInfo(
     badge: Badge,
     ranking: Int,
     onRankingButtonClick: () -> Unit,
+    onUserInfoEditButtonClick: () -> Unit,
 ) {
     Row(
         modifier = modifier,
@@ -299,6 +308,7 @@ private fun ProfileInfo(
         EditableProfileImage(
             modifier = Modifier.size(160.dp),
             imgUri = profileImage,
+            onProfileImageClick = onUserInfoEditButtonClick,
         )
         Spacer(modifier = Modifier.width(28.dp))
         Column(
@@ -521,6 +531,7 @@ private fun MyPageContentPreview() {
             ranking = 2,
             restReportCount = 3,
             onRankingButtonClick = {},
+            onUserInfoEditButtonClick = {},
         )
     }
 }
@@ -553,6 +564,7 @@ private fun MyPageNoContentPreview() {
             ranking = 2,
             restReportCount = 0,
             onRankingButtonClick = {},
+            onUserInfoEditButtonClick = {},
         )
     }
 }

@@ -313,6 +313,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
             navToFoodSpotDetail = { foodSpotId ->
                 navController.navigateToFoodSpotDetail(foodSpotId)
             },
+            navToUserInfoEdit = {
+                navController.navigateToUserInfoEdit(it)
+            },
         )
     }
 }
@@ -448,7 +451,15 @@ private fun NavGraphBuilder.foodSpotReviewComposable(navController: NavHostContr
 }
 
 private fun NavGraphBuilder.userInfoEditComposable(navController: NavHostController) {
-    composable(UserInfoEditRoutes.GRAPH) {
+    composable(
+        route = "${UserInfoEditRoutes.GRAPH}/{${UserInfoEditRoutes.USER_INFO_EDIT_KEY}}",
+        arguments =
+            listOf(
+                navArgument(UserInfoEditRoutes.USER_INFO_EDIT_KEY) {
+                    type = UserInfoType()
+                },
+            ),
+    ) {
         UserInfoEditScreen(
             navToBack = {
                 navController.popBackStack()
@@ -553,8 +564,12 @@ private fun NavHostController.navigateToFoodSpotReview(
     navigate("${FoodSpotReviewRoutes.GRAPH}/$foodSpotReviewJson", builder)
 }
 
-private fun NavHostController.navigateToUserInfoEdit(builder: NavOptionsBuilder.() -> Unit = {}) {
-    navigate(UserInfoEditRoutes.GRAPH, builder)
+private fun NavHostController.navigateToUserInfoEdit(
+    userInfoDTO: UserInfoDTO,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val userInfo = Uri.encode(Gson().toJson(userInfoDTO))
+    navigate("${UserInfoEditRoutes.GRAPH}/$userInfo", builder)
 }
 
 object SplashRoutes {
@@ -644,4 +659,5 @@ object FoodSpotReviewRoutes {
 
 object UserInfoEditRoutes {
     const val GRAPH = "user_info_edit"
+    const val USER_INFO_EDIT_KEY = "user_info_edit_key"
 }
