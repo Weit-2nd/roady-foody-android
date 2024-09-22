@@ -1,5 +1,6 @@
 package com.weit2nd.presentation.ui.mypage
 
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -311,7 +312,7 @@ private fun ProfileInfo(
             )
             UserInfoItem(
                 title = stringResource(R.string.my_page_badge_title),
-                content = badge.toUi(),
+                content = badge.toUi(LocalContext.current),
                 textColor = MaterialTheme.colorScheme.onSecondary,
                 backgroundColor = MaterialTheme.colorScheme.secondary,
             )
@@ -340,12 +341,12 @@ private fun ProfileInfo(
     }
 }
 
-private fun Badge.toUi() =
+private fun Badge.toUi(context: Context) =
     when (this) {
-        Badge.BEGINNER -> "초심자"
-        Badge.INTERMEDIATE -> "중수"
-        Badge.EXPERT -> "고수"
-        Badge.SUPER_EXPERT -> "초고수"
+        Badge.BEGINNER -> context.getString(R.string.badge_beginner)
+        Badge.INTERMEDIATE -> context.getString(R.string.badge_intermediate)
+        Badge.EXPERT -> context.getString(R.string.badge_expert)
+        Badge.SUPER_EXPERT -> context.getString(R.string.badge_super_expert)
         Badge.UNKNOWN -> ""
     }
 

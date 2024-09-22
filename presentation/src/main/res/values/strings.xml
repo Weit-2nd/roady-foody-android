@@ -126,6 +126,12 @@
     <string name="my_page_ranking_title">랭킹</string>
     <string name="my_page_ranking_content">%s위</string>
 
+    <!-- Badge -->
+    <string name="badge_beginner">초심자</string>
+    <string name="badge_intermediate">중수</string>
+    <string name="badge_expert">고수</string>
+    <string name="badge_super_expert">초고수</string>
+
     <!-- review history -->
     <string name="review_history_title">내가 쓴 리뷰</string>
 
