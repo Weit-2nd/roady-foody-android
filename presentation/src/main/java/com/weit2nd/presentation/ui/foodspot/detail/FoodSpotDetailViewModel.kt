@@ -1,6 +1,7 @@
 package com.weit2nd.presentation.ui.foodspot.detail
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
 import com.weit2nd.domain.model.Coordinate
@@ -20,6 +21,7 @@ import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
 import com.weit2nd.presentation.navigation.dto.toFoodCategoryDTO
 import com.weit2nd.presentation.navigation.dto.toRatingCountDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import java.time.LocalDate
@@ -98,15 +100,23 @@ class FoodSpotDetailViewModel @Inject constructor(
                             isLoading = true,
                         )
                     }
+
                     runCatching {
-                        val foodSpotReviews =
-                            getFoodSpotReviewsUseCase(
-                                foodSpotsId = id,
-                                count = DEFAULT_REVIEW_COUNT,
-                                lastItemId = null,
-                                sortType = ReviewSortType.LATEST,
-                            )
-                        val detail = getFoodSpotDetailUseCase(id)
+                        val foodSpotReviewsDeferred =
+                            viewModelScope.async {
+                                getFoodSpotReviewsUseCase(
+                                    foodSpotsId = id,
+                                    count = DEFAULT_REVIEW_COUNT,
+                                    lastItemId = null,
+                                    sortType = ReviewSortType.LATEST,
+                                )
+                            }
+                        val detailDeferred =
+                            viewModelScope.async {
+                                getFoodSpotDetailUseCase(id)
+                            }
+                        val foodSpotReviews = foodSpotReviewsDeferred.await()
+                        val detail = detailDeferred.await()
                         val address =
                             searchPlaceWithCoordinateUseCase(
                                 coordinate =
