@@ -3,6 +3,7 @@ package com.weit2nd.presentation.ui.foodspot.detail
 import android.content.Context
 import android.graphics.PointF
 import android.util.Log
+import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -275,7 +276,10 @@ private fun FoodSpotDetailContent(
                             .clip(RoundedCornerShape(12.dp))
                             .aspectRatio(4f / 3f)
                             .fillMaxWidth(),
-                    factory = { mapView },
+                    factory = {
+                        (mapView.parent as? ViewGroup)?.removeView(mapView)
+                        mapView
+                    },
                 )
             }
         }
