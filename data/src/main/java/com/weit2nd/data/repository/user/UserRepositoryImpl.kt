@@ -34,6 +34,9 @@ class UserRepositoryImpl @Inject constructor(
             nickname = nickname,
             profileImage = profileImageUrl,
             coin = coin,
+            badge = badge,
+            restDailyReportCreationCount = restDailyReportCreationCount,
+            myRanking = myRanking,
         )
 
     private suspend fun getUserId(): Long {

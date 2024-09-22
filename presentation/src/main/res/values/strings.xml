@@ -120,6 +120,17 @@
     <string name="account_deletion_dialog_content">탈퇴 선택 시,\n계정은 삭제되며 복구되지 않습니다.</string>
     <string name="my_page_written_review_title">내가 쓴 리뷰 (%d)</string>
     <string name="my_page_reported_food_spot_title">내가 제보한 음식점 (%d)</string>
+    <string name="my_page_rest_report_count">남은 리포트 수 : %d회</string>
+    <string name="my_page_coin_title">코인</string>
+    <string name="my_page_badge_title">뱃지</string>
+    <string name="my_page_ranking_title">랭킹</string>
+    <string name="my_page_ranking_content">%d위</string>
+
+    <!-- Badge -->
+    <string name="badge_beginner">초심자</string>
+    <string name="badge_intermediate">중수</string>
+    <string name="badge_expert">고수</string>
+    <string name="badge_super_expert">초고수</string>
 
     <!-- review history -->
     <string name="review_history_title">내가 쓴 리뷰</string>

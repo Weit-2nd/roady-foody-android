@@ -69,6 +69,10 @@ class MyPageViewModel @Inject constructor(
         MyPageIntent.NavToFoodSpotDetail(foodSpotId).post()
     }
 
+    fun onRankingButtonClick() {
+        // todo 랭킹 화면 보이기
+    }
+
     private fun MyPageIntent.post() =
         intent {
             when (this@post) {
@@ -108,6 +112,9 @@ class MyPageViewModel @Inject constructor(
                                     nickname = userInfo.nickname,
                                     profileImage = userInfo.profileImage,
                                     coin = userInfo.coin,
+                                    badge = userInfo.badge,
+                                    restDailyReportCreationCount = userInfo.restDailyReportCreationCount,
+                                    myRanking = userInfo.myRanking,
                                     foodSpotHistory = reportedFoodSpot,
                                     review =
                                         writtenReview?.let {
