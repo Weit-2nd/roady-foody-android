@@ -65,6 +65,7 @@ import com.weit2nd.presentation.navigation.dto.ImageViewerDTO
 import com.weit2nd.presentation.ui.common.BorderButton
 import com.weit2nd.presentation.ui.common.FoodSpotImagePager
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
+import com.weit2nd.presentation.ui.common.RetryScreen
 import com.weit2nd.presentation.ui.common.ReviewItem
 import com.weit2nd.presentation.ui.common.ReviewRequest
 import com.weit2nd.presentation.ui.common.ReviewTotal
@@ -162,18 +163,25 @@ fun FoodSpotDetailScreen(
         if (state.isLoading) {
             LoadingDialogScreen()
         }
-        FoodSpotDetailContent(
-            state = state,
-            mapView = mapView,
-            isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
-            isBusinessInformationShow = isBusinessInformationShow,
-            onImageClick = vm::onImageClick,
-            onOperationHourClick = vm::onOperationHourClick,
-            onPostReviewClick = vm::onPostReviewClick,
-            onReviewContentClick = vm::onReviewContentsClick,
-            onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
-            onReviewReadMoreClick = vm::onReviewReadMoreClick,
-        )
+        if (state.shouldRetry) {
+            RetryScreen(
+                modifier = Modifier.fillMaxSize(),
+                onRetryButtonClick = vm::onRetryButtonClick,
+            )
+        } else {
+            FoodSpotDetailContent(
+                state = state,
+                mapView = mapView,
+                isViewMoreOperationHoursEnabled = isViewMoreOperationHoursEnabled,
+                isBusinessInformationShow = isBusinessInformationShow,
+                onImageClick = vm::onImageClick,
+                onOperationHourClick = vm::onOperationHourClick,
+                onPostReviewClick = vm::onPostReviewClick,
+                onReviewContentClick = vm::onReviewContentsClick,
+                onReviewContentReadMoreClick = vm::onReviewContentsReadMoreClick,
+                onReviewReadMoreClick = vm::onReviewReadMoreClick,
+            )
+        }
     }
 }
 

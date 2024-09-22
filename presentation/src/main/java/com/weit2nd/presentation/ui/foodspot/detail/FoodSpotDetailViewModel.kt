@@ -52,6 +52,14 @@ class FoodSpotDetailViewModel @Inject constructor(
         }
     }
 
+    fun onRetryButtonClick() {
+        if (foodSpotId != null) {
+            FoodSpotDetailIntent.LoadFoodSpotDetail(foodSpotId).post()
+        } else {
+            FoodSpotDetailIntent.NavToBack.post()
+        }
+    }
+
     fun onImageClick(
         images: List<String>,
         position: Int,
