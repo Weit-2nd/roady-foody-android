@@ -8,5 +8,5 @@ data class UserInfoEditState(
     val profileImageUri: Uri? = null,
     val nickname: String = "",
     val isNicknameCheckingLoading: Boolean = false,
-    val nicknameState: NicknameState = NicknameState.EMPTY,
+    val nicknameState: NicknameState = NicknameState.CAN_SIGN_UP,
 )
