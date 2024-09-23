@@ -36,7 +36,6 @@ import com.weit2nd.presentation.ui.theme.Gray2
 import com.weit2nd.presentation.ui.theme.Gray3
 import com.weit2nd.presentation.ui.theme.RoadyFoodyTheme
 
-
 @Composable
 fun ProfileSettingScreen(
     modifier: Modifier = Modifier,
@@ -49,6 +48,7 @@ fun ProfileSettingScreen(
     isNicknameValid: Boolean,
     onSignUpButtonClick: () -> Unit,
     canSignUp: Boolean,
+    signUpButtonTitle: String,
 ) {
     Column(
         modifier = modifier,
@@ -65,9 +65,9 @@ fun ProfileSettingScreen(
             Spacer(modifier = Modifier.height(4.dp))
             EditableProfileImage(
                 modifier =
-                Modifier
-                    .size(120.dp)
-                    .align(Alignment.CenterHorizontally),
+                    Modifier
+                        .size(120.dp)
+                        .align(Alignment.CenterHorizontally),
                 imgUri = profileImage,
                 onProfileImageClick = onProfileImageClick,
             )
@@ -79,8 +79,8 @@ fun ProfileSettingScreen(
             )
             NicknameSetting(
                 modifier =
-                Modifier
-                    .fillMaxWidth(),
+                    Modifier
+                        .fillMaxWidth(),
                 nickname = nickname,
                 nicknameState = nicknameState,
                 onInputValueChange = onNicknameInputValueChange,
@@ -93,7 +93,7 @@ fun ProfileSettingScreen(
             modifier = Modifier.fillMaxWidth(),
             onClick = onSignUpButtonClick,
             enabled = canSignUp,
-            text = stringResource(R.string.sign_up),
+            text = signUpButtonTitle,
         )
     }
 }
@@ -121,15 +121,15 @@ private fun NicknameSetting(
 
         Text(
             modifier =
-            Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
+                Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
             color =
-            when (nicknameState) {
-                NicknameState.CAN_SIGN_UP -> Blue
-                NicknameState.EMPTY, NicknameState.VALID -> Gray2
-                else -> MaterialTheme.colorScheme.error
-            },
+                when (nicknameState) {
+                    NicknameState.CAN_SIGN_UP -> Blue
+                    NicknameState.EMPTY, NicknameState.VALID -> Gray2
+                    else -> MaterialTheme.colorScheme.error
+                },
             text = getNicknameStateMessage(nicknameState),
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -173,14 +173,14 @@ fun NicknameTextField(
                 )
             },
             colors =
-            TextFieldDefaults.colors(
-                disabledContainerColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                unfocusedIndicatorColor = Gray3,
-                disabledIndicatorColor = Gray3,
-                focusedIndicatorColor = Gray3,
-            ),
+                TextFieldDefaults.colors(
+                    disabledContainerColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    unfocusedIndicatorColor = Gray3,
+                    disabledIndicatorColor = Gray3,
+                    focusedIndicatorColor = Gray3,
+                ),
             onValueChange = { newValue ->
                 userInput = newValue
                 onInputValueChange(newValue.text)
@@ -189,9 +189,9 @@ fun NicknameTextField(
         )
         DuplicationCheckButton(
             modifier =
-            Modifier
-                .height(48.dp)
-                .padding(start = 12.dp),
+                Modifier
+                    .height(48.dp)
+                    .padding(start = 12.dp),
             onClick = onDuplicationBtnClick,
             enable = isNicknameValid,
         )

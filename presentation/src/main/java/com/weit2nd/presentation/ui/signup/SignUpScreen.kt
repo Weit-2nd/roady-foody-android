@@ -86,6 +86,7 @@ fun SignUpScreen(
                     isNicknameValid = isNicknameValid,
                     onSignUpButtonClick = vm::onSignUpButtonClick,
                     canSignUp = canSignUp,
+                    signUpButtonTitle = stringResource(R.string.sign_up),
                 )
             },
         )

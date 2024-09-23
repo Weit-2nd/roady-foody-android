@@ -14,9 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
+import com.weit2nd.presentation.R
 import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ProfileSettingScreen
@@ -87,6 +89,7 @@ fun UserInfoEditScreen(
                     isNicknameValid = isNicknameValid,
                     onSignUpButtonClick = vm::onEditButtonClick,
                     canSignUp = canSignUp,
+                    signUpButtonTitle = stringResource(R.string.edit_profile_sign_up),
                 )
             },
         )
