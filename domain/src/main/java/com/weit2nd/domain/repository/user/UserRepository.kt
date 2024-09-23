@@ -19,8 +19,7 @@ interface UserRepository {
         lastItemId: Long?,
     ): List<UserReview>
 
-    suspend fun editUserInfo(
-        profileImage: String?,
-        nickname: String,
-    )
+    suspend fun editUserInfo(profileImage: String?)
+
+    suspend fun editUserNickname(nickname: String)
 }

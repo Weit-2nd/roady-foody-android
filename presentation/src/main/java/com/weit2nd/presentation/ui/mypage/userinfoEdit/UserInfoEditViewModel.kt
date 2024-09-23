@@ -7,7 +7,8 @@ import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.usecase.pickimage.PickSingleImageUseCase
 import com.weit2nd.domain.usecase.signup.CheckNicknameDuplicateUseCase
 import com.weit2nd.domain.usecase.signup.VerifyNicknameUseCase
-import com.weit2nd.domain.usecase.user.EditUserInfoUseCase
+import com.weit2nd.domain.usecase.user.EditUserNicknameUseCase
+import com.weit2nd.domain.usecase.user.EditUserProfileImageUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.navigation.UserInfoEditRoutes
 import com.weit2nd.presentation.navigation.dto.UserInfoDTO
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class UserInfoEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val editUserInfoUseCase: EditUserInfoUseCase,
+    private val editUserProfileImageUseCase: EditUserProfileImageUseCase,
+    private val editUserNicknameUseCase: EditUserNicknameUseCase,
     private val verifyNicknameUseCase: VerifyNicknameUseCase,
     private val checkNicknameDuplicateUseCase: CheckNicknameDuplicateUseCase,
     private val pickSingleImageUseCase: PickSingleImageUseCase,
@@ -80,10 +82,15 @@ class UserInfoEditViewModel @Inject constructor(
                     }
                     runCatching {
                         state.apply {
-                            editUserInfoUseCase.invoke(
-                                profileImage = profileImageUri?.toString(),
-                                nickname = nickname,
-                            )
+                            if (profileImageUri?.toString() != userInfo.profileImage) {
+                                editUserProfileImageUseCase.invoke(
+                                    profileImage = profileImageUri?.toString(),
+                                )
+                            }
+
+                            if (nickname != userInfo.nickname) {
+                                editUserNicknameUseCase.invoke(nickname)
+                            }
                         }
                     }.onSuccess {
                         postSideEffect(UserInfoEditSideEffect.NavToBack)

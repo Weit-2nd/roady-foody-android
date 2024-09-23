@@ -115,10 +115,7 @@ class UserRepositoryImpl @Inject constructor(
             isFoodTruck = isFoodTruck,
         )
 
-    override suspend fun editUserInfo(
-        profileImage: String?,
-        nickname: String,
-    ) {
+    override suspend fun editUserInfo(profileImage: String?) {
         val imagePart =
             profileImage?.let { imageUri ->
                 if (localImageDatasource.checkImageUriValid(imageUri).not()) {
@@ -134,6 +131,13 @@ class UserRepositoryImpl @Inject constructor(
             userDataSource.editUserProfile(
                 image = imagePart,
             )
+        }.onFailure {
+            throw handleUserInfoEditException(it)
+        }
+    }
+
+    override suspend fun editUserNickname(nickname: String) {
+        runCatching {
             userDataSource.editUserNickname(request = UserNicknameRequest(nickname))
         }.onFailure {
             throw handleUserInfoEditException(it)
