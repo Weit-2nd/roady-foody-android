@@ -46,7 +46,7 @@ fun UserInfoEditScreen(
 
     val canSignUp by remember {
         derivedStateOf {
-            state.value.nicknameState == NicknameState.CAN_SIGN_UP &&
+            state.value.nicknameState == NicknameState.CAN_SET_PROFILE &&
                 state.value.isLoading.not()
         }
     }
@@ -88,7 +88,7 @@ fun UserInfoEditScreen(
                     onDuplicationBtnClick = vm::onDuplicationBtnClick,
                     isNicknameValid = isNicknameValid,
                     onSignUpButtonClick = vm::onEditButtonClick,
-                    canSignUp = canSignUp,
+                    confirm = canSignUp,
                     signUpButtonTitle = stringResource(R.string.edit_profile_sign_up),
                 )
             },

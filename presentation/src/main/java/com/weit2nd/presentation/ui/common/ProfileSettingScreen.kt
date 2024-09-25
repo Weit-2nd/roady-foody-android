@@ -47,7 +47,7 @@ fun ProfileSettingScreen(
     onDuplicationBtnClick: () -> Unit,
     isNicknameValid: Boolean,
     onSignUpButtonClick: () -> Unit,
-    canSignUp: Boolean,
+    confirm: Boolean,
     signUpButtonTitle: String,
 ) {
     Column(
@@ -92,7 +92,7 @@ fun ProfileSettingScreen(
         BottomButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = onSignUpButtonClick,
-            enabled = canSignUp,
+            enabled = confirm,
             text = signUpButtonTitle,
         )
     }
@@ -126,7 +126,7 @@ private fun NicknameSetting(
                     .fillMaxWidth(),
             color =
                 when (nicknameState) {
-                    NicknameState.CAN_SIGN_UP -> Blue
+                    NicknameState.CAN_SET_PROFILE -> Blue
                     NicknameState.EMPTY, NicknameState.VALID -> Gray2
                     else -> MaterialTheme.colorScheme.error
                 },
@@ -143,7 +143,7 @@ private fun getNicknameStateMessage(nicknameState: NicknameState) =
         NicknameState.INVALID_CHARACTERS -> stringResource(R.string.nickname_invalid_character)
         NicknameState.INVALID_CONTAIN_SPACE -> stringResource(R.string.nickname_invalid_space)
         NicknameState.DUPLICATE -> stringResource(R.string.nickname_duplicate)
-        NicknameState.CAN_SIGN_UP -> stringResource(R.string.nickname_can_sign_up)
+        NicknameState.CAN_SET_PROFILE -> stringResource(R.string.nickname_can_sign_up)
         else -> stringResource(R.string.nickname_description)
     }
 

@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -44,7 +43,7 @@ fun SignUpScreen(
 
     val canSignUp by remember {
         derivedStateOf {
-            state.value.nicknameState == NicknameState.CAN_SIGN_UP &&
+            state.value.nicknameState == NicknameState.CAN_SET_PROFILE &&
                 state.value.isSignUpLoading.not()
         }
     }
@@ -85,7 +84,7 @@ fun SignUpScreen(
                     onDuplicationBtnClick = vm::onDuplicationBtnClick,
                     isNicknameValid = isNicknameValid,
                     onSignUpButtonClick = vm::onSignUpButtonClick,
-                    canSignUp = canSignUp,
+                    confirm = canSignUp,
                     signUpButtonTitle = stringResource(R.string.sign_up),
                 )
             },

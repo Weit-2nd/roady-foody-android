@@ -2,9 +2,9 @@ package com.weit2nd.data.repository.signup
 
 import com.squareup.moshi.Moshi
 import com.weit2nd.data.model.user.SignUpRequest
-import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.signup.SignUpDataSource
+import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.util.getMultiPart
 import com.weit2nd.domain.exception.imageuri.NotImageException
 import com.weit2nd.domain.exception.user.SignUpException
@@ -29,16 +29,17 @@ class SignUpRepositoryImpl @Inject constructor(
         nickname: String,
         agreedTermIds: List<Long>,
     ) {
-        val imagePart = image?.let { imageUri ->
-            if (localImageDatasource.checkImageUriValid(imageUri).not()) {
-                throw NotImageException()
+        val imagePart =
+            image?.let { imageUri ->
+                if (localImageDatasource.checkImageUriValid(imageUri).not()) {
+                    throw NotImageException()
+                }
+                localImageDatasource.getImageMultipartBodyPart(
+                    uri = imageUri,
+                    formDataName = "profileImage",
+                    imageName = System.currentTimeMillis().toString(),
+                )
             }
-            localImageDatasource.getImageMultipartBodyPart(
-                uri = imageUri,
-                formDataName = "profileImage",
-                imageName = System.currentTimeMillis().toString(),
-            )
-        }
         val request =
             SignUpRequest(
                 nickname = nickname,
@@ -101,7 +102,7 @@ class SignUpRepositoryImpl @Inject constructor(
         return if (signUpDataSource.checkNicknameDuplication(nickname).isDuplicated) {
             NicknameState.DUPLICATE
         } else {
-            NicknameState.CAN_SIGN_UP
+            NicknameState.CAN_SET_PROFILE
         }
     }
 }
