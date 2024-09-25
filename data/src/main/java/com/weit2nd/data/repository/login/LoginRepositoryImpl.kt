@@ -1,6 +1,9 @@
 package com.weit2nd.data.repository.login
 
+import android.content.Context
+import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
+import com.weit2nd.data.BuildConfig
 import com.weit2nd.data.source.login.LoginDataSource
 import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.util.ActivityProvider
@@ -16,10 +19,15 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(
+    context: Context,
     private val loginDataSource: LoginDataSource,
     private val tokenDataSource: TokenDataSource,
     private val activityProvider: ActivityProvider,
 ) : LoginRepository {
+    init {
+        KakaoSdk.init(context, BuildConfig.KAKAO_NATIVE_APP_KEY)
+    }
+
     override suspend fun loginWithKakao(): Result<Unit> =
         withContext(Dispatchers.IO) {
             val currentActivity =

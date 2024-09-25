@@ -23,8 +23,6 @@ android {
         targetSdk = 34
         versionCode = 4
         versionName = "0.0.4"
-
-        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties.getProperty("KAKAO_NATIVE_APP_KEY")
     }
 
     signingConfigs {
@@ -86,7 +84,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.hilt.android)
-    implementation(libs.kakao.login)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     kapt(libs.hilt.android.compiler)
