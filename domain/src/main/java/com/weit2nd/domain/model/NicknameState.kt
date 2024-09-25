@@ -7,5 +7,5 @@ enum class NicknameState {
     INVALID_CONTAIN_SPACE,
     VALID,
     DUPLICATE,
-    CAN_SIGN_UP,
+    CAN_SET_PROFILE,
 }

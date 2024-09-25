@@ -8,7 +8,7 @@ import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.model.reivew.ExpendableReview
 import com.weit2nd.presentation.navigation.ReviewHistoryRoutes
-import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.Container
@@ -24,7 +24,7 @@ class ReviewHistoryViewModel @Inject constructor(
     override val container: Container<ReviewHistoryState, ReviewHistorySideEffect> =
         container(ReviewHistoryState())
     private val userInfo =
-        savedStateHandle.get<ReviewHistoryDTO>(ReviewHistoryRoutes.REVIEW_HISTORY_KEY)!!
+        savedStateHandle.get<UserInfoDTO>(ReviewHistoryRoutes.REVIEW_HISTORY_KEY)!!
     private var hasNext = AtomicBoolean(true)
     private var requestReviewJob: Job =
         Job().apply {

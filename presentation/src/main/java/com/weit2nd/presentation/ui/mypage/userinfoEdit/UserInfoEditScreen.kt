@@ -1,6 +1,5 @@
-package com.weit2nd.presentation.ui.signup
+package com.weit2nd.presentation.ui.mypage.userinfoEdit
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,31 +19,35 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.weit2nd.domain.model.NicknameState
 import com.weit2nd.presentation.R
+import com.weit2nd.presentation.ui.common.BackTopBar
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ProfileSettingScreen
-import com.weit2nd.presentation.ui.common.TitleTopBar
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 
 @Composable
-fun SignUpScreen(
-    vm: SignUpViewModel = hiltViewModel(),
-    navToHome: () -> Unit,
+fun UserInfoEditScreen(
+    vm: UserInfoEditViewModel = hiltViewModel(),
+    navToBack: () -> Unit,
 ) {
     val state = vm.collectAsState()
     val context = LocalContext.current
     vm.collectSideEffect { sideEffect ->
-        handleSideEffects(
-            sideEffect = sideEffect,
-            navToHome = navToHome,
-            context = context,
-        )
+        when (sideEffect) {
+            UserInfoEditSideEffect.NavToBack -> {
+                navToBack()
+            }
+
+            is UserInfoEditSideEffect.ShowToast -> {
+                Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    val canSignUp by remember {
+    val canSetProfile by remember {
         derivedStateOf {
             state.value.nicknameState == NicknameState.CAN_SET_PROFILE &&
-                state.value.isSignUpLoading.not()
+                state.value.isLoading.not()
         }
     }
 
@@ -55,18 +58,19 @@ fun SignUpScreen(
     }
 
     Box {
-        if (state.value.isSignUpLoading) {
+        if (state.value.isLoading) {
             LoadingDialogScreen()
         }
 
         Scaffold(
             topBar = {
-                TitleTopBar(
+                BackTopBar(
                     modifier =
                         Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surface),
-                    title = stringResource(R.string.term_screen_topbar_title),
+                    title = "프로필 수정",
+                    onClickBackBtn = vm::onBackButtonClick,
                 )
             },
             content = { innerPadding ->
@@ -83,27 +87,11 @@ fun SignUpScreen(
                     onNicknameInputValueChange = vm::onNicknameInputValueChange,
                     onDuplicationBtnClick = vm::onDuplicationBtnClick,
                     isNicknameValid = isNicknameValid,
-                    onSetProfileButtonClick = vm::onSignUpButtonClick,
-                    canSetProfile = canSignUp,
-                    setProfileButtonTitle = stringResource(R.string.sign_up),
+                    onSetProfileButtonClick = vm::onEditButtonClick,
+                    canSetProfile = canSetProfile,
+                    setProfileButtonTitle = stringResource(R.string.edit_profile),
                 )
             },
         )
-    }
-}
-
-private fun handleSideEffects(
-    sideEffect: SignUpSideEffect,
-    navToHome: () -> Unit,
-    context: Context,
-) {
-    when (sideEffect) {
-        is SignUpSideEffect.NavToHome -> {
-            navToHome()
-        }
-
-        is SignUpSideEffect.ShowToast -> {
-            Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
-        }
     }
 }

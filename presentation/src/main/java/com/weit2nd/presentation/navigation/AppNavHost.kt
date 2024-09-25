@@ -18,7 +18,7 @@ import com.weit2nd.domain.model.Coordinate
 import com.weit2nd.presentation.navigation.dto.FoodSpotForReviewDTO
 import com.weit2nd.presentation.navigation.dto.FoodSpotReviewDTO
 import com.weit2nd.presentation.navigation.dto.PlaceSearchDTO
-import com.weit2nd.presentation.navigation.dto.ReviewHistoryDTO
+import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import com.weit2nd.presentation.navigation.dto.toCoordinateDTO
 import com.weit2nd.presentation.navigation.dto.toImageViewerDTO
 import com.weit2nd.presentation.navigation.dto.toPlaceDTO
@@ -28,8 +28,8 @@ import com.weit2nd.presentation.navigation.type.FoodSpotForReviewType
 import com.weit2nd.presentation.navigation.type.FoodSpotReviewType
 import com.weit2nd.presentation.navigation.type.ImageViewerDataType
 import com.weit2nd.presentation.navigation.type.PlaceSearchType
-import com.weit2nd.presentation.navigation.type.ReviewHistoryType
 import com.weit2nd.presentation.navigation.type.TermIdsType
+import com.weit2nd.presentation.navigation.type.UserInfoType
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerData
 import com.weit2nd.presentation.ui.common.imageviewer.ImageViewerScreen
 import com.weit2nd.presentation.ui.foodspot.detail.FoodSpotDetailScreen
@@ -40,6 +40,7 @@ import com.weit2nd.presentation.ui.login.LoginScreen
 import com.weit2nd.presentation.ui.mypage.MyPageScreen
 import com.weit2nd.presentation.ui.mypage.foodspot.FoodSpotHistoryScreen
 import com.weit2nd.presentation.ui.mypage.review.ReviewHistoryScreen
+import com.weit2nd.presentation.ui.mypage.userinfoEdit.UserInfoEditScreen
 import com.weit2nd.presentation.ui.review.PostReviewScreen
 import com.weit2nd.presentation.ui.search.SearchScreen
 import com.weit2nd.presentation.ui.select.picture.SelectPictureScreen
@@ -80,6 +81,7 @@ fun AppNavHost(
         reviewHistoryComposable(navController)
         foodSpotHistoryComposable(navController)
         foodSpotReviewComposable(navController)
+        userInfoEditComposable(navController)
     }
 }
 
@@ -311,6 +313,9 @@ private fun NavGraphBuilder.myPageComposable(navController: NavHostController) {
             navToFoodSpotDetail = { foodSpotId ->
                 navController.navigateToFoodSpotDetail(foodSpotId)
             },
+            navToUserInfoEdit = {
+                navController.navigateToUserInfoEdit(it)
+            },
         )
     }
 }
@@ -364,7 +369,7 @@ private fun NavGraphBuilder.reviewHistoryComposable(navController: NavHostContro
         arguments =
             listOf(
                 navArgument(ReviewHistoryRoutes.REVIEW_HISTORY_KEY) {
-                    type = ReviewHistoryType()
+                    type = UserInfoType()
                 },
             ),
     ) {
@@ -445,6 +450,24 @@ private fun NavGraphBuilder.foodSpotReviewComposable(navController: NavHostContr
     }
 }
 
+private fun NavGraphBuilder.userInfoEditComposable(navController: NavHostController) {
+    composable(
+        route = "${UserInfoEditRoutes.GRAPH}/{${UserInfoEditRoutes.USER_INFO_EDIT_KEY}}",
+        arguments =
+            listOf(
+                navArgument(UserInfoEditRoutes.USER_INFO_EDIT_KEY) {
+                    type = UserInfoType()
+                },
+            ),
+    ) {
+        UserInfoEditScreen(
+            navToBack = {
+                navController.popBackStack()
+            },
+        )
+    }
+}
+
 private fun NavHostController.navigateToHome(
     placeSearch: PlaceSearchDTO? = null,
     builder: NavOptionsBuilder.() -> Unit = {},
@@ -519,10 +542,10 @@ private fun NavHostController.navigateToFoodSpotDetail(
 }
 
 private fun NavHostController.navigateToReviewHistory(
-    reviewHistoryDTO: ReviewHistoryDTO,
+    userInfoDTO: UserInfoDTO,
     builder: NavOptionsBuilder.() -> Unit = {},
 ) {
-    val reviewHistoryJson = Uri.encode(Gson().toJson(reviewHistoryDTO))
+    val reviewHistoryJson = Uri.encode(Gson().toJson(userInfoDTO))
     navigate("${ReviewHistoryRoutes.GRAPH}/$reviewHistoryJson", builder)
 }
 
@@ -539,6 +562,14 @@ private fun NavHostController.navigateToFoodSpotReview(
 ) {
     val foodSpotReviewJson = Uri.encode(Gson().toJson(foodSpotReviewDTO))
     navigate("${FoodSpotReviewRoutes.GRAPH}/$foodSpotReviewJson", builder)
+}
+
+private fun NavHostController.navigateToUserInfoEdit(
+    userInfoDTO: UserInfoDTO,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) {
+    val userInfo = Uri.encode(Gson().toJson(userInfoDTO))
+    navigate("${UserInfoEditRoutes.GRAPH}/$userInfo", builder)
 }
 
 object SplashRoutes {
@@ -624,4 +655,9 @@ object FoodSpotHistoryRoutes {
 object FoodSpotReviewRoutes {
     const val GRAPH = "food_spot_review"
     const val FOOD_SPOT_REVIEW_KEY = "food_spot_review_key"
+}
+
+object UserInfoEditRoutes {
+    const val GRAPH = "user_info_edit"
+    const val USER_INFO_EDIT_KEY = "user_info_edit_key"
 }

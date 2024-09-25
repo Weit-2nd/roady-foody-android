@@ -19,6 +19,8 @@ sealed class MyPageIntent {
         val foodSpotId: Long,
     ) : MyPageIntent()
 
+    data object NavToUserInfoEdit : MyPageIntent()
+
     data object Logout : MyPageIntent()
 
     data object Withdraw : MyPageIntent()
