@@ -2,7 +2,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 val localProperties = Properties()
-localProperties.load(FileInputStream(rootProject.file("local.properties")))
+localProperties.load(FileInputStream(rootProject.file(".gradle/roadyfoody.properties")))
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -37,11 +37,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            isMinifyEnabled = true
+            proguardFiles(*fileTree("proguard").toList().toTypedArray())
+            consumerProguardFiles(*fileTree("proguard").toList().toTypedArray())
         }
     }
 

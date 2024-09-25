@@ -1,4 +1,9 @@
 import com.google.protobuf.gradle.id
+import java.io.FileInputStream
+import java.util.Properties
+
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file(".gradle/roadyfoody.properties")))
 
 plugins {
     alias(libs.plugins.androidLibrary)
@@ -19,16 +24,20 @@ android {
 
     defaultConfig {
         minSdk = 29
-        consumerProguardFiles("consumer-rules.pro")
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties.getProperty("KAKAO_NATIVE_APP_KEY")
+
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            "\"${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}\"",
+        )
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            isMinifyEnabled = true
+            proguardFiles(*fileTree("proguard").toList().toTypedArray())
+            consumerProguardFiles(*fileTree("proguard").toList().toTypedArray())
         }
     }
     compileOptions {
