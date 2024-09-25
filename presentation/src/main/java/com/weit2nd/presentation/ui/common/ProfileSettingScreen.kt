@@ -46,9 +46,9 @@ fun ProfileSettingScreen(
     onNicknameInputValueChange: (String) -> Unit,
     onDuplicationBtnClick: () -> Unit,
     isNicknameValid: Boolean,
-    onSignUpButtonClick: () -> Unit,
-    confirm: Boolean,
-    signUpButtonTitle: String,
+    onSetProfileButtonClick: () -> Unit,
+    canSetProfile: Boolean,
+    setProfileButtonTitle: String,
 ) {
     Column(
         modifier = modifier,
@@ -58,7 +58,7 @@ fun ProfileSettingScreen(
         ) {
             Text(
                 modifier = Modifier.padding(top = 20.dp),
-                text = stringResource(R.string.sign_up_profile_image),
+                text = stringResource(R.string.profile_image),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -73,7 +73,7 @@ fun ProfileSettingScreen(
             )
             Text(
                 modifier = Modifier.padding(top = 24.dp),
-                text = stringResource(R.string.sign_up_nickname),
+                text = stringResource(R.string.nickname),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -91,9 +91,9 @@ fun ProfileSettingScreen(
 
         BottomButton(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onSignUpButtonClick,
-            enabled = confirm,
-            text = signUpButtonTitle,
+            onClick = onSetProfileButtonClick,
+            enabled = canSetProfile,
+            text = setProfileButtonTitle,
         )
     }
 }

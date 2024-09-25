@@ -83,9 +83,9 @@ fun SignUpScreen(
                     onNicknameInputValueChange = vm::onNicknameInputValueChange,
                     onDuplicationBtnClick = vm::onDuplicationBtnClick,
                     isNicknameValid = isNicknameValid,
-                    onSignUpButtonClick = vm::onSignUpButtonClick,
-                    confirm = canSignUp,
-                    signUpButtonTitle = stringResource(R.string.sign_up),
+                    onSetProfileButtonClick = vm::onSignUpButtonClick,
+                    canSetProfile = canSignUp,
+                    setProfileButtonTitle = stringResource(R.string.sign_up),
                 )
             },
         )
