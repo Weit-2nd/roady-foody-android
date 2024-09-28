@@ -4,6 +4,7 @@ import com.weit2nd.data.model.review.UserReviewsDTO
 import com.weit2nd.data.model.spot.FoodSpotHistoriesDTO
 import com.weit2nd.data.model.user.UserDTO
 import com.weit2nd.data.model.user.UserNicknameRequest
+import com.weit2nd.data.model.user.UserStatisticsDTO
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -41,4 +42,9 @@ interface UserService {
     suspend fun editUserNickname(
         @Body userNicknameRequest: UserNicknameRequest,
     )
+
+    @GET("/api/v1/users/{userId}/statistics")
+    suspend fun getUserStatistics(
+        @Path("userId") userId: Long,
+    ): UserStatisticsDTO
 }

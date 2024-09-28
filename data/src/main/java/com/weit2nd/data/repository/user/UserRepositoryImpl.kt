@@ -8,6 +8,7 @@ import com.weit2nd.data.model.spot.toFoodSpotPhoto
 import com.weit2nd.data.model.user.TokenPayload
 import com.weit2nd.data.model.user.UserDTO
 import com.weit2nd.data.model.user.UserNicknameRequest
+import com.weit2nd.data.model.user.toUserStatistics
 import com.weit2nd.data.source.localimage.LocalImageDatasource
 import com.weit2nd.data.source.token.TokenDataSource
 import com.weit2nd.data.source.user.UserDataSource
@@ -20,6 +21,7 @@ import com.weit2nd.domain.model.UserInfo
 import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.model.spot.FoodSpotHistories
 import com.weit2nd.domain.model.spot.FoodSpotHistoryContent
+import com.weit2nd.domain.model.user.UserStatistics
 import com.weit2nd.domain.repository.user.UserRepository
 import okhttp3.internal.http.HTTP_BAD_REQUEST
 import okhttp3.internal.http.HTTP_CONFLICT
@@ -142,6 +144,10 @@ class UserRepositoryImpl @Inject constructor(
         }.onFailure {
             throw handleUserInfoEditException(it)
         }
+    }
+
+    override suspend fun getUserStatistics(userId: Long): UserStatistics {
+        return userDataSource.getUserStatistics(userId).toUserStatistics()
     }
 
     private fun handleUserInfoEditException(throwable: Throwable) =

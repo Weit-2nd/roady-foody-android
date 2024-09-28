@@ -4,6 +4,7 @@ import com.weit2nd.data.model.review.UserReviewsDTO
 import com.weit2nd.data.model.spot.FoodSpotHistoriesDTO
 import com.weit2nd.data.model.user.UserDTO
 import com.weit2nd.data.model.user.UserNicknameRequest
+import com.weit2nd.data.model.user.UserStatisticsDTO
 import com.weit2nd.data.service.UserService
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -45,5 +46,9 @@ class UserDataSource @Inject constructor(
 
     suspend fun editUserNickname(request: UserNicknameRequest) {
         service.editUserNickname(request)
+    }
+
+    suspend fun getUserStatistics(userId: Long): UserStatisticsDTO {
+        return service.getUserStatistics(userId)
     }
 }
