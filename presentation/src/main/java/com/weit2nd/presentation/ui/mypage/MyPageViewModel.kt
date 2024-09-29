@@ -3,8 +3,10 @@ package com.weit2nd.presentation.ui.mypage
 import com.weit2nd.domain.usecase.logout.LogoutUseCase
 import com.weit2nd.domain.usecase.logout.WithdrawUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
+import com.weit2nd.domain.usecase.user.GetMyUserIdUseCase
 import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
+import com.weit2nd.domain.usecase.user.GetUserStatisticsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.dto.UserInfoDTO
@@ -19,9 +21,11 @@ import javax.inject.Inject
 class MyPageViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val withdrawUseCase: WithdrawUseCase,
+    private val getMyUserIdUseCase: GetMyUserIdUseCase,
     private val getMyUserInfoUseCase: GetMyUserInfoUseCase,
     private val getFoodSpotHistoriesUseCase: GetFoodSpotHistoriesUseCase,
     private val getUserReviewsUseCase: GetUserReviewsUseCase,
+    private val getUserStatisticsUseCase: GetUserStatisticsUseCase,
 ) : BaseViewModel<MyPageState, MyPageSideEffect>() {
     override val container: Container<MyPageState, MyPageSideEffect> = container(MyPageState())
 
@@ -88,12 +92,16 @@ class MyPageViewModel @Inject constructor(
                     }
                     coroutineScope {
                         runCatching {
-                            val userInfo = getMyUserInfoUseCase.invoke()
+                            val userId = getMyUserIdUseCase.invoke()
+                            val userInfoDeferred =
+                                async {
+                                    getMyUserInfoUseCase.invoke()
+                                }
                             val reportedFoodSpotDeferred =
                                 async {
                                     getFoodSpotHistoriesUseCase
                                         .invoke(
-                                            userId = userInfo.userId,
+                                            userId = userId,
                                             count = LOAD_DATA_NUMBER,
                                         ).contents
                                         .firstOrNull()
@@ -102,13 +110,20 @@ class MyPageViewModel @Inject constructor(
                                 async {
                                     getUserReviewsUseCase
                                         .invoke(
-                                            userId = userInfo.userId,
+                                            userId = userId,
                                             count = LOAD_DATA_NUMBER,
                                         ).firstOrNull()
                                 }
+                            val statisticsDeferred =
+                                async {
+                                    getUserStatisticsUseCase
+                                        .invoke(userId)
+                                }
 
+                            val userInfo = userInfoDeferred.await()
                             val reportedFoodSpot = reportedFoodSpotDeferred.await()
                             val writtenReview = writtenReviewDeferred.await()
+                            val statistics = statisticsDeferred.await()
 
                             reduce {
                                 state.copy(
@@ -120,19 +135,22 @@ class MyPageViewModel @Inject constructor(
                                     restDailyReportCreationCount = userInfo.restDailyReportCreationCount,
                                     myRanking = userInfo.myRanking,
                                     foodSpotHistory = reportedFoodSpot,
+                                    foodSpotCount = statistics.reportCount,
                                     review =
                                         writtenReview?.let {
                                             Review(
-                                                writtenReview.id,
-                                                userInfo.userId,
-                                                userInfo.profileImage,
-                                                userInfo.nickname,
-                                                writtenReview.createdAt,
-                                                writtenReview.rating.toFloat(),
-                                                writtenReview.photos.map { it.image },
-                                                writtenReview.contents,
+                                                reviewId = writtenReview.id,
+                                                userId = userInfo.userId,
+                                                profileImage = userInfo.profileImage,
+                                                nickname = userInfo.nickname,
+                                                date = writtenReview.createdAt,
+                                                rating = writtenReview.rating.toFloat(),
+                                                reviewImages = writtenReview.photos.map { it.image },
+                                                contents = writtenReview.contents,
                                             )
                                         },
+                                    reviewCount = statistics.reviewCount,
+                                    likeCount = statistics.likeCount,
                                     isLoading = false,
                                 )
                             }
