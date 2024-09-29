@@ -40,7 +40,7 @@ class UserRepositoryImpl @Inject constructor(
 
     private suspend fun UserDTO.toUser(): UserInfo =
         UserInfo(
-            userId = getUserId(),
+            userId = getMyUserId(),
             nickname = nickname,
             profileImage = profileImageUrl,
             coin = coin,
@@ -49,7 +49,7 @@ class UserRepositoryImpl @Inject constructor(
             myRanking = myRanking,
         )
 
-    private suspend fun getUserId(): Long {
+    override suspend fun getMyUserId(): Long {
         val token =
             tokenDataSource.getAccessToken()?.token ?: run {
                 throw RuntimeException("유저 토큰이 존재하지 않음")

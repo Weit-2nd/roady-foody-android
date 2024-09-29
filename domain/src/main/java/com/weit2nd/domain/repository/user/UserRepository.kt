@@ -8,6 +8,8 @@ import com.weit2nd.domain.model.user.UserStatistics
 interface UserRepository {
     suspend fun getMyUserInfo(): UserInfo
 
+    suspend fun getMyUserId(): Long
+
     suspend fun getFoodSpotHistories(
         userId: Long,
         count: Int,
