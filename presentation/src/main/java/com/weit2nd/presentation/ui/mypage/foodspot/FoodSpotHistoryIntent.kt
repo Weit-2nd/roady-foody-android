@@ -10,4 +10,6 @@ sealed class FoodSpotHistoryIntent {
     data class LoadNextFoodSpots(
         val lastId: Long?,
     ) : FoodSpotHistoryIntent()
+
+    data object InitTotalCount : FoodSpotHistoryIntent()
 }

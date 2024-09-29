@@ -1,9 +1,11 @@
 package com.weit2nd.presentation.ui.mypage.review
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.weit2nd.domain.exception.user.UserReviewException
 import com.weit2nd.domain.model.review.UserReview
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
+import com.weit2nd.domain.usecase.user.GetUserStatisticsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.model.reivew.ExpendableReview
@@ -11,6 +13,7 @@ import com.weit2nd.presentation.navigation.ReviewHistoryRoutes
 import com.weit2nd.presentation.navigation.dto.UserInfoDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.viewmodel.container
 import java.util.concurrent.atomic.AtomicBoolean
@@ -20,6 +23,7 @@ import javax.inject.Inject
 class ReviewHistoryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getUserReviewsUseCase: GetUserReviewsUseCase,
+    private val getUserStatisticsUseCase: GetUserStatisticsUseCase,
 ) : BaseViewModel<ReviewHistoryState, ReviewHistorySideEffect>() {
     override val container: Container<ReviewHistoryState, ReviewHistorySideEffect> =
         container(ReviewHistoryState())
@@ -32,6 +36,9 @@ class ReviewHistoryViewModel @Inject constructor(
         }
 
     fun onCreate() {
+        viewModelScope.launch {
+            ReviewHistoryIntent.InitTotalCount.post()
+        }
         ReviewHistoryIntent.LoadNextReviews(null).post()
     }
 
@@ -74,7 +81,6 @@ class ReviewHistoryViewModel @Inject constructor(
                 }
 
                 is ReviewHistoryIntent.LoadNextReviews -> {
-                    // TODO 응답으로 리뷰 총 개수도 받아와야함
                     runCatching {
                         getUserReviewsUseCase.invoke(
                             userId = userInfo.userId,
@@ -118,6 +124,18 @@ class ReviewHistoryViewModel @Inject constructor(
                         state.copy(
                             reviews = updatedReviews,
                         )
+                    }
+                }
+
+                ReviewHistoryIntent.InitTotalCount -> {
+                    runCatching {
+                        getUserStatisticsUseCase.invoke(userInfo.userId).reviewCount
+                    }.onSuccess {
+                        reduce {
+                            state.copy(
+                                totalCount = it,
+                            )
+                        }
                     }
                 }
             }

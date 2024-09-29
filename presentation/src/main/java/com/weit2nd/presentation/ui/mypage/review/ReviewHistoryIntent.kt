@@ -7,6 +7,8 @@ sealed interface ReviewHistoryIntent {
         val lastId: Long?,
     ) : ReviewHistoryIntent
 
+    data object InitTotalCount : ReviewHistoryIntent
+
     data class ChangeReviewContentExpendState(
         val position: Int,
         val expandState: Boolean,
