@@ -19,4 +19,5 @@ data class MyPageState(
     val foodSpotCount: Int = 0,
     val review: Review? = null,
     val reviewCount: Int = 0,
+    val likeCount: Int = 0,
 )

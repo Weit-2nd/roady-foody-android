@@ -5,6 +5,7 @@ import com.weit2nd.domain.usecase.logout.WithdrawUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
 import com.weit2nd.domain.usecase.user.GetMyUserInfoUseCase
 import com.weit2nd.domain.usecase.user.GetUserReviewsUseCase
+import com.weit2nd.domain.usecase.user.GetUserStatisticsUseCase
 import com.weit2nd.presentation.base.BaseViewModel
 import com.weit2nd.presentation.model.foodspot.Review
 import com.weit2nd.presentation.navigation.dto.UserInfoDTO
@@ -22,6 +23,7 @@ class MyPageViewModel @Inject constructor(
     private val getMyUserInfoUseCase: GetMyUserInfoUseCase,
     private val getFoodSpotHistoriesUseCase: GetFoodSpotHistoriesUseCase,
     private val getUserReviewsUseCase: GetUserReviewsUseCase,
+    private val getUserStatisticsUseCase: GetUserStatisticsUseCase,
 ) : BaseViewModel<MyPageState, MyPageSideEffect>() {
     override val container: Container<MyPageState, MyPageSideEffect> = container(MyPageState())
 
@@ -106,9 +108,15 @@ class MyPageViewModel @Inject constructor(
                                             count = LOAD_DATA_NUMBER,
                                         ).firstOrNull()
                                 }
+                            val statisticsDeferred =
+                                async {
+                                    getUserStatisticsUseCase
+                                        .invoke(userInfo.userId)
+                                }
 
                             val reportedFoodSpot = reportedFoodSpotDeferred.await()
                             val writtenReview = writtenReviewDeferred.await()
+                            val statistics = statisticsDeferred.await()
 
                             reduce {
                                 state.copy(
@@ -120,6 +128,7 @@ class MyPageViewModel @Inject constructor(
                                     restDailyReportCreationCount = userInfo.restDailyReportCreationCount,
                                     myRanking = userInfo.myRanking,
                                     foodSpotHistory = reportedFoodSpot,
+                                    foodSpotCount = statistics.reportCount,
                                     review =
                                         writtenReview?.let {
                                             Review(
@@ -133,6 +142,8 @@ class MyPageViewModel @Inject constructor(
                                                 writtenReview.contents,
                                             )
                                         },
+                                    reviewCount = statistics.reviewCount,
+                                    likeCount = statistics.likeCount,
                                     isLoading = false,
                                 )
                             }
