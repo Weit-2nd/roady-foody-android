@@ -63,7 +63,7 @@ class PostReviewViewModel @Inject constructor(
         intent {
             when (this@post) {
                 PostReviewIntent.PostReview -> {
-                    val ratingForRequest = (state.rating * 2).toInt()
+                    val ratingForRequest = state.rating.toInt()
                     val verificationState =
                         verifyReviewUseCase.invoke(
                             contents = state.content,

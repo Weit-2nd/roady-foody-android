@@ -1,5 +1,7 @@
 package com.weit2nd.presentation.ui.mypage
 
+import com.weit2nd.domain.exception.user.UserFoodSpotException
+import com.weit2nd.domain.exception.user.UserReviewException
 import com.weit2nd.domain.usecase.logout.LogoutUseCase
 import com.weit2nd.domain.usecase.logout.WithdrawUseCase
 import com.weit2nd.domain.usecase.spot.GetFoodSpotHistoriesUseCase
@@ -99,20 +101,36 @@ class MyPageViewModel @Inject constructor(
                                 }
                             val reportedFoodSpotDeferred =
                                 async {
-                                    getFoodSpotHistoriesUseCase
-                                        .invoke(
-                                            userId = userId,
-                                            count = LOAD_DATA_NUMBER,
-                                        ).contents
-                                        .firstOrNull()
+                                    runCatching {
+                                        getFoodSpotHistoriesUseCase
+                                            .invoke(
+                                                userId = userId,
+                                                count = LOAD_DATA_NUMBER,
+                                            ).contents
+                                            .firstOrNull()
+                                    }.getOrElse {
+                                        if (it is UserFoodSpotException.NoMoreFoodSpotException) {
+                                            null
+                                        } else {
+                                            throw it
+                                        }
+                                    }
                                 }
                             val writtenReviewDeferred =
                                 async {
-                                    getUserReviewsUseCase
-                                        .invoke(
-                                            userId = userId,
-                                            count = LOAD_DATA_NUMBER,
-                                        ).firstOrNull()
+                                    runCatching {
+                                        getUserReviewsUseCase
+                                            .invoke(
+                                                userId = userId,
+                                                count = LOAD_DATA_NUMBER,
+                                            ).firstOrNull()
+                                    }.getOrElse {
+                                        if (it is UserReviewException.NoMoreReviewException) {
+                                            null
+                                        } else {
+                                            throw it
+                                        }
+                                    }
                                 }
                             val statisticsDeferred =
                                 async {
