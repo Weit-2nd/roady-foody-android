@@ -80,7 +80,11 @@ class MyPageViewModel @Inject constructor(
     }
 
     fun onRankingButtonClick() {
-        // todo 랭킹 화면 보이기
+        MyPageIntent.SetRankingDialogShownState(true).post()
+    }
+
+    fun onRankingCloseButtonClick() {
+        MyPageIntent.SetRankingDialogShownState(false).post()
     }
 
     private fun MyPageIntent.post() =
@@ -253,6 +257,14 @@ class MyPageViewModel @Inject constructor(
                             ),
                         ),
                     )
+                }
+
+                is MyPageIntent.SetRankingDialogShownState -> {
+                    reduce {
+                        state.copy(
+                            isRankingDialogShown = isShown,
+                        )
+                    }
                 }
             }
         }

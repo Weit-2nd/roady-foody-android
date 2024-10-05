@@ -51,6 +51,7 @@ import com.weit2nd.presentation.ui.common.CommonAlertDialog
 import com.weit2nd.presentation.ui.common.EditableProfileImage
 import com.weit2nd.presentation.ui.common.LoadingDialogScreen
 import com.weit2nd.presentation.ui.common.ReviewItem
+import com.weit2nd.presentation.ui.mypage.ranking.RankingDialog
 import com.weit2nd.presentation.ui.theme.DarkGray
 import com.weit2nd.presentation.ui.theme.Gray1
 import com.weit2nd.presentation.ui.theme.Gray4
@@ -144,6 +145,8 @@ fun MyPageScreen(
                         onWithdrawConfirm = vm::onWithdrawConfirm,
                         onLogoutDialogClose = vm::onLogoutDialogClose,
                         onWithdrawDialogClose = vm::onWithdrawDialogClose,
+                        onRankingDialogClose = vm::onRankingCloseButtonClick,
+                        isRankingDialogShown = state.isRankingDialogShown,
                         isLogoutDialogShown = state.isLogoutDialogShown,
                         isWithdrawDialogShown = state.isWithdrawDialogShown,
                         onFoodSpotHistoryClick = vm::onFoodSpotHistoryClick,
@@ -177,6 +180,8 @@ private fun MyPageContent(
     onWithdrawConfirm: () -> Unit,
     onLogoutDialogClose: () -> Unit,
     onWithdrawDialogClose: () -> Unit,
+    onRankingDialogClose: () -> Unit,
+    isRankingDialogShown: Boolean,
     isLogoutDialogShown: Boolean,
     isWithdrawDialogShown: Boolean,
     onFoodSpotHistoryClick: () -> Unit,
@@ -206,6 +211,14 @@ private fun MyPageContent(
                 contents = stringResource(R.string.account_deletion_dialog_content),
                 onPositiveButtonClick = onWithdrawConfirm,
                 onNegativeButtonClick = onWithdrawDialogClose,
+            )
+        }
+
+        if (isRankingDialogShown) {
+            RankingDialog(
+                modifier = Modifier.align(Alignment.Center),
+                onDismiss = onRankingDialogClose,
+                onCloseButtonClick = onRankingDialogClose,
             )
         }
 
@@ -520,6 +533,8 @@ private fun MyPageContentPreview() {
             onWithdrawConfirm = {},
             onLogoutDialogClose = {},
             onWithdrawDialogClose = {},
+            onRankingDialogClose = {},
+            isRankingDialogShown = false,
             isLogoutDialogShown = false,
             isWithdrawDialogShown = false,
             onReviewHistoryClick = {},
@@ -553,6 +568,8 @@ private fun MyPageNoContentPreview() {
             onWithdrawConfirm = {},
             onLogoutDialogClose = {},
             onWithdrawDialogClose = {},
+            onRankingDialogClose = {},
+            isRankingDialogShown = false,
             isLogoutDialogShown = false,
             isWithdrawDialogShown = false,
             onReviewHistoryClick = {},
