@@ -142,5 +142,13 @@
     <!-- total count -->
     <string name="total_count">전체</string>
 
+    <!-- Ranking -->
+    <string name="ranking_title">랭킹</string>
+    <string name="ranking_total">전체</string>
+    <string name="ranking_report">리포트</string>
+    <string name="ranking_review">리뷰</string>
+    <string name="ranking_like">좋아요</string>
+    <string name="ranking_close">닫기</string>
+
     <string name="error_network">인터넷 연결 상태를 확인해주세요</string>
 </resources>
