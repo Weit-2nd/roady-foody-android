@@ -23,8 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,7 +64,6 @@ fun ProfileImage(
     modifier: Modifier = Modifier,
     imgUri: Uri? = null,
     @DrawableRes fallback: Int = R.drawable.ic_launcher_background,
-    placeholder: Painter? = ColorPainter(Gray4),
     onProfileImageClick: (() -> Unit) = {},
 ) {
     var isImageLoading by remember { mutableStateOf(true) }
@@ -84,7 +81,6 @@ fun ProfileImage(
             contentScale = ContentScale.Crop,
             onSuccess = { isImageLoading = false },
             fallback = painterResource(id = fallback),
-            placeholder = placeholder,
         )
 
         if (isImageLoading) {
@@ -105,9 +101,7 @@ private fun DefaultProfileImage(modifier: Modifier = Modifier) {
     ) {
         Icon(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                Modifier.fillMaxSize(0.7f),
             painter = painterResource(id = R.drawable.ic_default_profile),
             contentDescription = "",
             tint = Gray2,
@@ -149,7 +143,7 @@ private fun DefaultProfileImagePreview() {
     RoadyFoodyTheme {
         DefaultProfileImage(
             Modifier
-                .size(100.dp),
+                .size(30.dp),
         )
     }
 }
