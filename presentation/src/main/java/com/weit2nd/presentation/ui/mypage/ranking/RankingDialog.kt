@@ -242,7 +242,7 @@ private fun RankingItem(
         Spacer(modifier = Modifier.width(16.dp))
         ProfileImage(
             modifier = Modifier.size(32.dp),
-            imgUri = rankingItem.profileImageUrl.toUri(),
+            imgUri = rankingItem.profileImageUrl?.toUri(),
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
