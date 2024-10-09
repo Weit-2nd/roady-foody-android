@@ -13,6 +13,7 @@ data class MyPageState(
     val badge: Badge = Badge.UNKNOWN,
     val restDailyReportCreationCount: Int = 0,
     val myRanking: Int = 0,
+    val isRankingDialogShown: Boolean = false,
     val isLogoutDialogShown: Boolean = false,
     val isWithdrawDialogShown: Boolean = false,
     val foodSpotHistory: FoodSpotHistoryContent? = null,

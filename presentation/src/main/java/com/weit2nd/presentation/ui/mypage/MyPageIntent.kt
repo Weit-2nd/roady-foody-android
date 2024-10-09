@@ -11,6 +11,10 @@ sealed class MyPageIntent {
         val isShown: Boolean,
     ) : MyPageIntent()
 
+    data class SetRankingDialogShownState(
+        val isShown: Boolean,
+    ) : MyPageIntent()
+
     data object NavToReviewHistory : MyPageIntent()
 
     data object NavToFoodSpotHistory : MyPageIntent()
