@@ -198,7 +198,10 @@ private fun RankingItems(
         state = state,
         contentPadding = contentPadding,
     ) {
-        items(rankingItems) { rankingItem ->
+        items(
+            items = rankingItems,
+            key = { it.userId },
+        ) { rankingItem ->
             RankingItem(
                 modifier =
                     Modifier
